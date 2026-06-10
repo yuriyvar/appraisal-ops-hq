@@ -13,6 +13,7 @@ Cadence: 2-week sprints. Sprint review doubles as the system's kaizen retro
 - [ ] Run memory-review skill manually once; promote first 5 notes + 1 SOP
 - [ ] Write SOP v0.1 for the single most repeated workflow (suggested: order intake)
 - [ ] Baseline metrics: avg touch-time per order, revision/rework rate
+- [ ] Decide & set up backup for client job files (currently local-only!)
 - Sprint goal: one full capture→review cycle completed on real work
 
 ## Sprint 2 — Standard work + andon
