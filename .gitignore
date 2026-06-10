@@ -1,0 +1,25 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Client data must never enter this repo
+jobs/
+orders/
+*.pdf
+*.docx
+*.xlsx
+!docs/**/*.pdf.placeholder
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.obsidian/workspace*
+.obsidian/cache
+
+# Python / Node
+__pycache__/
+*.pyc
+.venv/
+node_modules/
