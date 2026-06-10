@@ -5,6 +5,15 @@ This repo holds **process and knowledge only** — never client order files,
 engagement letters, borrower data, or report PDFs. Those live in external
 file storage. If a task produces such files, keep them OUT of the repo.
 
+## Environment (Yuriy's PC — primary workstation)
+- **This repo:** `C:\Users\yuriy\VDV Appraisals\appraisal-ops-hq\` — local folder,
+  NOT inside OneDrive. Synced and backed up via GitHub (private repo).
+- **Client job files:** `C:\Users\yuriy\OneDrive\VDV Appraisals\Jobs\` — orders,
+  engagement letters, report PDFs, anything with borrower/client data. Synced by
+  OneDrive. Scripts and SOPs reference this location but its contents NEVER get
+  copied into the repo.
+- New machines: `git clone` the repo; never copy the folder through OneDrive.
+
 ## Layout
 - `vault/` — Ops Memory system (Obsidian-compatible markdown). Read
   `vault/README.md` before touching anything inside it.
