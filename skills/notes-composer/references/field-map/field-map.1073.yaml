@@ -1,0 +1,9 @@
+# Field map — FNM1073 (individual condominium unit)
+# Status: UNSUPPORTED — NO SAMPLES in the current corpus (no 1073 XML; a few condo
+# PDFs are PDF-only, e.g. "3406 carlton st unit 10a"). Scaffold only — do NOT fabricate.
+form: FNM1073
+inherits: FNM1004
+status: unsupported-no-samples
+needed_to_build:
+  - "1-2 FNM1073 XML exports (ideally with PDF pairs) covering project info + unit fields"
+mappings: []   # intentionally empty until samples exist

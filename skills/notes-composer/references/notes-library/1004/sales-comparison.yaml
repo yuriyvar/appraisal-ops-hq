@@ -1,0 +1,41 @@
+# Notes library — form 1004 — group: sales-comparison
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: sales-comparison
+fields:
+  - note_field: SALES_COMPARISON._Comment
+    label: "Sales comparison comment"
+    render_target: "comps[].flags / review.notes"
+    seen_total: 30
+    variants:
+      - id: Comment-1
+        seen_count: 6
+        confidence: medium
+        template: |
+          The most recent comparable sales data in closest proximity to the subject was utilized in the market approach.  It (was) necessary for the appraiser to widen the market search to obtain comparables with similar utility, style, effective age and sales data reflective of current market conditions. Based on appraisal practice with emphasis placed on weighing the elements of comparison, the sales chosen represent the best indication of the subject's current market value. In the appraiser's opinion, the sales chosen best weigh the elements of comparison, and while the distance from the subject property is very important, various factors within the elements of comparison require a wider than one mile radius search.  The adjustments for site are based on market abstraction and contributory value. Above a certain point each additional increment of land area contributes less on a per acre or per square foot basis than the initial minimum site size for the area, thus a constant dollar per acre or square foot adjustment was not utilized. This concept relates to diminishing marginal utility. All physical factors of the subject and comparable sites have been weighing in arriving at site adjustments or lack thereof.
+          
+          The age adjustments utilized in this report considers both the chronological and effective ages of the subject and the comparables. Points of consideration are buyer preference for newer homes, wear and tear on the infrastructure, and obsolescense that may be present.
+          
+          The comparables used in this report are, in the opinion of the appraiser, the best available after an investigation of sales activity in the subejct's market area. Adjustments in the sales comparison analysis section are estimates based on market extraction and/or reaction to a particular item and not cost figures.  Inevitably there are times when the appraiser finds it is necessary to use comparable sales data that is older than desired or require net and or gross adjustments that are greater than desired However, these sales are the best available that can meet or approach conformity with the optimum guidelines set forth by the National Association of Fee Appraisers as well as FNMA/FHMLC/HUD/VA loan investor underwriting guidelines and the USPAP.
+          
+          The comparable search criteria included design, age, location, number of bedrooms/bathrooms, lot size and condition. Although it is the appraiser's intention to search for and utilize the most closely comparable properties to the subject, there may be times when the sales used on the comp grid are only slightly similar to the subject due to a lack of more comparable sales.
+          
+          The appraiser provided a sketch in this appraisal report to show the approximate dimensions of the improvements. The sketch is included only to assist the reader in visualization of the property & understanding the appraisers determination of the subject properties size and floor plan layout.
+          
+          The final estimate of value was determined giving more weight to comp 2 which more closely resembled the subject and had the least net/gross adjustments.  The final estimate of value is estimated after a review of market data and comparable sales and a paired sales analysis of the differences between the subject and comparables used in this appraisal report.
+          
+          Comments on Neighborhood:
+          
+          The subject property is adequately screened from commercial development in the neighborhood and the commercial development indicated in the neighborhood analysis does not adversely impact the subject's marketability or market value, nor does it represent obsolescense. Rather, it is considered a convenience for shopping, neighborhood services, and local employment opportunities.
+          
+          The perception of what constitutes urban, suburban, or rural neighborhoods varies throughout the county and from appraiser to appraiser.  Guidelines have not been established for defining these terms for appraisal purposes. FNMA characterizes an urban location as one that "relates to a city" suburban as
+  - note_field: SALES_COMPARISON._CurrentSalesAgreementAnalysisComment
+    label: "Sales/transfer-history analysis"
+    render_target: "subject.sales_history"
+    seen_total: 30
+    variants:
+      - id: CurrentSalesAgreementAnalysisComment-1
+        seen_count: 29
+        confidence: high
+        template: |
+          Per public records no sale or transfer of the subject property within the last three years. Comps have not been sold or listed in the last year.

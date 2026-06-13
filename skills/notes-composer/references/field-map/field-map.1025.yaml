@@ -1,0 +1,19 @@
+# Field map — FNM1025 (small residential income, 2-4 units)
+# Status: LOW CONFIDENCE — only 1 XML sample (harrison 624). Do not generalize.
+# Adds a rent schedule / income approach on top of the FNM1004 spine.
+form: FNM1025
+inherits: FNM1004
+status: low-confidence-1-sample
+mappings:
+  - record_path: income.rent_schedule
+    mismo: "MULTIFAMILY_RENT_SCHEDULE[RentalDataAnalysisComment, MarketRentalDataComment]"
+    pdf: { section: "Income Approach", label: "Rent schedule / market rent", kind: grid-cell+narrative }
+    aci_web: null
+    worksheet: "(not yet modeled — record schema has no income block yet)"
+  - record_path: income.market_rentals
+    mismo: "MULTIFAMILY_RENTALS[RentalDataAnalysisComment]"
+    pdf: { section: "Income Approach", label: "Comparable rentals", kind: grid-cell }
+    aci_web: null
+    worksheet: "(not yet modeled)"
+# NOTE: the appraisal-record schema v1.0 has no income/rent block — adding 1025 support
+# means a schema extension. Flag for ADR when 1025 volume justifies it.

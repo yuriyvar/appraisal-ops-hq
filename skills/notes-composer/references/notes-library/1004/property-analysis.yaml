@@ -1,0 +1,15 @@
+# Notes library — form 1004 — group: property-analysis
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: property-analysis
+fields:
+  - note_field: PROPERTY_ANALYSIS._Comment
+    label: "Property condition/observation"
+    render_target: "subject.flags"
+    seen_total: 30
+    variants:
+      - id: Comment-1
+        seen_count: 2
+        confidence: low
+        template: |
+          The appraiser can only describe what can be visibly observed given that the appraiser is not qualified as a home inspector and therefore does not warrant physical deficiencies or adverse conditions that affect the livability, soundness, or structural integrity of the property. Any visible signs of physical defeciencies or adverse conditions have been noted.

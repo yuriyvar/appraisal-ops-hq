@@ -1,0 +1,14 @@
+# Field map — FNM2055 (exterior-only / drive-by)
+# Status: LOW CONFIDENCE — only 1 XML sample (208 stonewall). Do not generalize.
+# Inherits the FNM1004 comp grid + narrative spine. Key delta: exterior-only inspection.
+form: FNM2055
+inherits: FNM1004
+status: low-confidence-1-sample
+mappings:
+  - record_path: order.inspection
+    mismo: "REPORT[AppraisalFormType=FNM2055]  (exterior-only)"
+    pdf: { section: Subject, label: "Exterior inspection", kind: grid-cell }
+    aci_web: null
+    worksheet: "Header · Inspection = exterior"
+# Comp grid, adjustments, neighborhood/market/reconciliation narrative map as FNM1004.
+# Confirm against more 2055 samples before relying on this.

@@ -1,5 +1,12 @@
 # CLAUDE.md — appraisal-ops-hq
 
+Rule #1: at the start of every session, read latest handoff + vault/00-inbox.md + Pipeline Records before doing anything.
+
+1.1. Each session handoff is stored in "C:\Users\yuriy\VDV Appraisals\.claude\Session-Handoffs" - read more than one if necessary.
+1.2 Also read "C:\Users\yuriy\VDV Appraisals\.claude\claude-preferences.md"
+
+
+
 Operations hub for a residential appraisal company (~65–90 orders/month).
 This repo holds **process and knowledge only** — never client order files,
 engagement letters, borrower data, or report PDFs. Those live in external
@@ -8,7 +15,7 @@ file storage. If a task produces such files, keep them OUT of the repo.
 ## Environment (Yuriy's PC — primary workstation)
 - **This repo:** `C:\Users\yuriy\VDV Appraisals\appraisal-ops-hq\` — local folder,
   NOT inside OneDrive. Synced and backed up via GitHub (private repo).
-- **Client job files:** `<SET-ME: actual jobs folder path>` — orders, engagement
+- **Client job files:** `C:\Users\yuriy\VDV Appraisals\` — orders, engagement
   letters, report PDFs, anything with borrower/client data. NOTE: currently NOT
   cloud-backed-up — backup decision pending (Sprint 1 item). Contents NEVER get
   copied into the repo.

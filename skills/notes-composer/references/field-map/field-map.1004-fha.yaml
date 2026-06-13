@@ -1,0 +1,10 @@
+# Field map — 1004 FHA (URAR + HUD/FHA addenda)
+# Status: UNSUPPORTED — NO SAMPLES in the current corpus. Scaffold only.
+# 1004 FHA = the FNM1004 spine plus FHA-specific fields (HUD case #, MPR observations,
+# well/septic distances, appliance/utility checks). Build from samples; do not fabricate.
+form: FNM1004-FHA
+inherits: FNM1004
+status: unsupported-no-samples
+needed_to_build:
+  - "1-2 FHA 1004 XML exports to capture the HUD case #, MPR, and well/septic delta fields"
+mappings: []

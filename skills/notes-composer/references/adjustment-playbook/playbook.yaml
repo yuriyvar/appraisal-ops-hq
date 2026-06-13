@@ -1,0 +1,123 @@
+# Adjustment playbook — typical magnitudes from past reports (XML amounts).
+# A HINT for the appraiser; schema keeps adjustments.* appraiser-entered.
+# GLA rate ~$75/sf corroborated by gPAR grids. Cross-link: adjustments.lines[].feature.
+features:
+  - feature: GrossLivingArea
+    schema_feature: "gla_sf"
+    nonzero_count: 160
+    typical_abs_usd: 8850
+    range_abs_usd: [100, 251175]
+    common_abs_usd: [2400, 11250, 480]
+    forms: ['1004', '1004C', '2055']
+  - feature: SiteArea
+    schema_feature: "lot_size_sf"
+    nonzero_count: 91
+    typical_abs_usd: 15200
+    range_abs_usd: [200, 314600]
+    common_abs_usd: [2600, 1300, 1400]
+    forms: ['1004', '1004C']
+  - feature: Condition
+    schema_feature: "grade_or_condition"
+    nonzero_count: 83
+    typical_abs_usd: 15000
+    range_abs_usd: [750, 100000]
+    common_abs_usd: [10000, 15000, 20000]
+    forms: ['1004', '1004C', '1025']
+  - feature: PorchDeck
+    schema_feature: "\u2014"
+    nonzero_count: 75
+    typical_abs_usd: 5000
+    range_abs_usd: [3000, 15000]
+    common_abs_usd: [3000, 5000, 10000]
+    forms: ['1004', '1004C', '1025']
+  - feature: RoomAboveGradeLine2
+    schema_feature: "bedrooms/full_baths"
+    nonzero_count: 67
+    typical_abs_usd: 5000
+    range_abs_usd: [2500, 20000]
+    common_abs_usd: [2500, 5000, 10000]
+    forms: ['1004', '2055']
+  - feature: CarStorage
+    schema_feature: "garage"
+    nonzero_count: 65
+    typical_abs_usd: 10000
+    range_abs_usd: [2500, 30000]
+    common_abs_usd: [10000, 20000, 5000]
+    forms: ['1004', '1004C', '2055']
+  - feature: BasementArea
+    schema_feature: "below_grade_finished_sf"
+    nonzero_count: 56
+    typical_abs_usd: 23900
+    range_abs_usd: [1100, 268400]
+    common_abs_usd: [37800, 90500, 5800]
+    forms: ['1004']
+  - feature: BasementFinish
+    schema_feature: "below_grade_finished_sf"
+    nonzero_count: 33
+    typical_abs_usd: 5000
+    range_abs_usd: [300, 25000]
+    common_abs_usd: [5000, 10000, 2500]
+    forms: ['1004']
+  - feature: DateOfSale
+    schema_feature: "\u2014"
+    nonzero_count: 31
+    typical_abs_usd: 9100
+    range_abs_usd: [900, 195000]
+    common_abs_usd: [3700, 9100, 900]
+    forms: ['1004', '1004C']
+  - feature: Quality
+    schema_feature: "grade_or_condition"
+    nonzero_count: 23
+    typical_abs_usd: 50000
+    range_abs_usd: [15000, 150000]
+    common_abs_usd: [50000, 75000, 40000]
+    forms: ['1004', '1025']
+  - feature: View
+    schema_feature: "(view)"
+    nonzero_count: 21
+    typical_abs_usd: 7500
+    range_abs_usd: [5000, 75000]
+    common_abs_usd: [7500, 5000, 50000]
+    forms: ['1004', '1004C']
+  - feature: Location
+    schema_feature: "(location)"
+    nonzero_count: 21
+    typical_abs_usd: 7500
+    range_abs_usd: [3000, 100000]
+    common_abs_usd: [7500, 3000, 30000]
+    forms: ['1004', '1004C']
+  - feature: HeatingCooling
+    schema_feature: "heating/cooling"
+    nonzero_count: 15
+    typical_abs_usd: 5000
+    range_abs_usd: [3000, 10000]
+    common_abs_usd: [7500, 3000, 5000]
+    forms: ['1004', '1004C']
+  - feature: Age
+    schema_feature: "year_built"
+    nonzero_count: 9
+    typical_abs_usd: 23000
+    range_abs_usd: [8000, 106000]
+    common_abs_usd: [32000, 8000, 9000]
+    forms: ['1004', '1004C']
+  - feature: DesignStyle
+    schema_feature: "style"
+    nonzero_count: 7
+    typical_abs_usd: 10000
+    range_abs_usd: [10000, 25000]
+    common_abs_usd: [10000, 25000]
+    forms: ['1004']
+  - feature: GrossBuildingArea
+    schema_feature: "\u2014"
+    nonzero_count: 3
+    typical_abs_usd: 6100
+    range_abs_usd: [2700, 6700]
+    common_abs_usd: [2700, 6100, 6700]
+    forms: ['1025']
+  - feature: PropertyRights
+    schema_feature: "\u2014"
+    nonzero_count: 1
+    typical_abs_usd: 7500
+    range_abs_usd: [7500, 7500]
+    common_abs_usd: [7500]
+    forms: ['1004']

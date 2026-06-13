@@ -1,0 +1,70 @@
+# Notes library — form 1004 — group: other
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: other
+fields:
+  - note_field: LISTING_HISTORY.ListedWithinPreviousYearDescription
+    label: "LISTING_HISTORY.ListedWithinPreviousYearDescription"
+    render_target: "\u2014"
+    seen_total: 29
+    variants:
+      - id: ListedWithinPreviousYearDescription-1
+        seen_count: 13
+        confidence: high
+        template: |
+          Not Listed On MLS, No Offering Price, No Listing Date
+      - id: ListedWithinPreviousYearDescription-2
+        seen_count: 4
+        confidence: medium
+        template: |
+          The subject property was listed on {date} for {money}. {mls_number}
+  - note_field: SALES_CONTRACT.SalesConcessionDescription
+    label: "SALES_CONTRACT.SalesConcessionDescription"
+    render_target: "\u2014"
+    seen_total: 8
+    variants:
+      - id: SalesConcessionDescription-1
+        seen_count: 2
+        confidence: low
+        template: |
+          Seller shall credit Purchaser at settlement (to be reflected on the settlement statement/closing  disclosure) the sum of {money} towards Purchaser's closing costs, prepaids, points and loan expenses.
+  - note_field: _LEGAL_DESCRIPTION._TextDescription
+    label: "_LEGAL_DESCRIPTION._TextDescription"
+    render_target: "\u2014"
+    seen_total: 10
+    variants:
+      - id: TextDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          {road} A/F Dist Lot 1A Tally Ho Farms Sd
+  - note_field: SITE._ZoningClassificationDescription
+    label: "SITE._ZoningClassificationDescription"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: ZoningClassificationDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          Single- and Two-Family Urban Residential
+  - note_field: SITE._DimensionsDescription
+    label: "SITE._DimensionsDescription"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: DimensionsDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          124x62x42x134x299x160x284x97x374x261x317x385x33x33
+  - note_field: SALES_CONTRACT._ReviewComment
+    label: "SALES_CONTRACT._ReviewComment"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: ReviewComment-1
+        seen_count: 1
+        confidence: low
+        template: |
+          The appraiser analyzed the contract. The appraiser reviewed the purchase agreement dated {date}. The reported purchase price is {money}, with a {money} earnest money deposit and a seller credit of {money} toward buyer closing costs. The property is being sold as-is, and the agreement states that the property must appraise for at least the purchase price. The appraiser also considered the current assessment, which is reportedly {money}, as well as available market data. The contract price is below the current assessment and below the general range indicated by the most relevant comparable sales reviewed, which reportedly range from approximately {money} to {money}. These factors are atypical for a property of this size and price segment and were considered in the appraiser's analysis of the contract.

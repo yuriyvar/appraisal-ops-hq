@@ -1,0 +1,75 @@
+# Notes library — form 1004C — group: other
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004C
+group: other
+fields:
+  - note_field: LISTING_HISTORY.ListedWithinPreviousYearDescription
+    label: "LISTING_HISTORY.ListedWithinPreviousYearDescription"
+    render_target: "\u2014"
+    seen_total: 6
+    variants:
+      - id: ListedWithinPreviousYearDescription-1
+        seen_count: 3
+        confidence: medium
+        template: |
+          Not Listed On MLS, No Offering Price, No Listing Date
+  - note_field: _LEGAL_DESCRIPTION._TextDescription
+    label: "_LEGAL_DESCRIPTION._TextDescription"
+    render_target: "\u2014"
+    seen_total: 2
+    variants:
+      - id: TextDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          Coats Est & Jones Lot 1-B Db 1921/933 2.442 Ac
+  - note_field: SALES_CONTRACT._ReviewComment
+    label: "SALES_CONTRACT._ReviewComment"
+    render_target: "\u2014"
+    seen_total: 3
+    variants:
+      - id: ReviewComment-1
+        seen_count: 1
+        confidence: low
+        template: |
+          Arms-Length tranasaction; The appraiser has analyzed the contract
+  - note_field: _QUALITY.DataSourceDescription
+    label: "_QUALITY.DataSourceDescription"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: DataSourceDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          NADA Manufactured housing appraisal guide
+  - note_field: MANUFACTURED_HOME._HUDDataPlateDataSourceDescription
+    label: "MANUFACTURED_HOME._HUDDataPlateDataSourceDescription"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: HUDDataPlateDataSourceDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          Located in the utility cloet next to the breaker box,
+  - note_field: SALES_CONTRACT.SalesConcessionDescription
+    label: "SALES_CONTRACT.SalesConcessionDescription"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: SalesConcessionDescription-1
+        seen_count: 1
+        confidence: low
+        template: |
+          Seller to pay {money} in concession toward closing costs.
+  - note_field: SALES_CONTRACT._InvoiceReviewComment
+    label: "SALES_CONTRACT._InvoiceReviewComment"
+    render_target: "\u2014"
+    seen_total: 1
+    variants:
+      - id: InvoiceReviewComment-1
+        seen_count: 1
+        confidence: low
+        template: |
+          The appraiser reviewed the invoice document. Data analyzed were applied and congregated into the appraisal report.

@@ -1,0 +1,25 @@
+# Notes library — form 1004 — group: site-cost
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: site-cost
+fields:
+  - note_field: COST_ANALYSIS.SiteEstimatedValueComment
+    label: "Site value comment"
+    render_target: "(cost approach)"
+    seen_total: 30
+    variants:
+      - id: SiteEstimatedValueComment-1
+        seen_count: 30
+        confidence: high
+        template: |
+          The site value was determined using the allocation/sales comparison method.
+  - note_field: COST_ANALYSIS._Comment
+    label: "Cost approach comment"
+    render_target: "(cost approach)"
+    seen_total: 30
+    variants:
+      - id: Comment-1
+        seen_count: 30
+        confidence: high
+        template: |
+          Physical depreciation was factored using the age-life method.

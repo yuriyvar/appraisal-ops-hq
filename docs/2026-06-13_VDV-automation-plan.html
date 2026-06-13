@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VDV Appraisal Automation — Plan</title>
+<style>
+  :root{
+    --navy:#1F4E5F; --teal:#2E8B9E; --ink:#1c2530; --muted:#5d6b78;
+    --bg:#eef2f4; --card:#ffffff; --line:#d8e0e4;
+    --green:#1f9d57; --amber:#d98c1f; --red:#c0392b;
+    --greenbg:#e4f6ec; --amberbg:#fbf0db; --redbg:#fbe7e4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center}
+  .deck{width:min(1040px,96vw);height:min(660px,94vh);position:relative}
+  .slide{position:absolute;inset:0;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;box-shadow:0 12px 40px rgba(20,40,55,.12);padding:44px 52px;
+    display:none;flex-direction:column;overflow:auto}
+  .slide.active{display:flex;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .kicker{color:var(--teal);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin-bottom:6px}
+  h1{font-size:40px;line-height:1.1;margin:.1em 0 .2em}
+  h2{font-size:27px;margin:.1em 0 .55em;color:var(--navy)}
+  p{font-size:16px;line-height:1.5;color:var(--ink);margin:.3em 0}
+  .sub{color:var(--muted);font-size:15px}
+  ul{margin:.3em 0 0;padding-left:0;list-style:none}
+  li{position:relative;padding:7px 0 7px 26px;font-size:15.5px;line-height:1.45;border-bottom:1px dashed #eef1f3}
+  li:before{content:"";position:absolute;left:4px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+  li b{color:var(--navy)}
+  .grid{display:grid;gap:14px;margin-top:6px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+  .card{background:#f7fafb;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card h3{margin:0 0 4px;font-size:16px;color:var(--navy)}
+  .card p{font-size:13.5px;color:var(--muted);margin:.15em 0}
+  .pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+  .ok{background:var(--greenbg);color:var(--green)} .warn{background:var(--amberbg);color:var(--amber)} .bad{background:var(--redbg);color:var(--red)}
+  .phase{display:flex;align-items:flex-start;gap:14px;padding:8px 0;border-bottom:1px dashed #eef1f3}
+  .pn{flex:0 0 34px;height:34px;border-radius:9px;background:var(--navy);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .phase div b{color:var(--navy)} .phase small{color:var(--muted)}
+  .title-slide{justify-content:center;background:linear-gradient(135deg,#1F4E5F,#2E8B9E);color:#fff;border:none}
+  .title-slide h1,.title-slide h2{color:#fff} .title-slide .kicker{color:#bfe7ef}
+  .title-slide .sub{color:#dceef2}
+  .foot{position:absolute;bottom:14px;left:52px;right:52px;display:flex;justify-content:space-between;align-items:center;
+    font-size:12px;color:var(--muted)}
+  .title-slide .foot{color:#cfe7ec}
+  .q{font-size:16px;background:#f7fafb;border-left:3px solid var(--teal);padding:8px 12px;border-radius:6px;margin:7px 0}
+  .nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;z-index:10}
+  .nav button{border:none;background:var(--navy);color:#fff;width:38px;height:38px;border-radius:10px;font-size:17px;cursor:pointer;opacity:.92}
+  .nav button:hover{opacity:1}
+  .dots{display:flex;gap:6px;margin:0 6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#b9c6cc;cursor:pointer}
+  .dot.on{background:var(--navy);transform:scale(1.25)}
+  .count{font-size:13px;color:var(--muted);min-width:46px;text-align:center}
+  @media print{.slide{display:flex;position:static;height:auto;page-break-after:always;box-shadow:none;margin-bottom:14px}.nav{display:none}.deck{height:auto;width:100%}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1 -->
+  <section class="slide title-slide active">
+    <div class="kicker">VDV Appraisals · Operations Automation</div>
+    <h1>From one address to a finished appraisal</h1>
+    <p class="sub" style="font-size:19px;max-width:760px">Readiness assessment &amp; build plan — proven on a live order (119 Countryside Ln, Henrico), aimed at ACI.</p>
+    <div class="foot"><span>Prepared by Yuriy + Claude ("Bob")</span><span>2026-06-13 · for review with Alan</span></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide">
+    <div class="kicker">What we proved today</div>
+    <h2>A full property search, end to end</h2>
+    <ul>
+      <li><b>Subject verified across 3 sources</b> — Henrico assessment, Zillow, CVR MLS all agree: 6,662 sf, 2002, 5BR/5.2BA, pool. </li>
+      <li><b>Comp market is thin &amp; the subject tops it</b> — of 45 homes within 1 mi, ~37 are 2,600–5,200 sf / $1.0–1.8M; a smaller product.</li>
+      <li><b>Best comp surfaced by radius, missed by the size band</b> — 8721 Ruggles Rd (same subdivision, 0.6 mi, 7,560 sf, $3.10M).</li>
+      <li><b>Deliverables produced</b> — comp workbook + DataMaster-ready CSV in <code>Comps files\</code>.</li>
+    </ul>
+    <div class="foot"><span>VDV Automation Plan</span><span>2 / 12</span></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide">
+    <div class="kicker">Readiness for an unattended agent</div>
+    <h2>The model is ready; the build has one weak link</h2>
+    <div class="grid g3">
+      <div class="card"><span class="pill ok">~80% · OK</span><h3>Subject extraction</h3><p>Reliable once per-county assessment quirks live in a registry.</p></div>
+      <div class="card"><span class="pill ok">Good</span><h3>DataMaster CSV</h3><p>Format is exact; just always keep ML#/PID.</p></div>
+      <div class="card"><span class="pill bad">Weak link</span><h3>Comp pull</h3><p>No tested MLS procedure → the agent re-derives brittle bits each run.</p></div>
+    </div>
+    <p class="sub" style="margin-top:14px">Latest Sonnet can do all of it — the gap is documented standard work, not capability. The failure mode is always the MLS leg.</p>
+    <div class="foot"><span>VDV Automation Plan</span><span>3 / 12</span></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide">
+    <div class="kicker">Architecture decision · ADR-002</div>
+    <h2>Two modules, vendor-family adapters, one registry</h2>
+    <div class="grid g2">
+      <div class="card"><h3>① Subject verification</h3><p>Always from the county assessment <b>source of record</b>, per-vendor adapter, cross-checked with public portals.</p></div>
+      <div class="card"><h3>② Comp pull</h3><p><b>MLS-first.</b> County sales-GIS used only where it exists, as an accelerator.</p></div>
+    </div>
+    <ul style="margin-top:10px">
+      <li><b>Adapters by vendor family, not per county</b> — ~8 families cover all ~95 VA jurisdictions.</li>
+      <li><b>MLS is the backbone</b> — only the MLS has DOM, concessions, condition, list-vs-sold, prior-sale chain.</li>
+      <li><b>No per-county skills</b> — a new county is a registry row, not new code.</li>
+    </ul>
+    <div class="foot"><span>VDV Automation Plan</span><span>4 / 12</span></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide">
+    <div class="kicker">Data sources</div>
+    <h2>Adapter sets, not special cases</h2>
+    <div class="grid g3">
+      <div class="card"><h3>Public portals</h3><p>Zillow · Realtor.com · Redfin · Homes.com (+future). One interface: address → facts / APN / last-sold.</p></div>
+      <div class="card"><h3>MLS × 3 (growing)</h3><p><b>CVR + Bright</b> share one Matrix adapter; <b>Navica</b> needs its own. Always emits the same DataMaster CSV.</p></div>
+      <div class="card"><h3>County registry</h3><p>Assessment vendor + technique, sales-GIS? + endpoint, comp source, MLS, quirks.</p></div>
+    </div>
+    <p class="sub" style="margin-top:14px">Adding MLS #4 or a new portal later = one more adapter, not a rewrite.</p>
+    <div class="foot"><span>VDV Automation Plan</span><span>5 / 12</span></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide">
+    <div class="kicker">Registry storage — the SQLite question</div>
+    <h2>Hybrid: human source + machine index + cache</h2>
+    <div class="grid g3">
+      <div class="card"><span class="pill ok">Source of truth</span><h3>Sheet / CSV</h3><p>Human-editable, git-diffable, PR-reviewable. You &amp; Alan add counties here.</p></div>
+      <div class="card"><span class="pill warn">Derived</span><h3>SQLite index</h3><p>Built from the source. Fast typed, relational queries for the agent.</p></div>
+      <div class="card"><span class="pill ok">Earns its keep</span><h3>SQLite cache</h3><p>Every resolved subject/parcel/comp stored — never brute-force the same property twice.</p></div>
+    </div>
+    <p class="sub" style="margin-top:14px">A binary <code>.db</code> as the source would break casual editing and PR review — so SQLite is the index + cache, not the SOR.</p>
+    <div class="foot"><span>VDV Automation Plan</span><span>6 / 12</span></div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide">
+    <div class="kicker">Recurring pain · now a playbook</div>
+    <h2>Resolving a subject with no Tax ID</h2>
+    <ul>
+      <li><b>Normalize + expand the address</b> — street-type / directional / unit variants (county ≠ MLS ≠ postal).</li>
+      <li><b>Assessment by address → geocode + point-in-parcel</b> to get the GPIN even when the address attribute differs.</li>
+      <li><b>New-construction / builder-parcel check</b> — units may sit under an undivided builder parcel (SF=0) for 1–2 yrs.</li>
+      <li><b>Use the nearest assessed neighbor unit</b> as the GLA/spec proxy → start the DM file by entering the subject <b>manually</b>, then import comps.</li>
+      <li><b>Cross-check MLS (all 3) + portals</b> for the Tax ID and the alternate street name; record the alias mapping.</li>
+      <li><b>Cache every resolution</b> in SQLite — the streamlining win.</li>
+    </ul>
+    <div class="foot"><span>VDV Automation Plan</span><span>7 / 12</span></div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide">
+    <div class="kicker">Already in the skill</div>
+    <h2>The current SKILL does more than the test showed</h2>
+    <div class="grid g3">
+      <div class="card"><h3>Step 4 · MLS# lookup</h3><p>Zillow <code>MLS ID #</code> regex first → Matrix fallback → <b>BUILDER-DIRECT</b> flag.</p></div>
+      <div class="card"><h3>Step 5 · CSV</h3><p>To <code>Comps files\</code>, file card, builder-direct &amp; GLA-delta flags before DM.</p></div>
+      <div class="card"><h3>Step 6 · DM import</h3><p>Computer-use walkthrough; new-construction = enter subject manually first.</p></div>
+    </div>
+    <p class="sub" style="margin-top:14px">Plus Chesterfield UseCode filter, ArcGIS TaxID rounding, Matrix MAP-tab radius, luxury GLA widening, one-session rule. The refactor <b>migrates</b> these into adapters — it doesn't discard them.</p>
+    <div class="foot"><span>VDV Automation Plan</span><span>8 / 12</span></div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide">
+    <div class="kicker">The goal</div>
+    <h2>One record → two outputs → ACI</h2>
+    <div class="grid g3">
+      <div class="card"><h3>Structured record</h3><p>A single appraisal record (JSON): subject + comps + adjustments + photos. The keystone.</p></div>
+      <div class="card"><h3>HTML tabbed worksheet</h3><p>DM-style tabs for fast copy-paste into ACI. Near-term, zero integration risk.</p></div>
+      <div class="card"><h3>ACI web auto-fill</h3><p>ACI is going fully web-based — a win. Browser fills the form from a swappable field-map; human reviews, never auto-submits.</p></div>
+    </div>
+    <p class="sub" style="margin-top:14px">Photos pipeline feeds both: intake → auto-label → rename → place.</p>
+    <div class="foot"><span>VDV Automation Plan</span><span>0 / 0</span></div>
+  </section>
+
+  <!-- ACI auto-fill explained -->
+  <section class="slide">
+    <div class="kicker">Plain-English · for Alan</div>
+    <h2>How "ACI web auto-fill" actually works</h2>
+    <div class="grid g3">
+      <div class="card"><h3>1 · Browser fills the form</h3><p>New ACI is a website, so the agent types each value into the right box like a person — GLA, year built, every comp price. Nothing invented; all of it comes from the structured record.</p></div>
+      <div class="card"><h3>2 · A swappable field-map</h3><p>A small editable table says which value goes in which ACI box. When ACI changes its layout, you edit this <b>map</b> — a data change — not the code, so updates don't break it.</p></div>
+      <div class="card"><h3>3 · You review &amp; submit</h3><p>The agent fills, then <b>stops</b>. It never clicks Save / Submit. You check the form and press the button — exactly like DataMaster's "Review &amp; Send."</p></div>
+    </div>
+    <pre style="background:#0f2b33;color:#cfe7ec;font-family:Consolas,Menlo,monospace;font-size:13px;line-height:1.55;padding:12px 16px;border-radius:10px;margin-top:16px;white-space:pre;overflow:auto">field-map  (our data  →  ACI's form field)
+  subject.gla          →  #GLA
+  subject.year_built   →  #YearBuilt
+  comp[1].sale_price   →  #comp1_SalePrice
+  comp[1].gla          →  #comp1_GLA</pre>
+    <p class="sub" style="margin-top:12px">Net: the machine does the tedious typing; the licensed appraiser stays the final gate. (Can't build until the new ACI is live and we can see its real fields — HTML copy-paste is the bridge until then.)</p>
+    <div class="foot"><span>VDV Automation Plan</span><span>0 / 0</span></div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <div class="kicker">Action plan</div>
+    <h2>Six phases</h2>
+    <div class="phase"><div class="pn">1</div><div><b>Registry + routing</b> — ship two-module/adapter restructure; build CSV/sheet SOR; generate derived SQLite + cache table.</div></div>
+    <div class="phase"><div class="pn">2</div><div><b>Subject resolution</b> — implement the address→parcel brute-force playbook + cache.</div></div>
+    <div class="phase"><div class="pn">3</div><div><b>Comp-pull hardening</b> — Matrix adapter (CVR+Bright) as tested standard work; <b>Navica adapter</b>; multi-portal leg; exporter/broker session.</div></div>
+    <div class="phase"><div class="pn">4</div><div><b>Output assembly</b> — the structured appraisal record → HTML tabbed worksheet.</div></div>
+    <div class="phase"><div class="pn">5</div><div><b>Photos</b> — intake → auto-label → rename → place into the record / Photos tab.</div></div>
+    <div class="phase"><div class="pn">6</div><div><b>ACI web auto-fill</b> — field-map record → ACI web form (human-reviewed); HTML copy-paste fallback.</div></div>
+    <div class="foot"><span>VDV Automation Plan</span><span>0 / 0</span></div>
+  </section>
+
+  <!-- Desktop appraisals business case -->
+  <section class="slide">
+    <div class="kicker">The business case · scope with Alan</div>
+    <h2>Desktop appraisals — the volume play</h2>
+    <div class="grid g2">
+      <div class="card"><h3>Why they fit automation</h3><p>No interior/exterior inspection — the whole report is built from <b>data</b> (MLS, public records, prior listings, floor plan). That data-assembly is exactly what this pipeline already does.</p></div>
+      <div class="card"><h3>Why it pays for itself</h3><p>Far lighter than a full 1004/2055, so we can take on more of them. The added throughput funds ops — MLS dues, Claude subscriptions — then turns to margin. A self-funding flywheel.</p></div>
+    </div>
+    <ul style="margin-top:8px">
+      <li><b>Same engine, lighter form</b> — subject + comps + market data → the desktop form; reuses everything in Phases 1–5.</li>
+      <li><b>Appraiser still certifies</b> — automation assembles; the licensed appraiser judges, signs, and stays the gate (USPAP unchanged).</li>
+      <li><b>Confirm scope with Alan</b> — which desktop products / forms, which AMCs, and the eligibility rules.</li>
+    </ul>
+    <div class="foot"><span>VDV Automation Plan</span><span>0 / 0</span></div>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide">
+    <div class="kicker">For Alan — decisions needed</div>
+    <h2>Open questions</h2>
+    <div class="q">1 · Output first: HTML copy-paste worksheet, or push straight for ACI web auto-fill?</div>
+    <div class="q">2 · Is DataMaster the long-term bridge to ACI, or do we bypass it?</div>
+    <div class="q">3 · Navica — which boards / counties is it our system of record for?</div>
+    <div class="q">4 · Luxury subjects: confirm default = widen GLA to +15% and bracket up?</div>
+    <div class="q">5 · Registry: OK with hybrid (Sheet/CSV + derived SQLite + cache)?</div>
+    <div class="q">6 · Desktop appraisals: which products/forms &amp; AMCs should we target first as the volume play?</div>
+    <div class="foot"><span>VDV Automation Plan</span><span>0 / 0</span></div>
+  </section>
+
+  <!-- 12 -->
+  <section class="slide">
+    <div class="kicker">Status &amp; next</div>
+    <h2>Where things stand</h2>
+    <ul>
+      <li><b>Drafted</b> — ADR-002, county registry, MLS &amp; subject-resolution playbooks, kaizen K-002 (5-whys + PDCA), this deck.</li>
+      <li><span class="pill bad" style="margin:0">Blocker</span> &nbsp; git config was corrupted by concurrent-session access — files are safe; commit pending host-side recovery.</li>
+      <li><b>GitHub</b> — repo not yet wired; create private <code>appraisal-ops-hq</code>, push <code>main</code> + the K-002 branch, open the PR.</li>
+      <li><b>Recommended next</b> — draft the JSON appraisal-record schema (the keystone Step 4/5/6 + ACI all read from).</li>
+    </ul>
+    <div class="foot"><span>VDV Automation Plan</span><span>0 / 0</span></div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Previous">‹</button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count"></span>
+  <button id="next" aria-label="Next">›</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const dots=document.getElementById('dots');
+  let i=0;
+  slides.forEach((_,n)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>go(n);dots.appendChild(d);});
+  // auto-number the per-slide footer page counters (skips the title slide's date)
+  slides.forEach((s,k)=>{const f=s.querySelector('.foot');if(!f)return;const sp=f.querySelectorAll('span');const last=sp[sp.length-1];
+    if(last&&/^\s*\d+\s*\/\s*\d+\s*$/.test(last.textContent))last.textContent=(k+1)+' / '+slides.length;});
+  function go(n){i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
+    document.getElementById('count').textContent=(i+1)+' / '+slides.length;}
+  document.getElementById('next').onclick=()=>go(i+1);
+  document.getElementById('prev').onclick=()=>go(i-1);
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown')go(i+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp')go(i-1);});
+  go(0);
+</script>
+</body>
+</html>

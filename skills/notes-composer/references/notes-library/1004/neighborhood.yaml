@@ -1,0 +1,50 @@
+# Notes library — form 1004 — group: neighborhood
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: neighborhood
+fields:
+  - note_field: NEIGHBORHOOD_BOUNDARIES.GSENeighborhoodBoundariesDescription
+    label: "Neighborhood boundaries (GSE)"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: GSENeighborhoodBoundariesDescription-1
+        seen_count: 8
+        confidence: medium
+        template: |
+          The subject is bound by {road} ({route}) to the North, {road} ({route}) to the South, {road} to the East and {road} ({route}) to the West.
+  - note_field: NEIGHBORHOOD._BoundaryAndCharacteristicsDescription
+    label: "Neighborhood boundaries"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: BoundaryAndCharacteristicsDescription-1
+        seen_count: 8
+        confidence: medium
+        template: |
+          The subject is bound by {road} ({route}) to the North, {road} ({route}) to the South, {road} to the East and {road} ({route}) to the West.
+  - note_field: NEIGHBORHOOD._MarketConditionsDescription
+    label: "Neighborhood market conditions"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: MarketConditionsDescription-1
+        seen_count: 30
+        confidence: high
+        template: |
+          There is an ample financing available through local lenders including FHA, VA, VHDA, conventional and loan assumption. The intended use of this report is to establish market value. The intended user of this report is (LENDER/CLIENT) or its assigns. This appraisal is a complete report and presented in summary report format.
+  - note_field: NEIGHBORHOOD._Description
+    label: "Neighborhood description"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: Description-1
+        seen_count: 3
+        confidence: medium
+        template: |
+          Neighborhood with a mix of Transitional and Colonial homes. Amenities include parks, schools, and local businesses. Recent sales data is personally verified for accurate market representation.
+      - id: Description-2
+        seen_count: 3
+        confidence: medium
+        template: |
+          Neighborhood with a mix of Ranch and CapeCod homes. Amenities include parks, schools, and local businesses. Recent sales data is personally verified for accurate market representation.

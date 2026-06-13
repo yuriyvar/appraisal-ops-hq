@@ -1,0 +1,15 @@
+# Notes library — form 1004 — group: prior-sale
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: prior-sale
+fields:
+  - note_field: PRIOR_SALE.GSEPriorSaleComment
+    label: "Prior-sale comment"
+    render_target: "comps[].prior_sale"
+    seen_total: 30
+    variants:
+      - id: GSEPriorSaleComment-1
+        seen_count: 29
+        confidence: high
+        template: |
+          Per public records no sale or transfer of the subject property within the last three years. Comps have not been sold or listed in the last year.

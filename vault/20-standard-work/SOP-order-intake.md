@@ -15,6 +15,8 @@ andon-count: 0
 
 ## Steps (draft — refine in Sprint 1)
 1. Save engagement letter / order PDF to the job folder in the client jobs folder (path in CLAUDE.md Environment) (naming: YYYY-MM-DD_address_client).
+   - Comp CSV files (DataMaster "Appraiser Single Line" imports) → `C:\Users\yuriy\VDV Appraisals\Comps files\` (filename: `<address>_comps_appraiser-single-line.csv`)
+   - Comp photos and supporting docs → `C:\Users\yuriy\VDV Appraisals\Comps files\` (subfolder by address as needed)
 2. Extract: address, client/AMC, loan #, product type, fee, due date, special instructions.
 3. Check 10-notes/ for client-specific preferences (e.g. [[northstar-eta-preference]]).
 4. Create job record; pull county assessor card + FEMA flood zone + prior 3-yr sale history.

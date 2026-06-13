@@ -1,0 +1,81 @@
+# Field map — FNM1004 (URAR, single-family detached)
+# ONE mapping, multiple lenses (ADR-003). Keyed on the appraisal-record schema
+# path; each row projects to its consumers:
+#   mismo    — ACI/MISMO 2.6 element[attribute] the value was read from
+#   pdf      — where it renders in the delivered report (section · label · kind)
+#   aci_web  — selector/field id for ACI web auto-fill  (null until new ACI is live)
+#   worksheet— which Build A render_worksheet.py tab/row shows it (renderer = source of truth)
+# Seeded + validated against the 3 URAR XML↔PDF pairs (100% value match, pair-QA).
+form: FNM1004
+mismo_root: VALUATION_RESPONSE/REPORT
+status: seeded-validated   # from 30 1004 XMLs + 3 pairs
+
+mappings:
+  # ---- subject ----
+  - record_path: subject.characteristics.gla_sf
+    mismo: "PROPERTY[_GrossLivingAreaSquareFeetCount] / ROOM[*]"
+    pdf: { section: Subject, label: "Gross Living Area", kind: grid-cell }
+    aci_web: null
+    worksheet: "Subject tab · GLA (governing)"
+  - record_path: subject.characteristics.year_built
+    mismo: "STRUCTURE[_YearBuilt]"
+    pdf: { section: Subject, label: "Year Built", kind: grid-cell }
+    aci_web: null
+    worksheet: "Subject tab · Year built"
+  - record_path: subject.assessment.total_value
+    mismo: "_PARSED_STREET_ADDRESS / SITE assessment fields"
+    pdf: { section: Subject, label: "Assessor's value", kind: grid-cell }
+    aci_web: null
+    worksheet: "Subject tab · Total assessed"
+
+  # ---- comp grid ----
+  - record_path: comps[].sale.sale_price
+    mismo: "COMPARABLE_SALE[PropertySalesAmount]"
+    pdf: { section: "Sales Comparison", label: "Sale Price", kind: grid-cell }
+    aci_web: null
+    worksheet: "Comp grid · Sale price"
+  - record_path: comps[].price_per_sf
+    mismo: "COMPARABLE_SALE[SalesPricePerGrossLivingAreaAmount]"
+    pdf: { section: "Sales Comparison", label: "Price/GLA", kind: grid-cell }
+    aci_web: null
+    worksheet: "Comp grid · $/sf"
+  - record_path: comps[].sale.adjusted_price
+    mismo: "COMPARABLE_SALE[AdjustedSalesPriceAmount]"
+    pdf: { section: "Sales Comparison", label: "Adjusted Sale Price", kind: grid-cell }
+    aci_web: null
+    worksheet: "(derived) Comp grid"
+  - record_path: comps[].sale.net_adjustment_pct
+    mismo: "COMPARABLE_SALE[SalePriceTotalAdjustmentNetPercent]"
+    pdf: { section: "Sales Comparison", label: "Net Adj %", kind: grid-cell }
+    aci_web: null
+    worksheet: "Comp grid (net %)"
+  - record_path: comps[].sale.gross_adjustment_pct
+    mismo: "COMPARABLE_SALE[SalesPriceTotalAdjustmentGrossPercent]"
+    pdf: { section: "Sales Comparison", label: "Gross Adj %", kind: grid-cell }
+    aci_web: null
+    worksheet: "Comp grid (gross %)"
+
+  # ---- adjustment lines (appraiser-entered in record; observed in MISMO) ----
+  - record_path: adjustments.lines[feature].per_comp
+    mismo: "SALE_PRICE_ADJUSTMENT[_Type, _Description=comp value, _Amount=$]"
+    pdf: { section: "Sales Comparison", label: "<feature> $ adjustment", kind: grid-cell }
+    aci_web: null
+    worksheet: "Comp grid · GLA vs subj (subset)"
+    note: "feature names: GrossLivingArea, SiteArea, Condition, PorchDeck, CarStorage, BasementArea, DateOfSale, Quality, View, Location, ... (see adjustment-playbook)"
+
+  # ---- narrative / notes (see notes-library for phrasings) ----
+  - record_path: market.neighborhood_notes
+    mismo: "NEIGHBORHOOD[_Description,_MarketConditionsDescription,_BoundaryAndCharacteristicsDescription]"
+    pdf: { section: Neighborhood, label: "(narrative)", kind: narrative }
+    aci_web: null
+    worksheet: "Comp grid tab · neighborhood callout"
+  - record_path: review.notes (reconciliation)
+    mismo: "_RECONCILIATION[_SummaryComment]"
+    pdf: { section: Reconciliation, label: "(narrative)", kind: narrative }
+    aci_web: null
+    worksheet: "Footer · review notes"
+  - record_path: subject.sales_history (analysis)
+    mismo: "SALES_COMPARISON[_CurrentSalesAgreementAnalysisComment]"
+    pdf: { section: "Sales Comparison", label: "transfer-history comment", kind: narrative }
+    aci_web: null
+    worksheet: "Sale/Listing history tab"

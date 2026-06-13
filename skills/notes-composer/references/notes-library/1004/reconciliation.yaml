@@ -1,0 +1,15 @@
+# Notes library — form 1004 — group: reconciliation
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: reconciliation
+fields:
+  - note_field: _RECONCILIATION._SummaryComment
+    label: "Reconciliation summary"
+    render_target: "review.notes"
+    seen_total: 30
+    variants:
+      - id: SummaryComment-1
+        seen_count: 26
+        confidence: high
+        template: |
+          The sales comparison approach was the best method to use to determine the appraised value. Comparable 1 was given the highest weight and all comparables were selected due to their highly similar condition and features. The cost approach was given little weight due to the age of the home. The income approach was not given any weight due to insufficient market data

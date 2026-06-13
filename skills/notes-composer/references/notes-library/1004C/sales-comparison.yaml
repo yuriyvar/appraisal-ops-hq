@@ -1,0 +1,15 @@
+# Notes library — form 1004C — group: sales-comparison
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004C
+group: sales-comparison
+fields:
+  - note_field: SALES_COMPARISON._CurrentSalesAgreementAnalysisComment
+    label: "Sales/transfer-history analysis"
+    render_target: "subject.sales_history"
+    seen_total: 6
+    variants:
+      - id: CurrentSalesAgreementAnalysisComment-1
+        seen_count: 6
+        confidence: medium
+        template: |
+          Per public records no sale or transfer of the subject property within the last three years. Comps have not been sold or listed in the last year.

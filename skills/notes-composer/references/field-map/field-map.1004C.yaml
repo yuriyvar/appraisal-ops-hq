@@ -1,0 +1,23 @@
+# Field map — FNM1004C (manufactured home)
+# Inherits the FNM1004 spine (see field-map.1004.yaml). Below = manufactured-only deltas.
+# Status: seeded from 6 XML reports (not yet pair-validated — no 1004C PDF pair in corpus).
+form: FNM1004C
+inherits: FNM1004
+status: seeded
+mappings:
+  - record_path: subject.identifiers.hud_data_plate
+    mismo: "MANUFACTURED_HOME[_HUDDataPlateDataSourceDescription, _SerialNumber, _HUDCertificationLabelNumber]"
+    pdf: { section: "Manufactured Home", label: "HUD Data Plate / Certification Label", kind: grid-cell }
+    aci_web: null
+    worksheet: "(not yet rendered — add MH fields to Subject tab)"
+  - record_path: subject.characteristics.manufacturer
+    mismo: "MANUFACTURED_HOME[_Manufacturer, _ModelDescription, _ManufacturedYear]"
+    pdf: { section: "Manufactured Home", label: "Manufacturer / Model / Year", kind: grid-cell }
+    aci_web: null
+    worksheet: "(not yet rendered)"
+  - record_path: subject.characteristics.dimensions
+    mismo: "MANUFACTURED_HOME[_LengthFeetCount, _WidthFeetCount]"
+    pdf: { section: "Manufactured Home", label: "Dimensions", kind: grid-cell }
+    aci_web: null
+    worksheet: "(not yet rendered)"
+# NOTE: comp grid, adjustments, and all narrative fields map identically to FNM1004.

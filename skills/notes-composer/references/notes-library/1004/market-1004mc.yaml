@@ -1,0 +1,65 @@
+# Notes library — form 1004 — group: market-1004mc
+# De-identified (strict + locality). Slots: {date} {money} {road} {route} {mls_number} {parcel_id} {subdivision}.
+form: 1004
+group: market-1004mc
+fields:
+  - note_field: MARKET.SalesConcessionDescription
+    label: "1004MC concessions note"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: SalesConcessionDescription-1
+        seen_count: 17
+        confidence: high
+        template: |
+          CVRMLS indicates there were 34 closed sales during the past 12 months and 16 of those sales contained seller concessions which is 47% of the total transactions in this market area. Prior Months 7-12: 17 Sales; 11 with concessions; 65% of sales for this period. 4-6: 4 Sales; 2 with concessions; 50% of sales for this period. 0-3: 13 Sales; 3 with concessions; 23% of sales for this period. The concessions ranged between {money} and {money}. The median concession amount is {money}.
+      - id: SalesConcessionDescription-2
+        seen_count: 7
+        confidence: medium
+        template: |
+          Seller concessions are typical in this market and are typically less than 3% and they have remained stable over the past 12 months.
+      - id: SalesConcessionDescription-3
+        seen_count: 6
+        confidence: medium
+        template: |
+          The data used in the grid above does not indicate there were any concessions associated with the reported transactions. However, this is not a mandatory reporting field for agents and there may be some transactions that do include concessions, but have not been reported. It is beyond the scope of this assignment to confirm each sale used in the Market Conditions Report.
+  - note_field: MARKET.NeighborhoodMarketabilityFactorsDescription
+    label: "1004MC distressed-sales note"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: NeighborhoodMarketabilityFactorsDescription-1
+        seen_count: 21
+        confidence: high
+        template: |
+          The data used in the grid above does not indicate there were any REO/Short sales or other distressed properties associated with the reported transactions. However, this is not a mandatory reporting field for agents and there may be some distressed sales that were not reported. It is beyond the scope of this assignment to confirm each sale used in the Market Conditions Report.
+      - id: NeighborhoodMarketabilityFactorsDescription-2
+        seen_count: 7
+        confidence: medium
+        template: |
+          There were a mixture of reo sales and short sales in the subject's area. The amount of short sales and foreclosures have dropped in the past two years.
+  - note_field: MARKET.MarketTrendsReconciliationComment
+    label: "1004MC trends reconciliation"
+    render_target: "market.neighborhood_notes"
+    seen_total: 30
+    variants:
+      - id: MarketTrendsReconciliationComment-1
+        seen_count: 30
+        confidence: high
+        template: |
+          Overall neighborhood trends for the neighborhood are noted on Page 1 of the URAR, which is an accurate analysis of the current market statistically there is too little data(sales & listings in this price range) to determine the total months of housing supply, as the figure above is not an accurate indication of the current market and does not take into consideration seasonal trends, foreclosures etc. the medium comparable sales price, medium comparable days on the market, medium comparable listing days on the market, and medium sale price as a % of list price is not a reliable market indicator as the data is based on each listing date and does not take into consideration any duplicate or prior listings, including withdrawals, expired or released listings, and any prior reductions in the list price. Data on active listings can only accuracy be pulled based on current active listings, therefore active listings for the time frames indicate above could not accurately be analyzed due to the data provided by the MLS.
+  - note_field: MARKET.DataSourceDescription
+    label: "1004MC data source"
+    render_target: "sources"
+    seen_total: 23
+    variants:
+      - id: DataSourceDescription-1
+        seen_count: 17
+        confidence: high
+        template: |
+          CVRMLS was the data source used to complete the Market Conditions Addendum.  {date}
+      - id: DataSourceDescription-2
+        seen_count: 6
+        confidence: medium
+        template: |
+          bright MLS was the data source used to complete the Market Conditions Addendum.  {date}
