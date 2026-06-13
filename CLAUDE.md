@@ -49,6 +49,12 @@ file storage. If a task produces such files, keep them OUT of the repo.
    superseded SOP content gets `status: archived`, not deletion.
 5. **No secrets in the repo.** API keys and credentials go in untracked `.env`
    files; `.gitignore` already blocks them.
+6. **`VDV Appraisals` is the system of record; Google Drive is read-only by default.**
+   Never create, write, copy, or move files on Google Drive (or any external cloud)
+   without an explicit per-task request from Yuriy. All outputs land under
+   `C:\Users\yuriy\VDV Appraisals\` first. If anything ever gets written to GDrive
+   without that request, copy it into `VDV Appraisals`, verify the copy, then delete
+   it from GDrive. (Reading FROM GDrive when asked is fine.)
 
 ## Conventions
 - Branches: `kaizen/K-NNN-*` for SOP changes, `feat/*` for new skills/scripts/MCP,

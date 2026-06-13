@@ -1,0 +1,323 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "appraisal-record.schema.json",
+  "title": "VDV Appraisal Record",
+  "description": "Structured record assembled from subject facts + comp data. Consumed by render_worksheet.py (Build A) and notes-composer skill. Adjustments are appraiser-entered only; the record assembler never writes final adjustment values.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "generated_by"],
+  "additionalProperties": false,
+  "properties": {
+
+    "schema_version": { "type": "string", "enum": ["1.0"] },
+    "generated_at":   { "type": "string" },
+    "generated_by":   { "type": "string" },
+
+    "order": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "order_id":       { "type": ["string", "null"] },
+        "form_type":      { "type": ["string", "null"] },
+        "client":         { "type": ["string", "null"] },
+        "loan_number":    { "type": ["string", "null"] },
+        "effective_date": { "type": ["string", "null"] },
+        "due_date":       { "type": ["string", "null"] },
+        "inspection":     { "type": ["string", "null"] },
+        "fee":            { "type": ["number", "null"] },
+        "status":         { "type": ["string", "null"] }
+      }
+    },
+
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "full":   { "type": ["string", "null"] },
+            "street": { "type": ["string", "null"] },
+            "city":   { "type": ["string", "null"] },
+            "state":  { "type": ["string", "null"] },
+            "zip":    { "type": ["string", "null"] },
+            "county": { "type": ["string", "null"] }
+          }
+        },
+        "flags": { "type": "array", "items": { "type": "string" } },
+        "characteristics": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "property_type":          { "type": ["string", "null"] },
+            "use_code":               { "type": ["string", "null"] },
+            "zoning":                 { "type": ["string", "null"] },
+            "gla_sf":                 { "type": ["number", "null"] },
+            "above_grade_sf":         { "type": ["number", "null"] },
+            "below_grade_finished_sf":{ "type": ["number", "null"] },
+            "basement":               { "type": ["string", "null"] },
+            "year_built":             { "type": ["integer", "null"] },
+            "stories":                { "type": ["number", "null"] },
+            "style":                  { "type": ["string", "null"] },
+            "grade_or_condition":     { "type": ["string", "null"] },
+            "bedrooms":               { "type": ["integer", "null"] },
+            "full_baths":             { "type": ["integer", "null"] },
+            "half_baths":             { "type": ["integer", "null"] },
+            "total_rooms":            { "type": ["integer", "null"] },
+            "lot_size_sf":            { "type": ["number", "null"] },
+            "lot_size_acres":         { "type": ["number", "null"] },
+            "garage":                 { "type": ["string", "null"] },
+            "pool":                   { "type": ["boolean", "null"] },
+            "fireplaces":             { "type": ["integer", "null"] },
+            "heating":                { "type": ["string", "null"] },
+            "cooling":                { "type": ["string", "null"] },
+            "exterior":               { "type": ["string", "null"] }
+          }
+        },
+        "identifiers": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "gpin":                 { "type": ["string", "null"] },
+            "pid":                  { "type": ["string", "null"] },
+            "apn":                  { "type": ["string", "null"] },
+            "subdivision":          { "type": ["string", "null"] },
+            "section":              { "type": ["string", "null"] },
+            "block":                { "type": ["string", "null"] },
+            "lot":                  { "type": ["string", "null"] },
+            "magisterial_district": { "type": ["string", "null"] },
+            "neighborhood_code":    { "type": ["string", "null"] },
+            "legal_description":    { "type": ["string", "null"] }
+          }
+        },
+        "assessment": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tax_year":           { "type": ["integer", "null"] },
+            "land_value":         { "type": ["number", "null"] },
+            "improvements_value": { "type": ["number", "null"] },
+            "total_value":        { "type": ["number", "null"] }
+          }
+        },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "input_was_address_only": { "type": ["boolean", "null"] },
+            "method":                 { "type": ["string", "null"] },
+            "no_tax_id":              { "type": ["boolean", "null"] },
+            "neighbor_unit_proxy":    { "type": ["string", "null"] },
+            "cached":                 { "type": ["boolean", "null"] },
+            "resolved_on":            { "type": ["string", "null"] }
+          }
+        },
+        "verification": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "attribute":       { "type": "string" },
+              "county":          { "type": ["string", "null"] },
+              "zillow":          { "type": ["string", "null"] },
+              "realtor":         { "type": ["string", "null"] },
+              "redfin":          { "type": ["string", "null"] },
+              "homes":           { "type": ["string", "null"] },
+              "mls":             { "type": ["string", "null"] },
+              "governing_source":{ "type": ["string", "null"] },
+              "flag":            { "type": ["string", "null"] }
+            }
+          }
+        },
+        "listing": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "status":              { "type": ["string", "null"] },
+            "list_price":         { "type": ["number", "null"] },
+            "original_list_price":{ "type": ["number", "null"] },
+            "dom":                { "type": ["integer", "null"] },
+            "contract_date":      { "type": ["string", "null"] },
+            "mls_number":         { "type": ["string", "null"] },
+            "mls_system":         { "type": ["string", "null"] }
+          }
+        },
+        "sales_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "date":           { "type": ["string", "null"] },
+              "price":          { "type": ["number", "null"] },
+              "deed_book_page": { "type": ["string", "null"] },
+              "qualification":  { "type": ["string", "null"] },
+              "source":         { "type": ["string", "null"] }
+            }
+          }
+        },
+        "geo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "lat": { "type": ["number", "null"] },
+            "lon": { "type": ["number", "null"] }
+          }
+        }
+      }
+    },
+
+    "comps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["position", "status"],
+        "properties": {
+          "position":  { "type": ["integer", "null"] },
+          "status": {
+            "type": "string",
+            "enum": ["closed", "active", "pending", "unknown"]
+          },
+          "address": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "full":   { "type": ["string", "null"] },
+              "county": { "type": ["string", "null"] }
+            }
+          },
+          "distance_mi": { "type": ["number", "null"] },
+          "identifiers": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mls_number":  { "type": ["string", "null"] },
+              "mls_system":  { "type": ["string", "null"] },
+              "pid":         { "type": ["string", "null"] },
+              "subdivision": { "type": ["string", "null"] }
+            }
+          },
+          "characteristics": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "gla_sf":         { "type": ["number", "null"] },
+              "above_grade_sf": { "type": ["number", "null"] },
+              "year_built":     { "type": ["integer", "null"] },
+              "bedrooms":       { "type": ["integer", "null"] },
+              "full_baths":     { "type": ["integer", "null"] },
+              "half_baths":     { "type": ["integer", "null"] },
+              "total_rooms":    { "type": ["integer", "null"] },
+              "property_type":  { "type": ["string", "null"] }
+            }
+          },
+          "sale": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "sale_price":          { "type": ["number", "null"] },
+              "list_price":          { "type": ["number", "null"] },
+              "original_list_price": { "type": ["number", "null"] },
+              "dom":                 { "type": ["integer", "null"] },
+              "sale_date":           { "type": ["string", "null"] },
+              "concessions":         { "type": ["number", "string", "null"] }
+            }
+          },
+          "price_per_sf":           { "type": ["number", "null"] },
+          "gla_delta_vs_subject_sf":{ "type": ["number", "null"] },
+          "flags":      { "type": "array", "items": { "type": "string" } },
+          "out_of_county": { "type": ["boolean", "null"] },
+          "prior_sale": {
+            "type": ["object", "null"],
+            "additionalProperties": false,
+            "properties": {
+              "date":   { "type": ["string", "null"] },
+              "price":  { "type": ["number", "null"] },
+              "source": { "type": ["string", "null"] }
+            }
+          },
+          "geo": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "lat": { "type": ["number", "null"] },
+              "lon": { "type": ["number", "null"] }
+            }
+          }
+        }
+      }
+    },
+
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "search": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "radius_mi":          { "type": ["number", "null"] },
+            "sale_window_months": { "type": ["integer", "null"] },
+            "gla_band": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "low_sf":         { "type": ["number", "null"] },
+                "high_sf":        { "type": ["number", "null"] },
+                "luxury_widened": { "type": ["boolean", "null"] }
+              }
+            },
+            "mls_systems": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "neighborhood_notes": { "type": ["string", "null"] }
+      }
+    },
+
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "label":      { "type": ["string", "null"] },
+          "category":   { "type": ["string", "null"] },
+          "related_to": { "type": ["string", "null"] },
+          "status":     { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "name":         { "type": ["string", "null"] },
+          "url":          { "type": ["string", "null"] },
+          "retrieved_at": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "human_reviewed": { "type": "boolean" },
+        "notes":          { "type": ["string", "null"] }
+      }
+    },
+
+    "adjustments": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "entered_by_appraiser": { "type": "boolean" }
+      }
+    }
+  }
+}
