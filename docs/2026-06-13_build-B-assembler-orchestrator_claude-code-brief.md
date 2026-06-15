@@ -20,6 +20,10 @@ runnable flow. **Work the phases in order: Architecture Review first, QA test la
 - **One Cowork/Matrix session at a time** (the git-corruption andon). Git writes on host only.
 - **Confirm before side effects** (downloads, sending, form submits).
 - Read `docs/ADR-002` + `docs/ADR-003` and `appraisal-record.schema.json` before designing.
+- **Proactive quirk capture applies to you too (CLAUDE.md rule #2):** if you hit any data-source
+  exception or important handling detail while implementing/testing, add a row to
+  `skills/property-search/references/data-quirks.md` immediately — no reminder needed — and wire its
+  fix into the assembler's normalization pass.
 
 ---
 
@@ -57,7 +61,11 @@ Create `tools/record-assembler/assemble_record.py` (stdlib, deterministic).
 - **County-tag** every comp; flag out-of-county comps for SOR verification.
 - **Never emit unverified GLA** — if GLA is missing/unverified, set null + add a `flags` entry,
   do not guess.
-- **Normalize MLS#:** `BRTVA…` → strip `BRT`, keep `VA…` (see `datamaster-handoff.md`).
+- **Apply the data-quirks registry programmatically.** Read
+  `skills/property-search/references/data-quirks.md` and ENFORCE its fixes in code — don't rely on
+  a human having read them. At minimum: MLS# `BRTVA…` → strip `BRT`, keep `VA…` (MLS-001);
+  Chesterfield ArcGIS `TaxID` `Math.round()` (CHE-002); flag builder-direct / new-construction blanks.
+  Structure this as a small, testable normalization pass so new registry rows are easy to wire in.
 - Compute derived fields where deterministic (`price_per_sf`, `gla_delta_vs_subject_sf`).
 - Set `review.human_reviewed=false`, `adjustments.entered_by_appraiser=false` (leave adjustments empty).
 - Stamp `generated_at`, `generated_by="claude-cowork"`, `schema_version="1.0"`.
@@ -70,7 +78,12 @@ valid `worksheet.html`.
 ---
 
 ## Phase 2 — `/build-worksheet` orchestrator
-Create `.claude/commands/build-worksheet.md` (thin command) that chains, for an input address/order:
+**Already exists** — do NOT recreate: `.claude/commands/build-worksheet.md` (**this is YOUR — Claude
+Code's — runtime path**, the automated orchestrator) and `skills/worksheet-builder/SKILL.md` (the
+Cowork/Bob interactive path + the canonical deliverable & mandatory completeness gate). Both share one
+contract & gate. Your job is to (a) build the `record-assembler` they depend on (Phase 1), and
+(b) ensure the `/build-worksheet` command **enforces the completeness gate in code/flow** before render. Confirm the existing command's steps
+match what you built; update only to wire in the assembler and the gate. The flow, for an order:
 1. **Resolve subject + pull comps** via `skills/property-search` (county/GIS/Matrix; obey the
    one-session rule; MLS#s normalized). Output → subject facts + `Comps files\<addr>_comps...csv`.
 2. **Assemble** → `tools/record-assembler/assemble_record.py` → `appraisal-record.json`.

@@ -1,0 +1,79 @@
+# Condition profiles — FNMA 2055 (exterior-only / drive-by, UAD)
+# Exterior is OBSERVED; interior is NOT inspected -> estimated from MLS/exterior/prior.
+# Mark interior values "est." and verify against MLS photos + public record.
+# See _model.md for schema + provenance.
+
+form: "2055"
+rating_system: "UAD"
+default_tier: "average"
+scope_note: >
+  2055 is exterior-only. Exterior ratings come from the drive-by; INTERIOR fields are
+  ESTIMATED (MLS sheet, prior report, public record) and must be labeled as such.
+  Quality/Condition are estimated from exterior + market data, not interior inspection.
+quality_note: >
+  Quality = build grade, independent of wear; usually constant across tiers.
+
+profiles:
+
+  new:
+    observed_in_corpus: true
+    quality: "Q3"                  # Q2 if clearly above-grade
+    condition: "C2"                # exterior-estimated; C1 only if verifiably new
+    effective_age_hint: "0-5 yrs"
+    exterior:                      # OBSERVED at drive-by
+      walls: "Vinyl/New"
+      roof: "Comp/New"
+      windows: "Vinyl/New"
+      gutters: "Alum/New"
+      foundation: "Concrete/New"
+    interior_estimated:            # NOT inspected — from MLS/public record
+      floors: "est. LVP,Tile/New"
+      walls: "est. Drywall/New"
+      trim_finish: "est. Wood/New"
+      baths: "est. new"
+    condition_comment: >
+      Exterior observed as new/recently built; no exterior deferred maintenance.
+      Interior not inspected — estimated from MLS/public record as consistent with
+      a new home. Condition estimated C2 (exterior + data), not interior-verified.
+
+  average:
+    observed_in_corpus: true
+    quality: "Q3"
+    condition: "C3"
+    effective_age_hint: "moderate; typical for the neighborhood"
+    exterior:
+      walls: "Vinyl/Avg"
+      roof: "Comp/Avg"
+      windows: "Vinyl/Avg"
+      gutters: "Alum/Avg"
+      foundation: "Concrete/Avg"
+    interior_estimated:
+      floors: "est. Cpt,Vnl/Avg"
+      walls: "est. Drywall/Avg"
+      trim_finish: "est. Wood/Avg"
+      baths: "est. Avg"
+    condition_comment: >
+      Exterior observed as average / well maintained; no exterior deferred maintenance.
+      Interior not inspected — estimated average from MLS/public record. Condition
+      estimated C3.
+
+  fair:
+    observed_in_corpus: false      # EXTRAPOLATED
+    quality: "Q3"
+    condition: "C4"                # exterior-only; reserve C5 for clearly visible decline
+    effective_age_hint: "high; visible exterior wear"
+    exterior:
+      walls: "Vinyl/Fair"
+      roof: "Comp/Fair"            # note visible roof wear / remaining life
+      windows: "Vinyl/Fair"
+      gutters: "Alum/Fair"
+      foundation: "Concrete/Avg"
+    interior_estimated:
+      floors: "est. Cpt,Vnl/Fair"
+      walls: "est. Drywall/Fair"
+      trim_finish: "est. Wood/Fair"
+      baths: "est. dated"
+    condition_comment: >
+      Exterior shows wear / deferred maintenance (ITEMIZE what's visible from the
+      street). Interior not inspected — estimated dated from MLS/public record. On a
+      drive-by, be conservative: hold at C4 unless decline is clearly visible (then C5).

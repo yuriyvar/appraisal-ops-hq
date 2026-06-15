@@ -4,6 +4,7 @@ This is the routing layer for the property-search skill. The **source of truth**
 remains the Operational Records Google Sheet, tab "VA Counties Assessment & GIS
 Records" (doc `12zZgU1ULHasOrgh_WHDOME40HdqEkKIL`, gid `686822370`). This file is
 the local mirror. Reconcile per the skill's Step 1.
+> Source quirks & handling exceptions (MLS-format, GIS gotchas): see `data-quirks.md`.
 
 ## Proposed sheet/registry columns (extend the existing tab)
 | Column | Meaning |

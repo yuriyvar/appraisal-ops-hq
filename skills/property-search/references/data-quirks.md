@@ -1,0 +1,31 @@
+# Data-source quirks & handling exceptions
+
+The single registry of data-source oddities and the fixes for them — county GIS
+gotchas, MLS-format normalizations, portal mismatches. **Consult before pulling
+data; add new exceptions here** (don't bury them in START-HERE or scatter them).
+Fuller per-county routing lives in `va-data-sources.md` + `county-registry.md`;
+this file is the cross-cutting exception list.
+
+| ID | Source | Quirk | Fix / handling |
+|----|--------|-------|----------------|
+| MLS-001 | CVR MLS ↔ Bright MLS | `BRTVA…` MLS#s are Bright listings shared into CVR (the two share data). | **Strip `BRT`, keep `VA…`** (e.g. `BRTVAMB2000092` → `VAMB2000092`). The `VA…` form is the canonical key for Bright MLS **and** DataMaster pulls; never feed DM the `BRT…` form. |
+| DMA-001 | DataMaster `.dma` files | A `.dma` is a **ZIP** (`PK\x03\x04`) holding two entries: `FileVersion` + `Appraisal`. The `Appraisal` blob is **protobuf** (no public schema), but is partly **self-describing** — top-level field 3 carries an inline dictionary of DataMaster's own field names (`YearBuilt`, `CensusTract`, `Apn`, `CarStorageAttached`, `BasementYes/No`…), and field 4 holds the values. | **Read-only — never write `.dma` (only DataMaster does).** Decode with `tools/dma-decoder/dma_decode.py` (stdlib protobuf wire-walker). `extract_schema_names()` pulls the field vocabulary fast even from 30 MB files (top-level walk only). Corpus: 368 field names across 113 files, 172 in every file. This is the source of the DM data-collection field list (`tools/dm-collection-sheet/`). |
+| CHE-001 | Chesterfield assessment site | GLA disputes — header ft² needs verification. | Parcel detail → **Residential tab → expand "Dimensions"**: F1 (1st flr) + F2 (2nd flr) + finished DA (daylight basement) must reconcile to the Residential Buildings header ft². OH/WD/OP = unfinished, exclude. (e.g. 7861 Alexandria: 608+608+finished DA = 1586.) |
+| CHE-002 | Chesterfield ArcGIS (ParcelsEnriched) | `TaxID` field is `esriFieldTypeDouble` — float rounding corrupts large parcel IDs. | Apply `Math.round()` before stringifying. Matrix shows TaxID with dashes; strip dashes for the API. |
+| CHE-003 | Chesterfield new-construction condos | Even-numbered sides of new condo streets may stay under undivided builder parcels (OwnerName=builder, SF=0) 1–2 yrs; no individual Tax ID yet; Matrix/CoreLogic also blank. | Don't trust SF=0 / builder parcel. Enter subject manually; cross-check county GIS. |
+| ZIL-001 | Zillow | New-construction condo addresses can map to the **wrong parcel** (e.g. returned a $65k builder parcel). | Always cross-check Zillow GLA/sale against county GIS for new-construction condos. |
+| ZIL-002 | Zillow | Listing page may show only the original-purchase MLS#, not the resale. | Run `document.body.innerText.match(/MLS ID #\d+/gi)` on the sale-history stack; pick the resale agent/brokerage entry, not the builder's. |
+| BLD-001 | StyleCraft Homes (Hancock Village, Chesterfield) | Builder sells new units direct — **not listed in CVRMLS**; Zillow shows "Source: StyleCraft Homes" with no MLS#. | DM can only use PID for these; enter manually in ACI if DM can't pull by PID alone. Flag comp **BUILDER-DIRECT**. |
+| HEN-001 | Henrico | Open-data parcel layer is a 735-row **sample**; no queryable sales layer; APEX deep links 410-firewall. | MLS-only for comps; subject via APEX assessment search (enter at root). |
+| XCO-001 | Cross-county comps (any neighboring VA county) | A radius/MLS comp pull can return comps in a **neighboring county**; those MLS rows often **lack Above-Grade Living Area** (and other PR fields) because they're out-of-county. | **County-tag every comp.** For any out-of-county comp: (a) verify core facts (esp. GLA) against THAT county's assessment SOR, (b) if GLA can't be verified, set it null + flag `GLA unverified` (never guess), (c) never present an out-of-county comp as solid without SOR verification. |
+| POW-001 | Powhatan WebPAAS (`keynet.powhatanva.gov/webpaas`, Keystone) | Property-Address search is unforgiving and the county's street spelling can differ from the order intake (e.g. intake "Daphane Ln" is indexed as **DAPHNE LANE**) → full address returns **0 results**. | Search a **partial street fragment** (e.g. `DAPH`) to surface the real spelling, then open the parcel by its **PIN** link. |
+| POW-002 | Powhatan WebPAAS public access | Exposes **assessment/value + tax collections only** — there is **no building/improvement card** (year built, GLA, stories, rooms, foundation, heating, sketch). The `Collections (n)` button is the **tax-bill list**, not building data. | WebPAAS gives PIN, legal desc, township, acreage, land/bldg/net assessed value. Pull building characteristics (GLA, year, rooms, sketch) from **Powhatan CivQuest GIS** (`powhatan.civ.quest`) or **MLS**. |
+
+## Conventions for this file
+- One row per exception, with a stable ID (`<SRC>-NNN`). Newest can go anywhere; keep the table sorted by source.
+- **Bob writes here PROACTIVELY (CLAUDE.md cardinal rule #2).** The moment you encounter a
+  data-mining / data-prep exception or an important handling detail — a source oddity, a format
+  fix, a value you had to normalize, a trap that wasted time — add a row immediately, WITHOUT
+  being asked. Default to recording; a quirk left uncaptured is muda. Err toward over-capturing.
+- When you discover a new quirk on a live order: add it here, and (if it changes standard work) note it in `vault/00-inbox.md` for the next kaizen.
+- Cross-county rule is now row **XCO-001** above (county-tag + SOR-verify neighboring-county comps).

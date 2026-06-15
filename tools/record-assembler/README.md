@@ -50,8 +50,8 @@ Subject facts gathered by the `property-search` skill. All fields optional excep
     "status":         "in-progress"
   },
   "address": {
-    "full":   "119 Countryside Ln, Henrico, VA 23229",
-    "street": "119 Countryside Ln",
+    "full":   "119 Example Ridge Ln, Henrico, VA 23229",
+    "street": "119 Example Ridge Ln",
     "city":   "Henrico",
     "state":  "VA",
     "zip":    "23229",
@@ -61,7 +61,7 @@ Subject facts gathered by the `property-search` skill. All fields optional excep
     "gpin": "778-744-7716",
     "pid":  null,
     "apn":  "778-744-7716",
-    "subdivision": "Countryside",
+    "subdivision": "Example Ridge",
     "section": null, "block": null, "lot": null,
     "magisterial_district": "Tuckahoe",
     "neighborhood_code": null,

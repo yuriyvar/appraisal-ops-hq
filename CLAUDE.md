@@ -1,6 +1,7 @@
 # CLAUDE.md — appraisal-ops-hq
 
-Rule #1: at the start of every session, read latest handoff + vault/00-inbox.md + Pipeline Records before doing anything.
+Rule #1: at the start of every session, read `..\.claude\START-HERE.md` FIRST, then follow its
+read-order (latest handoff + vault/00-inbox.md + Pipeline Records) before doing anything.
 
 1.1. Each session handoff is stored in "C:\Users\yuriy\VDV Appraisals\.claude\Session-Handoffs" - read more than one if necessary.
 1.2 Also read "C:\Users\yuriy\VDV Appraisals\.claude\claude-preferences.md"
@@ -42,6 +43,10 @@ file storage. If a task produces such files, keep them OUT of the repo.
    one line each, newest first, never reorganized at capture time. When you
    (Claude) learn something reusable during a session — a data-source quirk, a
    client preference, a failed step — append it without being asked.
+   **Data-mining / data-prep exceptions and important handling details go to the
+   registry `skills/property-search/references/data-quirks.md` as well — write them
+   there PROACTIVELY, the moment you hit one, with no reminder needed.** (Default to
+   recording; a quirk left uncaptured is muda.)
 3. **Andon over workaround.** If standard work fails on a real order, file an
    andon (`vault/30-kaizen/templates/andon.md`) the same session. Don't silently
    route around a broken SOP.

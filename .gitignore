@@ -23,3 +23,9 @@ __pycache__/
 *.pyc
 .venv/
 node_modules/
+
+# Test / tool scratch (must never enter the repo)
+_qa_tmp/
+vdv_qa_*/
+# guard against the sandbox junk dir from a non-absolute Windows TMP path
+C*VDV Appraisals/

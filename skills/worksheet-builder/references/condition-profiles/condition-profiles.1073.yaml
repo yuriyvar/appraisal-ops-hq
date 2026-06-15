@@ -1,0 +1,70 @@
+# Condition profiles — FNMA 1073 (Individual Condo Unit, UAD)
+# NOTE: the VDV corpus had NO 1073 XML (condo reports were PDF-only), so this whole
+# file is EXTRAPOLATED from UAD convention + the condo PDFs. Treat as a scaffold and
+# verify against an actual 1073 once one is in hand. See _model.md.
+
+form: "1073"
+rating_system: "UAD"            # Q1-Q6, C1-C6 (condo is UAD)
+default_tier: "average"
+extrapolated: true              # no 1073 XML in corpus — confirm against a real report
+scope_note: >
+  Condo = the UNIT, not a detached house. No site/foundation/roof on the subject; the
+  relevant condition fields are the unit interior, the building/common elements, and the
+  project. Quality/Condition still use Q/C codes. Capture: project name, unit floor/#
+  levels, parking, common-element condition, HOA + what it covers.
+quality_note: >
+  Quality = unit/building construction grade, independent of wear; usually constant.
+
+profiles:
+
+  new:
+    observed_in_corpus: false
+    quality: "Q3"                 # Q2 for higher-grade buildings
+    condition: "C2"               # C1 only if never occupied
+    effective_age_hint: "0-5 yrs (or recently renovated unit)"
+    unit_interior:
+      floors: "LVP,Tile/New"
+      walls: "Drywall/New"
+      trim_finish: "Wood/New"
+      bath_floors: "Tile/New"
+      kitchen: "New appliances, cabinets, counters"
+    common_elements: "New/like-new; well-funded HOA; amenities current"
+    project_condition: "New construction or recently built project"
+    condition_comment: >
+      New / recently built unit; modern finishes; no deferred maintenance. Common
+      elements new. Confirm project is complete and HOA control turned over.
+
+  average:
+    observed_in_corpus: false
+    quality: "Q3"
+    condition: "C3"
+    effective_age_hint: "moderate; typical for the project"
+    unit_interior:
+      floors: "Cpt,Vnl/Avg"
+      walls: "Drywall/Avg"
+      trim_finish: "Wood/Avg"
+      bath_floors: "Vinyl/Avg"
+      kitchen: "Typical appliances; average cabinets/counters"
+    common_elements: "Average; maintained; adequate reserves"
+    project_condition: "Established project, well maintained"
+    condition_comment: >
+      Average condition unit; well maintained; no significant deferred maintenance.
+      Common elements average and maintained.
+
+  fair:
+    observed_in_corpus: false
+    quality: "Q3"
+    condition: "C5"               # C4 if dated-but-functional
+    effective_age_hint: "high; dated unit; deferred maintenance"
+    unit_interior:
+      floors: "Cpt,Vnl/Fair"
+      walls: "Drywall/Fair"
+      trim_finish: "Wood/Fair"
+      bath_floors: "Vinyl/Fair"
+      kitchen: "Dated cabinets/counters; older appliances"
+    common_elements: "Worn; possible deferred maintenance / special-assessment risk"
+    project_condition: "Older project; check reserves & pending special assessments"
+    condition_comment: >
+      Fair condition unit; dated finishes and deferred maintenance (ITEMIZE). Also
+      assess COMMON-element condition and HOA reserves — special-assessment risk is a
+      condo-specific value factor. Replace generic text with actual observed items.

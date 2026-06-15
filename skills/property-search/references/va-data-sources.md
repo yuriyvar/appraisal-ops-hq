@@ -2,6 +2,7 @@
 
 > Routing/adapters + comp-source flags now live in `county-registry.md`.
 > This file remains the endpoint/quirk detail mirror.
+> Cross-cutting source quirks & handling fixes: see `data-quirks.md`.
 
 **Source of truth: the "VA Counties Assessment & GIS Records" tab of the
 Operational Records Google Sheet** (doc `12zZgU1ULHasOrgh_WHDOME40HdqEkKIL`,

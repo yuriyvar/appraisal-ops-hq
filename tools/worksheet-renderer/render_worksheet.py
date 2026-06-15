@@ -717,20 +717,25 @@ JS = """
 """
 
 
-def render(rec):
+def render(rec, with_photos=False, with_map=False):
+    # Default tabs. Photos and Map are OPTIONAL — included only on Yuriy's approval
+    # (via --with-photos / --with-map). Off by default.
     tabs = [
         ("tab-subject", "Subject"),
         ("tab-comps", "Comp grid"),
         ("tab-history", "Sale / Listing history"),
-        ("tab-photos", "Photos"),
-        ("tab-map", "Map"),
     ]
+    panes = build_subject_tab(rec) + build_comps_tab(rec) + build_history_tab(rec)
+    if with_photos:
+        tabs.append(("tab-photos", "Photos"))
+        panes += build_photos_tab(rec)
+    if with_map:
+        tabs.append(("tab-map", "Map"))
+        panes += build_map_tab(rec)
     nav = "".join(
         '<button data-tab="{}">{}</button>'.format(tid, esc(label)) for tid, label in tabs
     )
     title = esc(g(rec, "subject", "address", "full", default="Appraisal worksheet"))
-    panes = (build_subject_tab(rec) + build_comps_tab(rec) + build_history_tab(rec)
-             + build_photos_tab(rec) + build_map_tab(rec))
     return """<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -751,6 +756,10 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Render appraisal-record.json -> worksheet.html")
     ap.add_argument("record", help="Path to appraisal-record.json")
     ap.add_argument("-o", "--output", help="Output HTML path (default: <record_dir>/worksheet.html)")
+    ap.add_argument("--with-photos", action="store_true",
+                    help="Include the Photos tab (optional; requires Yuriy's approval)")
+    ap.add_argument("--with-map", action="store_true",
+                    help="Include the Map tab (optional; requires Yuriy's approval)")
     args = ap.parse_args(argv)
 
     with open(args.record, "r", encoding="utf-8") as f:
@@ -763,7 +772,7 @@ def main(argv=None):
             "Rendering anyway.\n".format(ver, SCHEMA_VERSION_SUPPORTED))
 
     out = args.output or os.path.join(os.path.dirname(os.path.abspath(args.record)), "worksheet.html")
-    html_doc = render(rec)
+    html_doc = render(rec, with_photos=args.with_photos, with_map=args.with_map)
     with open(out, "w", encoding="utf-8") as f:
         f.write(html_doc)
     print("Wrote {} ({:,} bytes)".format(out, len(html_doc)))

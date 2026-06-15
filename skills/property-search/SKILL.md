@@ -32,10 +32,17 @@ conflicts are flagged.
 > county sales-GIS layer used only where the registry flags `Comp source =
 > GIS+MLS`. Resolve the county in `references/county-registry.md` to pick the
 > assessment adapter and the comp source BEFORE running the steps below.
+>
+> **Before pulling any data, skim `references/data-quirks.md`** — the registry of
+> source oddities and required fixes (MLS `BRTVA→VA`, Chesterfield Dimensions GLA,
+> ArcGIS TaxID rounding, Zillow new-construction parcel mismatch, builder-direct, …).
+> When you hit a new quirk on a live order, ADD it there.
 
 ### 1. Resolve data sources
 - Look up the county in `references/va-data-sources.md` (assessment site, GIS
   site, known live REST endpoints, quirks).
+- Check `references/data-quirks.md` for any source-specific exception that applies
+  (county GIS gotchas, MLS-format fixes, portal mismatches) before trusting a value.
 - **Reconcile with the source of truth when needed.** The master list lives in the
   Operational Records Google Sheet, tab "VA Counties Assessment & GIS Records"
   (doc `12zZgU1ULHasOrgh_WHDOME40HdqEkKIL`, gid `686822370`) — Yuriy adds

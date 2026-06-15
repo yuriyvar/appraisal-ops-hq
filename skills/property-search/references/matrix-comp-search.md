@@ -21,8 +21,8 @@ Turns the "comp-pull" module into standard work. Subject must be verified first.
 4. **Criteria:** Status = Sold (set the sold-date sub-field to a 12-mo range) plus
    Active/Pending for context; Type = Single Family Residence; set the GLA band.
    - **GLA band:** subject +/-10% by default, but **widen to ~+15% for luxury/large
-     subjects** — a tight band drops bracket-up comps (119 Countryside: the best
-     comp, 8721 Ruggles 7,560 sf, fell just past +10%).
+     subjects** — a tight band drops bracket-up comps (observed: on a large subject the
+     best comp fell just past +10% and was excluded by the tight band).
 5. **Display:** switch to "Appraiser Single Line", page size 100, to expose
    PR Abv Fin / PR Bldg / PR Living / TtlFinAr / SqFtTotal + prices + DOM.
 6. **Scrape gotchas:** result data rows have a fixed cell count (e.g. 31 direct

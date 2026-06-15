@@ -27,6 +27,7 @@ python tools/worksheet-renderer/render_worksheet.py appraisal-record.example.jso
 ```
 
 ## Output tabs
+**Default (always shown):**
 - **Subject** — characteristics (governing), identifiers, assessment, subject
   resolution, and the cross-source verification table (disagreements flagged).
 - **Comp grid** — URAR-style: features as rows, SUBJECT + comps as columns.
@@ -34,8 +35,10 @@ python tools/worksheet-renderer/render_worksheet.py appraisal-record.example.jso
   analysis only, per the comp-quality rule). Per-comp flags shown.
 - **Sale / Listing history** — subject sales history + current listing; comp
   prior sales.
-- **Photos** — card grid; placeholder until the photo-organizer build lands.
-- **Map** — inline SVG scatter of subject vs comps from lat/lon (no map tiles,
+
+**Optional (OFF by default — require Yuriy's approval; opt in with flags):**
+- **Photos** (`--with-photos`) — card grid; placeholder until the photo-organizer build lands.
+- **Map** (`--with-map`) — inline SVG scatter of subject vs comps from lat/lon (no map tiles,
   to stay deterministic) + a coordinate/proximity table.
 
 ## Contract notes

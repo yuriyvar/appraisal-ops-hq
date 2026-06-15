@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import sys
+import tempfile
 
 # -- path setup --
 # This file lives in tools/record-assembler/; repo root is two levels up.
@@ -32,7 +33,10 @@ def fail(name, reason):
     print("FAIL  {} | {}".format(name, reason))
 
 
-TMP = os.path.join("C:\\Users\\yuriy\\VDV Appraisals", "_qa_tmp")
+# Scratch dir in the OS temp location — cross-platform and ALWAYS outside the repo
+# (a hardcoded "C:\\Users\\..." path is not absolute on Linux/sandbox and would
+# create a literal junk dir inside the repo — see inbox 2026-06-15).
+TMP = tempfile.mkdtemp(prefix="vdv_qa_")
 os.makedirs(TMP, exist_ok=True)
 
 
@@ -55,11 +59,11 @@ BASE_SUBJECT = {
     "order": {"order_id": "TEST-001", "form_type": "1004", "client": "Test Bank",
               "loan_number": None, "effective_date": "2026-06-13", "due_date": None,
               "inspection": None, "fee": 500, "status": "in-progress"},
-    "address": {"full": "119 Countryside Ln, Henrico, VA 23229",
-                "street": "119 Countryside Ln", "city": "Henrico",
+    "address": {"full": "119 Example Ridge Ln, Henrico, VA 23229",
+                "street": "119 Example Ridge Ln", "city": "Henrico",
                 "state": "VA", "zip": "23229", "county": "Henrico"},
     "identifiers": {"gpin": "778-744-7716", "pid": None, "apn": "778-744-7716",
-                    "subdivision": "Countryside", "section": None, "block": None,
+                    "subdivision": "Example Ridge", "section": None, "block": None,
                     "lot": None, "magisterial_district": "Tuckahoe",
                     "neighborhood_code": None, "legal_description": None},
     "characteristics": {"property_type": "SFR", "use_code": "10", "zoning": "R-3",
@@ -233,7 +237,7 @@ try:
     sp = write_subject("subj_t8.json")
     cp = write_csv("brt.csv", [
         {"#": "1", "ML #": "BRTVAMB2000092", "PID": "P3", "Status": "CLOSD",
-         "Address": "120 Countryside Ln, Henrico, VA 23229",
+         "Address": "120 Example Ridge Ln, Henrico, VA 23229",
          "Distance": "0.1", "Total Finished Area": "1800",
          "# Bedrooms": "3", "Total Baths": "2",
          "Sales Price": "340000", "List Price": "345000",
@@ -253,17 +257,17 @@ except Exception as e:
 # ---------------------------------------------------------------------------
 MIX_ROWS = [
     {"#": "1", "ML #": "VA001", "PID": "P1", "Status": "CLOSD",
-     "Address": "121 Countryside Ln, Henrico, VA 23229",
+     "Address": "121 Example Ridge Ln, Henrico, VA 23229",
      "Distance": "0.1", "Total Finished Area": "1900",
      "# Bedrooms": "3", "Total Baths": "2",
      "Sales Price": "350000", "List Price": "355000", "Days On Market": "5", "MLS": "CVR"},
     {"#": "2", "ML #": "VA002", "PID": "P2", "Status": "ACT",
-     "Address": "122 Countryside Ln, Henrico, VA 23229",
+     "Address": "122 Example Ridge Ln, Henrico, VA 23229",
      "Distance": "0.2", "Total Finished Area": "1850",
      "# Bedrooms": "3", "Total Baths": "2",
      "Sales Price": "", "List Price": "360000", "Days On Market": "3", "MLS": "CVR"},
     {"#": "3", "ML #": "VA003", "PID": "P3", "Status": "PEND",
-     "Address": "123 Countryside Ln, Henrico, VA 23229",
+     "Address": "123 Example Ridge Ln, Henrico, VA 23229",
      "Distance": "0.3", "Total Finished Area": "1820",
      "# Bedrooms": "3", "Total Baths": "2.1",
      "Sales Price": "", "List Price": "348000", "Days On Market": "12", "MLS": "CVR"},

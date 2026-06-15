@@ -1,5 +1,7 @@
 # DataMaster handoff — CSV formats and flow
 
+> MLS-format & source quirks (incl. `BRTVA→VA`): see `data-quirks.md`.
+
 DataMaster (desktop app; shortcut in `C:\Users\yuriy\VDV Appraisals`) ingests
 comps via **CSV import** of CVR MLS Matrix grid exports. Per-order project files
 (`<subject address>.dma`) live in `C:\Users\yuriy\OneDrive\Documents\DataMaster\`

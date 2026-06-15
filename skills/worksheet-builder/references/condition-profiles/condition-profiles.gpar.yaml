@@ -1,0 +1,74 @@
+# Condition profiles — gPAR (General Purpose Appraisal Report)
+# gPAR is NOT UAD: Quality/Condition are WORDS (Good/Average/Fair/Poor), not Q#/C# codes.
+# Feature descriptions read "material/Word" or plain narrative.
+# See _model.md for schema + provenance (gPAR words mined: average 200, good 121, fair 22, poor 17).
+
+form: "gpar"
+rating_system: "words"          # Good / Average / Fair / Poor — NO Q/C codes
+default_tier: "average"
+note: >
+  gPAR is used for the broader / non-GSE assignments and lacks the UAD Q/C grid.
+  Use plain condition words. Some gPAR reports still borrow Q/C in narrative — prefer
+  words unless the assignment calls for codes. "Dated" and "Updated" are the common
+  condition-narrative words in VDV gPARs.
+
+profiles:
+
+  new:
+    observed_in_corpus: true
+    quality: "Good"               # or "New" for construction
+    condition: "Good"             # gPAR has no C1/C2 — "Good/New" carries it
+    effective_age_hint: "0-5 yrs"
+    exterior:
+      walls: "Vinyl/Good"
+      roof: "Composition/New"
+      windows: "Vinyl/Good"
+      foundation: "Concrete/Good"
+    interior:
+      floors: "LVP,Tile/Good"
+      walls: "Drywall/Good"
+      trim_finish: "Wood/Good"
+      baths: "New/Updated"
+    kitchen: "Updated — new appliances, cabinets, counters"
+    condition_comment: >
+      New / recently built or fully updated. Modern finishes; no deferred maintenance.
+
+  average:
+    observed_in_corpus: true
+    quality: "Average"
+    condition: "Average"
+    effective_age_hint: "moderate; typical for the area"
+    exterior:
+      walls: "Vinyl/Average"
+      roof: "Composition/Average"
+      windows: "Vinyl/Average"
+      foundation: "Concrete/Average"
+    interior:
+      floors: "Carpet,Vinyl/Average"
+      walls: "Drywall/Average"
+      trim_finish: "Wood/Average"
+      baths: "Average"
+    kitchen: "Functional — typical appliances, average cabinets/counters"
+    condition_comment: >
+      Average condition; well maintained; no significant deferred maintenance.
+
+  fair:
+    observed_in_corpus: false      # words exist in corpus (fair 22, poor 17) but not as a built profile
+    quality: "Average"            # quality = grade; usually unchanged. "Fair" only for low-grade build
+    condition: "Fair"             # "Poor" if substantial deferred maintenance
+    effective_age_hint: "high; dated; deferred maintenance"
+    exterior:
+      walls: "Vinyl/Fair"
+      roof: "Composition/Fair"
+      windows: "Vinyl/Fair"
+      foundation: "Concrete/Average"
+    interior:
+      floors: "Carpet,Vinyl/Fair"
+      walls: "Drywall/Fair"
+      trim_finish: "Wood/Fair"
+      baths: "Dated"
+    kitchen: "Dated cabinets/counters; older appliances"
+    condition_comment: >
+      Fair condition; dated finishes and deferred maintenance (ITEMIZE: worn flooring,
+      aged systems, original kitchen/baths). Use "Poor" only for substantial
+      deterioration. Replace this generic text with the actual observed items.

@@ -1,0 +1,91 @@
+# Condition profiles — FNMA 1004 (URAR, UAD)
+# Default Improvements + comp Quality/Condition values by condition tier.
+# Drop in, then EDIT to the real property. Profiles save typing, not judgment.
+# See _model.md for schema + provenance (mined from 38 XML + 22 gPAR reports).
+
+form: "1004"
+rating_system: "UAD"            # Q1-Q6, C1-C6, material/rating suffix
+default_tier: "average"
+quality_note: >
+  Quality of Construction is the build GRADE, independent of wear. It normally
+  stays constant across condition tiers — set it from construction grade, not age.
+  VDV's stock is almost entirely Q3; Q2 for better builds, Q4 for economy.
+
+profiles:
+
+  new:
+    observed_in_corpus: true       # /New + C1/C2 are in the corpus
+    quality: "Q3"                  # Q2 if clearly above-grade construction
+    condition: "C2"                # C1 only if literally new/never-occupied
+    effective_age_hint: "0-5 yrs"
+    exterior:
+      walls: "Vinyl/New"
+      roof: "Comp/New"
+      windows: "Vinyl/New"
+      gutters: "Alum/New"
+      storm_sash: "Yes/Ins/New"
+      foundation: "Concrete/New"
+      doors: "Wood/New"
+    interior:
+      floors: "LVP,Tile/New"       # or "HW/New"
+      walls: "Drywall/New"
+      trim_finish: "Wood/New"
+      bath_floors: "Tile/New"
+      bath_wainscot: "Tile/New"
+    kitchen: "New appliances; new cabinets & counters"
+    basement: "Concrete/New; if finished, new finish"
+    condition_comment: >
+      New construction / recently built. No deferred maintenance observed; modern
+      finishes and systems throughout. (C1 only if never occupied.)
+
+  average:
+    observed_in_corpus: true       # modal /Avg values — the VDV default
+    quality: "Q3"
+    condition: "C3"                # C4 if adequate-but-aging
+    effective_age_hint: "moderate; typical remaining economic life for the stock"
+    exterior:
+      walls: "Vinyl/Avg"           # Brick/Avg or Wood/Avg per the actual home
+      roof: "Comp/Avg"
+      windows: "Vinyl/Avg"
+      gutters: "Alum/Avg"
+      storm_sash: "Yes/Ins/Avg"
+      foundation: "Concrete/Avg"   # Block/Avg or Brick/Avg per the actual home
+      doors: "Wood/Avg"
+    interior:
+      floors: "Cpt,Vnl/Avg"        # or "HW,Vinyl/Avg"
+      walls: "Drywall/Avg"
+      trim_finish: "Wood/Avg"
+      bath_floors: "Vinyl/Avg"     # or "Tile/Avg"
+      bath_wainscot: "Fib/Avg"     # or "Tile/Avg"; "None" if no tub surround
+    kitchen: "Range/oven, refrigerator, dishwasher, disposal, microwave; avg cabinets/counters"
+    basement: "Concrete/Avg; partial finish typical"
+    condition_comment: >
+      Average condition; well maintained; no significant deferred maintenance noted.
+      Updates/maintenance consistent with age and neighborhood.
+
+  fair:
+    observed_in_corpus: false      # EXTRAPOLATED — VDV corpus has ~no fair/worn props
+    quality: "Q3"                  # quality unchanged by wear; Q4 only for economy builds
+    condition: "C5"                # C4 if dated-but-functional; C5 = obvious deferred maint.
+    effective_age_hint: "high; deferred maintenance present; shortened remaining life"
+    exterior:
+      walls: "Vinyl/Fair"
+      roof: "Comp/Fair"            # note remaining roof life; flag if at/near end
+      windows: "Vinyl/Fair"
+      gutters: "Alum/Fair"
+      storm_sash: "Yes/Avg"
+      foundation: "Concrete/Avg"   # foundation rarely 'fair' unless structural issue
+      doors: "Wood/Fair"
+    interior:
+      floors: "Cpt,Vnl/Fair"       # worn carpet / dated vinyl
+      walls: "Drywall/Fair"
+      trim_finish: "Wood/Fair"
+      bath_floors: "Vinyl/Fair"
+      bath_wainscot: "Fib/Fair"
+    kitchen: "Dated cabinets/counters; older appliances; note any missing/non-working"
+    basement: "Concrete/Avg; note dampness/settlement if present"
+    condition_comment: >
+      Fair condition. Dated finishes and deferred maintenance (e.g. worn flooring,
+      aged mechanicals, original kitchen/baths). ITEMIZE the specific C5 deficiencies
+      observed; a cost-to-cure / market reaction adjustment may apply. (Generic text —
+      replace with the actual items.)
