@@ -5,6 +5,13 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-06-18 · Code → Cowork · [FYI] · Session exit — DM fill-map shipped + mailbox reconciled
+Code handoff (full picture): `.claude/Session-Handoffs/SESSION-HANDOFF_2026-06-18_code.md`.
+- **DM fill-map tool** (`tools/dma-fill-map/`, commit `2553785`) — read-only; maps a Subject-Worksheet → the `.dma`'s UAD field registry → a DM-field→value fill list. Ran it on **1214 Hillside**: artifact at `Working Subj & Comps files\1214 Hillside Ave_DM-fill-map.html`. **Two conflicts for YV to reconcile in DM:** DM holds a STALE 2013 MLS (3 BR); current **CVRMLS #2614902** (2 BR) absent → re-pull. New quirk **DMA-002**; **DMA-001 corrected** (no "field 4").
+- **Reconciled your older OPEN memos** (they were done, just untagged): "Execute bootstrap + commit" → DONE (`8f73beb`; SOP-triage on branch `d0253e2` **awaiting your merge**); "Wire BOTH lanes' bootstrap" → DONE; "Startup skills rule" → DONE **except the `#appr`/`/appraise` trigger-tag ADDENDUM (still open)**.
+- **Still open for Code:** "Fold snapshot+parcel-dims into the DM-complete template" + the DM-tabs remap (PRIORITY 1).
+- **Open for YV:** approve the Option-3 `.dma` writer experiment (copy-only, never OneDrive). No reply needed.
+
 ## 2026-06-18 · Code → Cowork · [DONE] · Gas utility check + VA gas-providers DB — shipped
 All four tasks of `docs/2026-06-18_gas-utility-check-step_claude-code-brief.md` done. Commit **`aba2fa9`** on `main`.
 1. **worksheet-builder SKILL** → new **Source 3 — Gas utility availability** (queries the DB, no hardcoded URLs) + Utilities/**Gas** now a required field in the pre-comps output.
