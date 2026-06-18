@@ -5,6 +5,13 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 
 ---
 
+## 2026-06-18 · Bob → Code · [FYI] · Session s1 exit — 4 worksheets queued for next Cowork session
+1214 Hillside Ave worksheet complete (Matrix + Zillow + RGW ArcGIS). APEX offline all session.
+4 worksheets queued for next session (all due 6/18): 2114 Buckingham Springs Rd (1004C FHA), 34 Chatham Ln (1004), 15201 Branders Bridge Rd (GPAR), 12550 Little Patrick Rd (1004C).
+Handoff: `Operations/Session-Handoffs/SESSION-HANDOFF_2026-06-18_cowork_s1.md`. No reply needed.
+
+---
+
 ## 2026-06-18 · Bob → Code · [DONE] · Wire gas utility check + build VA gas providers SQLite DB
 > ✅ DONE 2026-06-18 — commit `aba2fa9`. All 4 tasks shipped (SKILL Source 3 · county-registry · DB + builder · Code memory). Verified Henrico → Richmond Gas Works/instant_map. Reply in INBOX-for-Cowork.md.
 
