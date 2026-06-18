@@ -52,6 +52,33 @@ Pull immediately after APEX — don't wait to be asked:
   - Garage (exterior or interior shots)
   *(Flag all photo-derived items as "Zillow — confirm at inspection")*
 
+### Source 3 — Gas utility availability
+Check gas availability BEFORE inferring/flagging heating fuel — a "forced air" subject is only a
+gas furnace if gas actually reaches the parcel (learned on 1214 Hillside Ave).
+- **Find the provider + lookup tool by county** — query the reference DB
+  `references/va-gas-providers.sqlite` (the source of truth; **do not hardcode URLs here**):
+  ```sql
+  SELECT p.provider_name, p.lookup_method, p.lookup_url, p.lookup_notes, p.phone
+  FROM va_gas_providers p
+  JOIN va_gas_provider_counties c ON c.provider_id = p.id
+  WHERE c.county_city = '<Jurisdiction>';   -- e.g. 'Henrico County'
+  ```
+  (Rebuild with `references/build_va_gas_providers.py` if it ever needs updating.)
+- **`lookup_method` tells you how definitive the check is:** `instant_map` (ArcGIS, seconds) ·
+  `zip_checker` (instant ZIP yes/no) · `map_only` / `form_callback` / `phone_only` (no instant
+  address-level answer → note "gas availability unknown — confirm at inspection").
+- **Henrico / Richmond City / N. Chesterfield → Richmond Gas Works** (`instant_map`): from the DB's
+  `lookup_url`, search the address → click the **street/parcel area (NOT the result pin)** → read the
+  popup. Three outcomes:
+  - "Natural gas is available" → gas connected; heating fuel likely **gas**.
+  - "…can be brought to it" → gas NOT currently connected → heating fuel is **NOT gas** (heat pump / oil / electric — confirm at inspection).
+  - No result / outside boundary → outside service area; no gas.
+- **If two providers return** (overlap county — Chesterfield, Frederick, Warren, Rockingham, Clarke):
+  present both and note the overlap.
+- **No provider row** → note "gas provider unknown — confirm at inspection."
+Record the result in the subject's Utilities row — **Gas: Connected / Available-not-connected /
+Not available** — and adjust the heating-fuel inference accordingly.
+
 ### What is NEVER in APEX — always flag for inspection
 - Foundation wall material (APEX records type only, e.g. Crawl, Basement)
 - Interior finishes (floors in rooms not visible in photos, bath tile, countertops)
@@ -62,6 +89,8 @@ Pull immediately after APEX — don't wait to be asked:
 Present the full subject profile in DM 1004 field order (Subject → Site → Improvements →
 Foundation → Exterior → Interior → HVAC → Amenities → Garage) with every field either
 populated or explicitly flagged `⚠️ confirm at inspection` or `⚠️ not in APEX`. No silent blanks.
+The **Site → Utilities** row (Electricity · **Gas** · Water · Sewer) is required — set **Gas** per
+Source 3 (`Connected` / `Available-not-connected` / `Not available`); never leave Gas blank.
 
 ---
 

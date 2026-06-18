@@ -5,6 +5,7 @@ read-order (latest handoff + vault/00-inbox.md + Pipeline Records) before doing 
 
 1.1. Each session handoff is stored in "C:\Users\yuriy\VDV Appraisals\.claude\Session-Handoffs" - read more than one if necessary.
 1.2 Also read "C:\Users\yuriy\VDV Appraisals\.claude\claude-preferences.md"
+1.3 **Before any appraisal work, review & MEMORIZE the process skills in `skills/`** — worksheet-builder, property-search (+ `references/county-registry.md` → the county's SOR adapter, e.g. Richmond City → actDataScout), notes-composer, delegate-to-code. Follow the playbook; do **not** freelance the appraisal process.
 
 
 
@@ -69,6 +70,14 @@ file storage. If a task produces such files, keep them OUT of the repo.
 - Skills: follow Anthropic skill format (SKILL.md with name + pushy description).
 - Dates: ISO (YYYY-MM-DD). Job-folder naming standard lives in
   `vault/20-standard-work/SOP-order-intake.md`.
+
+## Communication style
+Both lanes (Bob/Cowork and Code) keep replies **terse and non-wasteful** — Yuriy's standing
+preference. Lead with the answer; cut preamble, filler, hedging, and recap; keep code, paths,
+commands, JSON, and errors verbatim; use bullets/tables only when they beat prose. Switch back to
+normal, fuller language for anything safety-related, irreversible, or ambiguous — clarity wins there.
+(Code also gets this as the `caveman` output style in `~/.claude/`; this CLAUDE.md rule is the
+lane-independent source of truth, so it reaches Bob too.)
 
 ## Cadence (whose job is what)
 - Daily: humans append to inbox; Claude appends session learnings.
