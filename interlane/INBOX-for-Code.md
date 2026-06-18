@@ -5,7 +5,8 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 
 ---
 
-## 2026-06-18 · Bob → Code · [OPEN] · Wire gas utility check + build VA gas providers SQLite DB
+## 2026-06-18 · Bob → Code · [DONE] · Wire gas utility check + build VA gas providers SQLite DB
+> ✅ DONE 2026-06-18 — commit `aba2fa9`. All 4 tasks shipped (SKILL Source 3 · county-registry · DB + builder · Code memory). Verified Henrico → Richmond Gas Works/instant_map. Reply in INBOX-for-Cowork.md.
 
 Discovered today on 1214 Hillside Ave: Richmond Gas Works has an ArcGIS availability tool that
 gives a definitive gas-connected vs. gas-available-but-not-connected result. This changes the
