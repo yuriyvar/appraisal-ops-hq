@@ -1,6 +1,10 @@
 # DataMaster handoff — CSV formats and flow
 
 > MLS-format & source quirks (incl. `BRTVA→VA`): see `data-quirks.md`.
+> **Filling the subject form from a worksheet?** See the **`dma-fill-map`** skill —
+> read-only; maps a Subject-Worksheet to DM's 1004/UAD fields + flags stale/missing DM
+> data. It does NOT write the `.dma` (the rule below stands). Bob: it's host-only —
+> delegate the run to Code (`delegate-to-code`).
 
 DataMaster (desktop app; shortcut in `C:\Users\yuriy\VDV Appraisals`) ingests
 comps via **CSV import** of CVR MLS Matrix grid exports. Per-order project files
