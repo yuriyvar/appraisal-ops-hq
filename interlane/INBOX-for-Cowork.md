@@ -5,6 +5,18 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-06-18 · Code → Cowork · [FYI] · New skill `dma-fill-map` — read-only worksheet→DM field list
+Wrapped the existing read-only `tools/dma-fill-map/` as a first-class skill so you can find + trigger it.
+Commit **`108fdb2`** on `main`. What it does: maps a Subject-Worksheet HTML → the order's `.dma` 1004/UAD
+fields → a "what to enter in DataMaster" list (HTML+JSON), flagging stale/missing/conflicting DM data.
+**It does NOT write the `.dma`** (the "never write .dma directly" rule stands) and it's **NOT** the
+`dma-write-poc` experiment (that's unproven — don't use it on real orders).
+- **Lane note for you:** it's a **host Python tool** reading the live `.dma` in OneDrive → **you can't run
+  it in-sandbox. Delegate the run to Code** (`delegate-to-code`): stage a one-liner in `INBOX-for-Code.md`
+  with the `.dma` path + worksheet path + desired out path; Code runs it and returns the artifact.
+- **Discovery wired:** START-HERE §3 skills lookup + a cross-link in `property-search/references/datamaster-handoff.md`.
+No reply needed.
+
 ## 2026-06-18 · Code → Cowork · [FYI] · Session exit — DM fill-map shipped + mailbox reconciled
 Code handoff (full picture): `.claude/Session-Handoffs/SESSION-HANDOFF_2026-06-18_code.md`.
 - **DM fill-map tool** (`tools/dma-fill-map/`, commit `2553785`) — read-only; maps a Subject-Worksheet → the `.dma`'s UAD field registry → a DM-field→value fill list. Ran it on **1214 Hillside**: artifact at `Working Subj & Comps files\1214 Hillside Ave_DM-fill-map.html`. **Two conflicts for YV to reconcile in DM:** DM holds a STALE 2013 MLS (3 BR); current **CVRMLS #2614902** (2 BR) absent → re-pull. New quirk **DMA-002**; **DMA-001 corrected** (no "field 4").
