@@ -131,10 +131,68 @@ def _city_from_address(addr_str):
     return parts[-2].strip() if len(parts) >= 3 else None
 
 
+def _parse_date(raw):
+    """Best-effort parse of a sale-date string to a date. Handles YYYY-MM-DD,
+    ISO datetimes (...Z), MM/DD/YYYY, and MM/YYYY (-> 1st of month). None on miss."""
+    if not raw:
+        return None
+    s = str(raw).strip()
+    if not s:
+        return None
+    for fmt in ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S",
+                "%m/%d/%Y", "%m/%Y", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(s, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def _months_before(d, months):
+    """The date `months` calendar-months before date d (day clamped to month end)."""
+    import calendar
+    total = (d.year * 12 + (d.month - 1)) - months
+    y, m = divmod(total, 12)
+    m += 1
+    day = min(d.day, calendar.monthrange(y, m)[1])
+    return d.__class__(y, m, day)
+
+
+def _sale_window_flag(status, sale_date, anchor_date, window_months=12):
+    """12-month sales-window gate (vault andon 2026-06-26 #3). For a CLOSED comp,
+    returns a flag string when the sale is missing or older than the window, else
+    None. Active/pending comps are not sold, so they are exempt."""
+    if status != "closed":
+        return None
+    if not sale_date:
+        return ("Closed comp has no captured sale date — cannot verify the 12-month "
+                "window; capture it before using as a primary comp")
+    sd = _parse_date(sale_date)
+    if sd is None:
+        return "Sale date '{}' is unparseable — verify the 12-month window".format(sale_date)
+    if anchor_date and sd < _months_before(anchor_date, window_months):
+        return ("Sale {} is outside the {}-month window — supplemental only, needs an "
+                "explicit dated justification (never primary/unlabeled)"
+                .format(sale_date, window_months))
+    return None
+
+
+def _gla_band_flag(comp_gla, subject_gla, pct=10):
+    """Comp-selection rubric #1 (vault 2026-06-23): above-grade GLA within +/-pct%
+    of subject. Returns a flag string when out of band, else None."""
+    if comp_gla is None or not subject_gla:
+        return None
+    diff = (comp_gla - subject_gla) / subject_gla * 100.0
+    if abs(diff) > pct:
+        return ("Above-grade GLA {:+.0f}% vs subject — outside the ±{}% rubric band; "
+                "highlight for YV (never silently include or drop)".format(diff, pct))
+    return None
+
+
 # ---------------------------------------------------------------------------
 # CSV parsing
 # ---------------------------------------------------------------------------
-def _parse_comp_row(row, layout, subject_county, subject_gla_sf):
+def _parse_comp_row(row, layout, subject_county, subject_gla_sf, window_anchor=None):
     """Parse one DictReader row into a comp dict with flags populated."""
     flags = []
 
@@ -196,6 +254,7 @@ def _parse_comp_row(row, layout, subject_county, subject_gla_sf):
     list_price = _parse_float(row.get("List Price"))
     sale_price = _parse_float(row.get("Sales Price"))
     orig_list = _parse_float(row.get("Original List Price")) if layout == "appraiser" else None
+    sale_date = None  # not in single-line CSV; populated from CAMA/MLS elsewhere
 
     # --- derived ---
     price_per_sf = None
@@ -205,6 +264,18 @@ def _parse_comp_row(row, layout, subject_county, subject_gla_sf):
     gla_delta = None
     if gla_sf is not None and subject_gla_sf is not None:
         gla_delta = round(gla_sf - subject_gla_sf, 0)
+
+    # --- comp-quality gates (interlane 2026-06-26 [ACTION] #3/#5; vault 2026-06-17/06-23) ---
+    if not mls_number:
+        _add_flag(flags, "ML# missing — required for DataMaster; capture from Matrix")
+    if not pid:
+        _add_flag(flags, "Tax ID / PID missing — required for DataMaster; capture from Matrix")
+    gla_flag = _gla_band_flag(gla_sf, subject_gla_sf)
+    if gla_flag:
+        _add_flag(flags, gla_flag)
+    window_flag = _sale_window_flag(status, sale_date, window_anchor)
+    if window_flag:
+        _add_flag(flags, window_flag)
 
     return {
         "position": position,
@@ -235,7 +306,7 @@ def _parse_comp_row(row, layout, subject_county, subject_gla_sf):
             "list_price": list_price,
             "original_list_price": orig_list,
             "dom": dom,
-            "sale_date": None,    # not in single-line CSV
+            "sale_date": sale_date,
             "concessions": None,  # not in single-line CSV
         },
         "price_per_sf": price_per_sf,
@@ -247,7 +318,7 @@ def _parse_comp_row(row, layout, subject_county, subject_gla_sf):
     }
 
 
-def parse_comps_csv(csv_path, subject_county, subject_gla_sf):
+def parse_comps_csv(csv_path, subject_county, subject_gla_sf, window_anchor=None):
     """
     Parse a DataMaster Single Line CSV (either layout).
     Returns list of comp dicts, preserving row order.
@@ -257,7 +328,7 @@ def parse_comps_csv(csv_path, subject_county, subject_gla_sf):
         reader = csv.DictReader(fh)
         layout = _detect_layout(reader.fieldnames)
         for row in reader:
-            comp = _parse_comp_row(row, layout, subject_county, subject_gla_sf)
+            comp = _parse_comp_row(row, layout, subject_county, subject_gla_sf, window_anchor)
             comps.append(comp)
     return comps
 
@@ -291,6 +362,13 @@ def assemble(subject_json_path, comps_csv_path, out_path,
     subject_county = (subj.get("address") or {}).get("county")
     subject_gla_sf = (subj.get("characteristics") or {}).get("gla_sf")
 
+    # Resolve generated_at up front so it can anchor the 12-mo sales-window gate
+    # (deterministic: fixed input -> fixed anchor).
+    if not generated_at:
+        generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    eff_raw = order_meta.get("effective_date") or (subj.get("order") or {}).get("effective_date")
+    window_anchor = _parse_date(eff_raw) or _parse_date(generated_at[:10])
+
     # -- parse comps ---
     # Accept a single path, a list of paths, or None
     if isinstance(comps_csv_path, (list, tuple)):
@@ -306,7 +384,7 @@ def assemble(subject_json_path, comps_csv_path, out_path,
     all_comps = []
     for cp in csv_paths:
         if cp and os.path.isfile(cp):
-            all_comps.extend(parse_comps_csv(cp, subject_county, subject_gla_sf))
+            all_comps.extend(parse_comps_csv(cp, subject_county, subject_gla_sf, window_anchor))
         elif cp:
             sys.stderr.write("WARNING: comps CSV not found: {}\n".format(cp))
 
@@ -408,9 +486,7 @@ def assemble(subject_json_path, comps_csv_path, out_path,
         "neighborhood_notes": market_base.get("neighborhood_notes"),
     }
 
-    # -- stamp --
-    if not generated_at:
-        generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # -- stamp -- (generated_at already resolved above, to anchor the sales-window gate)
 
     # -- assemble record --
     record = {

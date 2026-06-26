@@ -17,7 +17,8 @@ sys.path.insert(0, os.path.join(REPO, "tools", "record-assembler"))
 sys.path.insert(0, os.path.join(REPO, "tools", "worksheet-renderer"))
 
 from assemble_record import (assemble, _normalize_mls, _normalize_status,
-                              _parse_baths, _detect_layout)
+                              _parse_baths, _detect_layout,
+                              _sale_window_flag, _gla_band_flag)
 from render_worksheet import render, audit_comp_tax_ids, esc
 
 results = []
@@ -432,6 +433,47 @@ try:
     ok("T16: Comp Tax ID gate — passes good render, catches a blanked comp cell")
 except Exception as e:
     fail("T16", str(e))
+
+# ---------------------------------------------------------------------------
+# T17: Comp-quality gates — GLA ±10% band, ML#/Tax ID capture, 12-mo window
+# ---------------------------------------------------------------------------
+try:
+    from datetime import date
+    sp = write_subject("subj_t17.json")  # subject GLA 1856
+    cp = write_csv("quality.csv", [
+        {"#": "1", "ML #": "VA100", "PID": "Q1", "Status": "CLOSD",
+         "Address": "130 Example Ridge Ln, Henrico, VA 23229",
+         "Distance": "0.2", "Total Finished Area": "2200",  # +18.5% -> band flag
+         "# Bedrooms": "4", "Total Baths": "3",
+         "Sales Price": "420000", "List Price": "425000", "Days On Market": "8", "MLS": "CVR"},
+        {"#": "2", "ML #": "", "PID": "Q2", "Status": "CLOSD",  # missing ML#
+         "Address": "131 Example Ridge Ln, Henrico, VA 23229",
+         "Distance": "0.3", "Total Finished Area": "1900",
+         "# Bedrooms": "3", "Total Baths": "2",
+         "Sales Price": "360000", "List Price": "365000", "Days On Market": "6", "MLS": "CVR"},
+        {"#": "3", "ML #": "VA102", "PID": "", "Status": "CLOSD",  # missing PID
+         "Address": "132 Example Ridge Ln, Henrico, VA 23229",
+         "Distance": "0.4", "Total Finished Area": "1850",
+         "# Bedrooms": "3", "Total Baths": "2",
+         "Sales Price": "352000", "List Price": "355000", "Days On Market": "9", "MLS": "CVR"},
+    ])
+    rec = assemble(sp, cp, out("rec_t17.json"), generated_at="2026-06-13T12:00:00Z")
+    c1, c2, c3 = rec["comps"]
+    assert any("rubric band" in f for f in c1["flags"]), "GLA band flag missing: " + str(c1["flags"])
+    assert any("ML# missing" in f for f in c2["flags"]), "ML# flag missing: " + str(c2["flags"])
+    assert any("Tax ID / PID missing" in f for f in c3["flags"]), "Tax ID flag missing: " + str(c3["flags"])
+    # every CLOSED comp with no captured sale date is flagged for the 12-mo window
+    assert all(any("12-month window" in f for f in c["flags"]) for c in rec["comps"]), \
+        "sale-window flag missing on a closed comp"
+    # direct check of the window logic with real dates
+    assert _sale_window_flag("closed", "05/2023", date(2026, 6, 13)), "old sale not flagged"
+    assert _sale_window_flag("closed", "2026-03-01", date(2026, 6, 13)) is None, "in-window sale flagged"
+    assert _sale_window_flag("active", None, date(2026, 6, 13)) is None, "active comp should be exempt"
+    # GLA band helper boundaries
+    assert _gla_band_flag(2100, 1856) and _gla_band_flag(1850, 1856) is None
+    ok("T17: Comp-quality gates — GLA ±10% band, ML#/Tax ID capture, 12-mo sales window")
+except Exception as e:
+    fail("T17", str(e))
 
 # ---------------------------------------------------------------------------
 # summary
