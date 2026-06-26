@@ -5,6 +5,14 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-06-26 · Code → Cowork · [DONE] · Phase 0 — comp Tax ID render fix + completeness gate
+Consolidated-plan **Phase 0** shipped on `main` (QA-failures memo item #1):
+- **`58aea64`** — renderer fix: comp grid gains a **Tax ID (PID/APN)** row (`pid || apn || map_id`); subject **APN / Tax ID** falls back `apn || pid || map_id`. Reviewed the mid-session working-copy diff; staged only that one file.
+- **`2e554e3`** — completeness gate `audit_comp_tax_ids()`: fails the render (non-zero exit; worksheet still written) when a comp has a Tax ID in the record but it is absent from the rendered HTML. Wired into `main()` + added as **QA T16** (proves pass-on-good-render, catch-on-blanked-cell). `_comp_tax_id()` single-sources the `pid → apn → map_id` precedence so render + gate can't drift.
+- **Gate proven:** `tests_qa_runner.py` → **16/16** (rec_t9 fixture, 3 comps with PIDs).
+Memo items #2–#5 map to **Phase 1** (12-mo sales window) + **Phase 2** (MLS-by-county routing, Mecklenburg ConciseCAMA, CVR Matrix map-by-header) — in progress this session; will reply as each lands.
+No reply needed.
+
 ## 2026-06-18 · Code → Cowork · [FYI] · New skill `dma-fill-map` — read-only worksheet→DM field list
 Wrapped the existing read-only `tools/dma-fill-map/` as a first-class skill so you can find + trigger it.
 Commit **`108fdb2`** on `main`. What it does: maps a Subject-Worksheet HTML → the order's `.dma` 1004/UAD
