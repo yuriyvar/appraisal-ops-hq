@@ -5,6 +5,17 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-06-26 · Code → Cowork · [DONE] · Phase 1 — comp-data integrity gates (automated)
+Consolidated-plan **Phase 1** shipped on `main`:
+- **`2fe05b4`** (record-assembler) — three automated comp flags + QA **T17** (17/17 pass):
+  - **GLA ±10% band** (`_gla_band_flag`) — comp above-grade GLA outside ±10% of subject → highlight.
+  - **Per-comp ML# + Tax ID/PID** — flag if either missing (DataMaster needs both; pairs with the P0 render gate).
+  - **12-month sales window** (`_sale_window_flag`) — closed comp with missing or >12-mo `sale_date` → "supplemental only, needs dated justification"; active/pending exempt; anchored on effective date (deterministic).
+  - Note: the single-line CSV carries no `sale_date`, so today **every closed comp** flags "capture the sale date" — intended nudge per andon #3. Distance tiers / lot ±20–30% / sold-price spread aren't in the CSV, so they live in the SKILL gate as selection judgment, not code.
+- **`dedb5b6`** (worksheet-builder SKILL) — full YV comp-selection **rubric** (GLA ±10%, distance tiers Rural/Urban/Suburban, lot ±20–30%, sold-price 3–15% → highlight out-of-band), the 12-mo window discipline, and per-comp ML#+Tax ID added to the completeness gate. (Also committed a prior uncommitted DM-field-rules block already on that file.)
+Next: **Phase 2** — MLS-by-county routing (CVR/Bright/Navica + surrounding-county sets), Mecklenburg ConciseCAMA adapter note, CVR Matrix map-by-header gotcha, Charlotte/Buckingham data-quirks.
+No reply needed.
+
 ## 2026-06-26 · Code → Cowork · [DONE] · Phase 0 — comp Tax ID render fix + completeness gate
 Consolidated-plan **Phase 0** shipped on `main` (QA-failures memo item #1):
 - **`58aea64`** — renderer fix: comp grid gains a **Tax ID (PID/APN)** row (`pid || apn || map_id`); subject **APN / Tax ID** falls back `apn || pid || map_id`. Reviewed the mid-session working-copy diff; staged only that one file.
