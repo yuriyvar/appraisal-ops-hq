@@ -238,7 +238,7 @@ def build_subject_tab(rec):
     id_rows = [
         ("GPIN", dash(g(ids, "gpin"))),
         ("PID", dash(g(ids, "pid"))),
-        ("APN / Tax ID", dash(g(ids, "apn"))),
+        ("APN / Tax ID", dash(g(ids, "apn") or g(ids, "pid") or g(ids, "map_id"))),
         ("Subdivision", dash(g(ids, "subdivision"))),
         ("Section / Block / Lot",
          "{} / {} / {}".format(dash(g(ids, "section")), dash(g(ids, "block")), dash(g(ids, "lot")))),
@@ -352,6 +352,9 @@ COMP_ROWS = [
     ("Baths",
      lambda r: baths(g(r, "subject", "characteristics", default={})),
      lambda c: baths(g(c, "characteristics", default={}))),
+    ("Tax ID (PID/APN)",
+     lambda r: dash(g(r, "subject", "identifiers", "pid") or g(r, "subject", "identifiers", "apn") or g(r, "subject", "identifiers", "map_id")),
+     lambda c: dash(g(c, "identifiers", "pid") or g(c, "identifiers", "apn") or g(c, "identifiers", "map_id"))),
     ("MLS #",
      lambda r: DASH,
      lambda c: dash(g(c, "identifiers", "mls_number"))),
