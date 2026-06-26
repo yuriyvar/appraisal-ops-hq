@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(REPO, "tools", "worksheet-renderer"))
 
 from assemble_record import (assemble, _normalize_mls, _normalize_status,
                               _parse_baths, _detect_layout)
-from render_worksheet import render
+from render_worksheet import render, audit_comp_tax_ids, esc
 
 results = []
 
@@ -410,6 +410,28 @@ try:
     ok("T15: End-to-end smoke — HTML renders, parses, no raw status codes, well-formed")
 except Exception as e:
     fail("T15", str(e))
+
+# ---------------------------------------------------------------------------
+# T16: Comp Tax ID completeness gate (interlane 2026-06-26 [ACTION] #1)
+# ---------------------------------------------------------------------------
+try:
+    with open(out("rec_t9.json")) as f:
+        rec_tax = json.load(f)
+
+    def _pid(c):
+        return (c.get("identifiers") or {}).get("pid")
+
+    assert any(_pid(c) for c in rec_tax["comps"]), "fixture has no comp PID"
+    html_tax = render(rec_tax)
+    assert "Tax ID (PID/APN)" in html_tax, "comp grid missing the Tax ID row"
+    assert not audit_comp_tax_ids(rec_tax, html_tax), "gate should pass on a good render"
+    victim = next(_pid(c) for c in rec_tax["comps"] if _pid(c))
+    broken = html_tax.replace(esc(str(victim)), "&mdash;")
+    assert audit_comp_tax_ids(rec_tax, broken), \
+        "gate failed to detect a comp Tax ID missing from the HTML"
+    ok("T16: Comp Tax ID gate — passes good render, catches a blanked comp cell")
+except Exception as e:
+    fail("T16", str(e))
 
 # ---------------------------------------------------------------------------
 # summary

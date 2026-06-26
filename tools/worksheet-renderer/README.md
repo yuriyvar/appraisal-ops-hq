@@ -17,8 +17,11 @@ data-collection automation is built.
 python render_worksheet.py RECORD.json [-o OUTPUT.html]
 ```
 - Default output: `worksheet.html` next to the input record.
-- Exits non-zero only on bad JSON / missing file. A schema_version mismatch
-  prints a warning but still renders.
+- Exits non-zero on bad JSON / missing file, or when the **comp Tax ID
+  completeness gate** fails (a comp has a PID/APN/map_id in the record but it
+  did not render in the HTML — see `audit_comp_tax_ids`). The worksheet is still
+  written so it can be inspected. A schema_version mismatch prints a warning but
+  still renders.
 
 Example:
 ```bash

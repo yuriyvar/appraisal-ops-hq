@@ -311,6 +311,18 @@ def build_subject_tab(rec):
 # Each row binds its SUBJECT accessor and its COMP accessor together, so the two
 # columns can never silently desync when a row is renamed/reordered.
 DASH = "&mdash;"
+COMP_TAX_ID_LABEL = "Tax ID (PID/APN)"
+
+
+def _comp_tax_id(obj):
+    """First non-empty parcel identifier on a comp or the subject, in the comp
+    grid's precedence: pid -> apn -> map_id. Single source of truth shared by the
+    COMP_ROWS Tax ID row and audit_comp_tax_ids() so render and gate can't drift."""
+    return (g(obj, "identifiers", "pid")
+            or g(obj, "identifiers", "apn")
+            or g(obj, "identifiers", "map_id"))
+
+
 COMP_ROWS = [
     # (label, subject_fn(rec), comp_fn(comp))
     ("Address",
@@ -352,9 +364,9 @@ COMP_ROWS = [
     ("Baths",
      lambda r: baths(g(r, "subject", "characteristics", default={})),
      lambda c: baths(g(c, "characteristics", default={}))),
-    ("Tax ID (PID/APN)",
-     lambda r: dash(g(r, "subject", "identifiers", "pid") or g(r, "subject", "identifiers", "apn") or g(r, "subject", "identifiers", "map_id")),
-     lambda c: dash(g(c, "identifiers", "pid") or g(c, "identifiers", "apn") or g(c, "identifiers", "map_id"))),
+    (COMP_TAX_ID_LABEL,
+     lambda r: dash(_comp_tax_id(g(r, "subject", default={}))),
+     lambda c: dash(_comp_tax_id(c))),
     ("MLS #",
      lambda r: DASH,
      lambda c: dash(g(c, "identifiers", "mls_number"))),
@@ -362,6 +374,34 @@ COMP_ROWS = [
      lambda r: DASH,
      lambda c: dash(g(c, "identifiers", "mls_system"))),
 ]
+
+
+def audit_comp_tax_ids(rec, html_doc):
+    """Completeness gate (interlane 2026-06-26 [ACTION] #1 / vault andon #1).
+
+    The comp grid once rendered MLS# but had no Tax ID row, so every comp's
+    APN/PID sat in the record JSON yet was invisible in the worksheet HTML.
+    This audit fails when a comp HAS a Tax ID (pid || apn || map_id) but that
+    value does not actually appear in the rendered HTML. Returns a list of
+    human-readable problem strings; an empty list means the gate passed."""
+    problems = []
+    comps = g(rec, "comps", default=[]) or []
+    if not comps:
+        return problems
+    if COMP_TAX_ID_LABEL not in html_doc:
+        problems.append('comp grid is missing the "{}" row entirely'
+                        .format(COMP_TAX_ID_LABEL))
+    for c in comps:
+        tax_id = _comp_tax_id(c)
+        if not tax_id:
+            continue  # no identifier in the record -> a blank cell is correct
+        if esc(str(tax_id)) not in html_doc:
+            problems.append(
+                "comp #{} ({}) has Tax ID {!r} in the record but it is not in "
+                "the rendered HTML".format(g(c, "position", default="?"),
+                                           g(c, "address", "full", default="?"),
+                                           tax_id))
+    return problems
 
 
 def _comp_grid(rec, comps, title, note=""):
@@ -779,6 +819,16 @@ def main(argv=None):
     with open(out, "w", encoding="utf-8") as f:
         f.write(html_doc)
     print("Wrote {} ({:,} bytes)".format(out, len(html_doc)))
+
+    # Completeness gate: every comp Tax ID present in the record must render in
+    # the HTML (interlane 2026-06-26 [ACTION] #1). The worksheet is still written
+    # so it can be inspected, but a violation exits non-zero to stop the pipeline.
+    problems = audit_comp_tax_ids(rec, html_doc)
+    if problems:
+        sys.stderr.write("QA GATE FAILED - comp Tax ID completeness:\n")
+        for p in problems:
+            sys.stderr.write("  - {}\n".format(p))
+        return 1
     return 0
 
 
