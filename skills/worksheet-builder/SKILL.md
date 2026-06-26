@@ -79,6 +79,13 @@ gas furnace if gas actually reaches the parcel (learned on 1214 Hillside Ave).
 Record the result in the subject's Utilities row — **Gas: Connected / Available-not-connected /
 Not available** — and adjust the heating-fuel inference accordingly.
 
+### DM-specific field rules (apply when building the worksheet)
+- **Assessor's Parcel #** — this is DM's canonical label for APN / Tax ID / Map#. Use it in the worksheet; never label the field "PID / APN / Tax ID" (confusing). One-time clarifier `(= APN / Tax ID)` is OK on first use.
+- **Map Reference** — enter `GIS` when the source doesn't supply a specific map reference. Never leave blank.
+- **HOA $ / period** — pull from MLS listing remarks or HOA disclosure docs. Always include amount + frequency (monthly/annually). If not found, flag `TBD — get from HOA docs`; never leave silently blank.
+- **RE Taxes $** — pull the actual annual tax bill (not the assessed value). actDataScout and similar portals usually show it; so does the MLS. Tax year must match the tax bill year shown.
+- **Census Tract** — DM often imports this from its own data. Mark `TBD — FFIEC geocoder` only if DM didn't fill it; check DM's import first before marking TBD.
+
 ### What is NEVER in APEX — always flag for inspection
 - Foundation wall material (APEX records type only, e.g. Crawl, Basement)
 - Interior finishes (floors in rooms not visible in photos, bath tile, countertops)
@@ -123,8 +130,22 @@ Block rendering and fix/flag first if any fails:
 - **Form-specific required fields:** check the `references/field-map/field-map.<form>.yaml` for the
   order's form and confirm its required fields are present (e.g. **1073 Project Information** — unit
   counts, roof, parking; **1004C** — HUD data plate / manufacturer). Missing → flag, don't omit silently.
-- **Per-comp data complete:** each comp carries prior **3-yr sale** history (1004 requirement),
-  **DOM / contract date**, and the **above/below-grade GLA split** — flag (never silently blank) if missing.
+- **Per-comp ML# + Tax ID/PID (DataMaster needs both):** every comp carries its **ML#** *and*
+  **Tax ID / PID** — the assembler flags either if missing; the renderer gate (`audit_comp_tax_ids`)
+  fails the build if a captured Tax ID doesn't actually render. Also carry prior **3-yr sale** history
+  (1004), **DOM / contract date**, and the **above/below-grade GLA split** — flag, never silently blank.
+- **12-month sales window:** primary CLOSED comps sell **within 12 months** of the effective date.
+  Older same-project / same-market sales are **supplemental only, with an explicit dated-sale
+  justification — never primary, never unlabeled** (andon 2026-06-26: The Moorings mixed 2023–24
+  sales). The assembler flags any closed comp with a missing or >12-mo `sale_date`.
+- **Comp-selection rubric (YV) — any criterion out of band → HIGHLIGHT and let YV decide, never
+  silently drop or include:**
+  - Above-grade **GLA ±10%** (assembler auto-flags; luxury > 5,000 sf widens to ±15%, see below).
+  - **Distance tiers** — Rural: 1, 3, 5, 7, 10, 12 mi (start tight, expand outward only as needed);
+    Urban: 0.25, 0.5, 1, 1.5 mi; Suburban: urban tiers up to 3 mi.
+  - **Parcel / lot area ±20–30%.**
+  - **Sold-price variation 3–15%.**
+  - Distance is **not** definitive — weight sale price + prior sale + condition/DOM, not proximity alone.
 - **GLA-band sanity:** luxury/large subjects (GLA > 5,000 sf) use the **±15%** band (per `property-search`);
   cross-check a radius pull so the band didn't drop an obviously-superior **same-subdivision** comp.
 - **Review gate:** record's `review.human_reviewed=false` and `adjustments` left to the appraiser.
