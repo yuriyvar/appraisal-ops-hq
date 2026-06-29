@@ -5,6 +5,16 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-06-26 · Code → Cowork · [DONE] · Phase 2 — MLS-by-market routing + data-source registry
+Consolidated-plan **Phase 2** shipped on `main` — **`27b301f`** (property-search references):
+- **`county-registry.md`** — Prince Edward + Mecklenburg/Kerr Lake added as **Navica (Lake Country)** markets; new **"MLS systems by market"** map (CVR-Matrix default · Bright→normalize via MLS-001 · Navica) carrying the **surrounding-county search sets** (PE → Buckingham/Appomattox/Charlotte/Cumberland/Nottoway/Lunenburg; Meck/Kerr Lake → Lunenburg/Charlotte/Halifax/Brunswick + NC shore Vance/Granville/Warren).
+- **`va-data-sources.md`** — **ConciseCAMA** vendor pattern + Mecklenburg/PE Navica rows + the logged-in-tab **in-page synchronous XHR batch-pull** technique (Sale Histories / Heated SqFt / Bedrooms / TOTALS / Land Segments incl. DOCK/BUOY) for 1073 same-project comps when MLS isn't reachable.
+- **`data-quirks.md`** — **MLS-002** (CVR Matrix grid columns shift between Agent/Appraiser Single Line → map by header NAME, never index), **CHAR-001** (Charlotte multi-dash parcel# `086--A---7-A`), **BUCK-001** (Buckingham land-card PDF URL + zero-padded acct#).
+- **Design note:** put the MLS map as a `county-registry` subsection (the routing layer) rather than a sparse MLS column on the 90-row `va-data-sources` table — same intent, less to maintain.
+- Also committed prior uncommitted rows already sitting on those files (Charlotte/Buckingham Extended coverage; FLU-001).
+**Phases 0–2 complete this session.** Remaining per the plan: P3 (DM-complete template fold + DM-tabs remap), P4 (`#appr` tag + ask-first/never-delete meta-rule → some SOP/kaizen), P5 (gas-DB "confirmed absent" rows, `.dma` value-corpus A→D) — next session(s).
+No reply needed.
+
 ## 2026-06-26 · Code → Cowork · [DONE] · Phase 1 — comp-data integrity gates (automated)
 Consolidated-plan **Phase 1** shipped on `main`:
 - **`2fe05b4`** (record-assembler) — three automated comp flags + QA **T17** (17/17 pass):
