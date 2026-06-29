@@ -5,7 +5,7 @@ read-order (latest handoff + vault/00-inbox.md + Pipeline Records) before doing 
 
 1.1. Each session handoff is stored in "C:\Users\yuriy\VDV Appraisals\.claude\Session-Handoffs" - read more than one if necessary.
 1.2 Also read "C:\Users\yuriy\VDV Appraisals\.claude\claude-preferences.md"
-1.3 **Before any appraisal work, review & MEMORIZE the process skills in `skills/`** — worksheet-builder, property-search (+ `references/county-registry.md` → the county's SOR adapter, e.g. Richmond City → actDataScout), notes-composer, delegate-to-code. Follow the playbook; do **not** freelance the appraisal process.
+1.3 **Before any appraisal work, review & MEMORIZE the process skills in `skills/`** — worksheet-builder, property-search (+ `references/county-registry.md` → the county's SOR adapter, e.g. Richmond City → actDataScout), notes-composer, delegate-to-code. Follow the playbook; do **not** freelance the appraisal process. **Trigger:** a message leading with `#appr` / `/appraise` = explicit appraisal work → load & follow the playbook immediately (property-search + county-registry → worksheet-builder gate → record-assembler → renderer).
 
 
 
@@ -61,6 +61,15 @@ file storage. If a task produces such files, keep them OUT of the repo.
    `C:\Users\yuriy\VDV Appraisals\` first. If anything ever gets written to GDrive
    without that request, copy it into `VDV Appraisals`, verify the copy, then delete
    it from GDrive. (Reading FROM GDrive when asked is fine.)
+7. **Fail loud, never guess.** When data is missing, unverifiable, or an instruction
+   is ambiguous, make the gap visible — flag it, ask, or stop — never fabricate or
+   silently fill a plausible value. A visible gap beats a confident wrong answer.
+   *In code:* flag / raise / exit non-zero instead of emitting a guess (e.g. the
+   worksheet gates — null + flag, never estimated GLA; the comp Tax ID / sales-window
+   / GLA-band gates). *In process (BOTH lanes — Code and Cowork/Ton):* mark unknowns
+   `⚠ TBD` / "confirm at inspection", ask before acting on an ambiguous instruction,
+   and never delete or strip YV's data on a guess (keep found work as candidates for
+   YV to confirm). Generalizes the QA-failure/andon class YV keeps catching.
 
 ## Conventions
 - Branches: `kaizen/K-NNN-*` for SOP changes, `feat/*` for new skills/scripts/MCP,
