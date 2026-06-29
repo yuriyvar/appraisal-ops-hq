@@ -5,6 +5,53 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 
 ---
 
+## 2026-06-26 · Bob → Code · [ACTION] · Consolidated phased plan — work the open items in order
+> ✅ **Phases 0–2 DONE 2026-06-29** — P0 renderer Tax ID + completeness gate, P1 comp-data gates, P2 MLS-by-market routing (commits 58aea64 · 2e554e3 · 2fe05b4 · dedb5b6 · 27b301f; QA 17/17; replies in INBOX-for-Cowork.md). **P3–P5 remain** for next session(s).
+All open Code items from this handoff cycle are folded into one dependency-ordered brief:
+**`docs/2026-06-26_code-implementation-plan_consolidated-handoffs.md`**. Phases: 0 renderer Tax ID
+commit + render-gate → 1 comp-data gates (12-mo window, comp-selection rubric, ML#+Tax ID) → 2 MLS-by-county
+routing (CVR/Bright/Navica + surrounding-county sets, ConciseCAMA, Matrix column gotcha) → 3 DM-complete
+template fold + DM-tabs remap (carried PRIORITY-1) → 4 `#appr` tag + ask-first/never-delete meta-rule
+(SOP→kaizen) → 5 optional (gas-DB absent rows, `.dma` value-corpus A→D). Do 0→1→2 in one session.
+Supersedes nothing below — it indexes the individual memos. Reply per memo in `INBOX-for-Cowork.md`.
+
+## 2026-06-26 · Ton → Code · [ACTION] · QA failures fixed mid-session — commit + harden (see vault andon 2026-06-26)
+> ✅ **DONE 2026-06-29** — all 5 items shipped across Phases 0–2: #1 renderer Tax ID row + `audit_comp_tax_ids` gate (58aea64, 2e554e3); #3 12-mo sales window + comp gates (2fe05b4, dedb5b6); #2/#4/#5 MLS-by-market routing + ConciseCAMA + CVR-Matrix map-by-header (27b301f). QA 17/17. Replies in INBOX-for-Cowork.md.
+YV ran a sharp QA pass on 3 worksheets and flagged real defects. Fixes already applied to working copies; Code to **commit + bake into the process** so they don't recur:
+1. **Renderer bug (FIXED — commit this).** `tools/worksheet-renderer/render_worksheet.py`: the comp grid `COMP_ROWS` rendered MLS# but had **no comp Tax ID row** → every comp's APN/Tax ID was invisible in the HTML despite being in the JSON. Added a **"Tax ID (PID/APN)"** comp row (reads `identifiers.pid || apn || map_id`) and made the **subject "APN / Tax ID"** fall back `apn || pid || map_id`. → Review/commit, and add a **completeness-gate assertion that each comp's Tax ID actually appears in the rendered HTML**, not just the record.
+2. **MLS-by-county routing (ADD to county-registry + va-data-sources).** Several Southside markets are **NAVICA (Lake Country Assn of Realtors)**, NOT CVR: **Prince Edward** and **Mecklenburg / Kerr Lake** confirmed (CVR returned 0 condo sales for 23927 over 5 yr). Add an explicit **MLS column (CVR / Bright / Navica) per county** + a **surrounding-county search set** for rural orders: PE → Buckingham, Appomattox, Charlotte, Cumberland, Nottoway, Lunenburg; Mecklenburg/Kerr Lake → Lunenburg, Charlotte, Halifax, Brunswick + **NC Kerr Lake shore (Vance/Granville/Warren NC)**.
+3. **12-month sales window discipline.** Default comp window = **12 months**; older same-project/same-market sales are **supplemental only with explicit dated-sale justification** — never primary, never unlabeled. (Defect: a thin-condo pull mixed 2023–2024 sales into the primary grid.) Consider a gate check that flags any comp with `sale_date` older than 12 mo (or `sale_date: null` so it can't be verified).
+4. **Mecklenburg CAMA technique (ADD to va-data-sources / a new adapter note).** `mecklenburg.cama.concisesystems.com` (ConciseCAMA) is **searchable** (Address/Owner/Map tabs). Parcel detail = clean GET `PropertyPage.aspx?id=<PRN>`. `web_fetch` is blocked (Disclaimer.aspx cookie gate) but a **logged-in browser tab works**; you can **batch-pull a whole condo project's sale histories with in-page synchronous XHR** (`/PropertyPage.aspx?id=…`, parse Heated Sq Ft / Bedrooms / TOTALS / Sales History / Land Segments incl. **DOCK/BUOY** premium). Great for 1073 same-project comps when MLS isn't reachable.
+5. **CVR Matrix column-mapping gotcha (ADD to data-quirks).** Result-grid `<td>` indices **shift between display formats** (Agent vs Appraiser Single Line). Don't hardcode indices — **re-read the header row** (`Address`/`ML #`/`PID`/`TtlFinAr`) and map by name each time.
+Reply optional; commit #1 is the priority.
+
+## 2026-06-26 · Bob → Code · [FYI] · Session exit — 3 worksheets built (Burton St, Kings Hwy, Yorktown Ave)
+Handoff: `Operations/Session-Handoffs/SESSION-HANDOFF_2026-06-26_cowork_s1.md`.
+- **2320 Burton St** + **2304 Yorktown Ave** (both Richmond City): worksheets built from Zillow + RGW. actdatascout bot-blocks Cowork — YV must pull both (VPN OFF). Matrix Identity Conflict unresolved (YV gate).
+- **16560 Kings Hwy** (Charlotte Co): worksheet built from county property card. Gas resolved = no natural gas service. Zoning still unconfirmed (charlotte.civ.quest pending, carried from 6/25).
+- **2114 Buckingham Springs Rd** (Buckingham Co): data-only (doublewide 2023, 2,888 sf, electric/well/septic). Worksheet not built.
+- county-registry.md updated (Charlotte Co + Buckingham Co). data-quirks.md entries for those two counties still missing — low priority.
+- **Optional Code task:** Charlotte Co + Buckingham Co are genuinely absent from `va-gas-providers.sqlite` (no SCC-regulated provider). If schema supports a "confirmed absent" row type, worth adding to distinguish from "not yet looked up." No urgency.
+No reply needed.
+
+## 2026-06-25 · Bob → Code · [FYI] · Session exit — Sandstone comps verified + Charlotte zoning (unfinished)
+Handoff: `Operations/Session-Handoffs/SESSION-HANDOFF_2026-06-25_cowork_s1.md`.
+- **319 N Sandstone:** 2 basement-verified comps via Rockingham VGSI — **109 S Sandstone** PID 9360 (anchor) + **602 Green St** PID 13079 (renovated flip), both 22812. **MLS# pending Valley MLS** (assessor has none — SRC-001).
+- **7303 Crush** rebuilt to your **DM-complete** format (+ kept YV's snapshot/parcel-dims). Reminder: folding snapshot+parcel-dims into the DM-complete template is still your open PRIORITY-1.
+- **Charlotte Co 16560 Kings Hwy** zoning UNFINISHED — assessor card ZONING blank; on `charlotte.civ.quest`, next step = enable zoning layer on Record 086-A-7-A.
+- Quirks added: **SRC-001**, **ROCK-001**.
+No reply needed.
+
+## 2026-06-22 · Bob → Code · [FYI] · Session exit — no appraisal work; business naming done
+No VDV orders touched this session. Yuriy's new AI/data venture named **RozumAI** — domain **mairozum.ai** identified as available, recommend registering immediately. Full context in `Operations/Session-Handoffs/SESSION-HANDOFF_2026-06-22_cowork_s1.md`. Your open items from 6/19 still stand (dirty git tree, K-003 merge, Alan interview, DM-complete template fold). No reply needed.
+
+---
+
+## 2026-06-19 · Bob → Code · [FYI] · Gas utility DB + dma-fill-map — both confirmed live
+Confirmed: `va-gas-providers.sqlite` query returns RGW/instant_map for Richmond City ✅. dma-fill-map FYI received. Starting today's orders: 2320 Burton St (Richmond City 1004+1007) + 16560 Kings Hwy (23976, Charlotte Co — researching county registry first). No reply needed.
+
+---
+
 ## 2026-06-18 · Bob → Code · [FYI] · Session s1 exit — 4 worksheets queued for next Cowork session
 1214 Hillside Ave worksheet complete (Matrix + Zillow + RGW ArcGIS). APEX offline all session.
 4 worksheets queued for next session (all due 6/18): 2114 Buckingham Springs Rd (1004C FHA), 34 Chatham Ln (1004), 15201 Branders Bridge Rd (GPAR), 12550 Little Patrick Rd (1004C).
