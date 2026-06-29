@@ -27,6 +27,12 @@ quirk columns are discovered on real orders — record them as you go.
 - **webgis.net**: lightweight county GIS (Amelia, Fluvanna, Galax, Halifax).
 - **interactivegis.com**: Buckingham, Cumberland, Nottoway, Rockingham.
 - **qPublic (schneidercorp)**: Hopewell.
+- **ConciseCAMA (concisesystems.com)** (Mecklenburg, Orange): ASP.NET CAMA portal; search by
+  Address / Owner / Map; parcel detail at `PropertyPage.aspx?id=<PRN>`. `web_fetch` is **blocked** by
+  a `Disclaimer.aspx` cookie gate, so use a **logged-in browser tab** — which also allows an **in-page
+  synchronous XHR batch-pull** of a whole project's parcels (Sale Histories, Heated Sq Ft, Bedrooms,
+  TOTALS, Land Segments incl. **DOCK/BUOY** premium). Invaluable for **1073 same-project comps when MLS
+  isn't reachable** (e.g. Mecklenburg / Kerr Lake, a Navica market).
 
 ## Counties / cities
 
@@ -70,14 +76,14 @@ quirk columns are discovered on real orders — record them as you go.
 | Louisa Co | https://louweb.louisa.org/assess/master_Q.asp | https://www.louisacounty.gov/2836/GIS-Mapping | Sheet spells "Lousa" |
 | Lynchburg City | — | https://mapviewer.lynchburgva.gov/ParcelViewer/Account/Logon | Logon page — may need account |
 | Martinsville City | https://gis.vgsi.com/martinsvilleVA/Search.aspx | — | Vision |
-| Mecklenburg Co | https://mecklenburg.cama.concisesystems.com/Search.aspx | — | |
+| Mecklenburg Co / Kerr Lake | https://mecklenburg.cama.concisesystems.com/Search.aspx (ConciseCAMA) | — | **MLS = Navica (Lake Country)**, not CVR (CVR returned 0 condo sales for 23927 over 5 yr). Parcel detail `PropertyPage.aspx?id=<PRN>`; `web_fetch` blocked by `Disclaimer.aspx` cookie gate → logged-in browser tab + in-page synchronous XHR batch-pulls a whole condo project's Sale Histories / Heated Sq Ft / Bedrooms / TOTALS / Land Segments (incl. **DOCK/BUOY** premium). Use for 1073 same-project comps when MLS isn't reachable. Surrounding comp set: Lunenburg, Charlotte, Halifax, Brunswick + NC Kerr Lake shore (Vance/Granville/Warren NC). |
 | New Kent Co | https://gis.vgsi.com/newkentcountyva/Search.aspx | https://atlas.civ.quest/newkent_va | Vision + CivQuest |
 | Nottoway Co | https://eservices.nottoway.org/Applications/TXApps/PropCardsIndex.htm | https://nottowaycova.interactivegis.com/map/ | |
 | Orange Co | https://orange.cama.concisesystems.com/Search.aspx | — | |
 | Page Co | https://eservices.pagecounty.virginia.gov/applications/txapps/PropCardsIndex.htm | https://www.pagecountygis.com/ ⚓ | |
 | Petersburg City | — | https://parcelviewer.geodecisions.com/Petersburg/ | |
 | Powhatan Co | https://keynet.powhatanva.gov/webpaas/ ⚓ | https://powhatan.civ.quest/ ⚓ | CivQuest. AGO has hosted "Vision_Powhatan" FeatureServer (services1.arcgis.com/ue5fMdTkPeHLCobS/.../Vision_Powhatan) incl. VISION_SALEHIST — verify freshness before relying on it |
-| Prince Edward Co | https://epayments.co.prince-edward.va.us/applications/txapps/VPCindex.htm | — | |
+| Prince Edward Co | https://epayments.co.prince-edward.va.us/applications/txapps/VPCindex.htm | — | **MLS = Navica (Lake Country)**, not CVR (Southside; CVR ~0 sales). Surrounding comp set: Buckingham, Appomattox, Charlotte, Cumberland, Nottoway, Lunenburg. |
 | Richmond City | https://www.actdatascout.com/RealProperty/Virginia/Richmond | https://cor.maps.arcgis.com/apps/instant/basic/index.html ⚓ | |
 | Rockingham Co | — | https://rockcova.interactivegis.com/map/ | |
 | Salem City | https://www.actdatascout.com/RealProperty/Virginia/Salem | — | |

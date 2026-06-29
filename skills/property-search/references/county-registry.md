@@ -53,6 +53,28 @@ the local mirror. Reconcile per the skill's Step 1.
 > Reconcile this table into the Google Sheet (add the new columns) on the next
 > logged-in Chrome session — ask before writing to the sheet.
 
+## Extended coverage (added as orders arrive)
+| Jurisdiction | Assessment vendor | Sales-GIS? | Comp source | MLS | Notes |
+|---|---|---|---|---|---|
+| Charlotte Co | charlottecountypropertycards.com (InteractiveGIS-style portal) | N (no known sales layer) | MLS-only | CVR-Matrix / Navica | Search by address or record#. Tax card shows building sections (A/B), foundation, ext walls, heat/AC, sketch. Parcel# format: 086--A---7-A. No SCC gas provider (rural Southside VA) — well/septic typical. County phone: (434) 542-5546. Verified 2026-06-19. |
+| Buckingham Co | buckcova.interactivegis.com (InteractiveGIS, public access — accept terms → Go to Map → Quick Search by address → click parcel → Tax Cards icon opens PDF at `/resources/landcards/000{ACCT#}.pdf`) | N (GIS parcel only, no sales layer) | MLS-only | CVR-Matrix / Navica | Parcel# format: 188-2-6A. Acct# zero-padded 9-digits + 3-digit suffix (e.g. 000011611-001). No SCC gas provider — heat pump/electric typical. Well/septic typical rural. Verified 2026-06-19. |
+| Prince Edward Co | epayments.co.prince-edward.va.us (TXApps property cards) | N | MLS-only | Navica (Lake Country) | Southside; CVR returns ~0 sales here, pull comps in Navica. Surrounding-county set: see "MLS systems by market" below. Verified 2026-06-26 (andon). |
+| Mecklenburg Co / Kerr Lake | ConciseCAMA (`mecklenburg.cama.concisesystems.com`) | N | MLS-only | Navica (Lake Country) | Kerr Lake waterfront; CVR returned 0 condo sales for 23927 over 5 yr. Surrounding set: see below. ConciseCAMA batch-pull technique -> `va-data-sources.md`. Verified 2026-06-26 (andon). |
+
+## MLS systems by market (CVR-Matrix / Bright / Navica)
+**Confirm the market's MLS before pulling comps** — a wrong-MLS pull (e.g. CVR for a Navica market)
+returns near-zero and burns the order (andon 2026-06-26: Prince Edward + The Moorings were pulled in
+CVR and came back empty).
+- **CVR-Matrix** — default for Richmond metro + Central VA (the coverage rows above).
+- **Bright** — NoVA / Shenandoah / panhandle; `BRTVA…` MLS#s are Bright listings shared into CVR, so
+  normalize per data-quirks **MLS-001** (strip `BRT`, keep `VA…`).
+- **Navica** (Lake Country Assn of Realtors) — Southside lake/rural markets. **Confirmed: Prince Edward
+  and Mecklenburg / Kerr Lake** (CVR is thin-to-empty there). For any Navica market, ALWAYS hand YV the
+  **surrounding-county search set** — rural comps routinely cross county lines:
+  - **Prince Edward** → Buckingham, Appomattox, Charlotte, Cumberland, Nottoway, Lunenburg.
+  - **Mecklenburg / Kerr Lake** → Lunenburg, Charlotte, Halifax, Brunswick **+ NC Kerr Lake shore
+    (Vance / Granville / Warren NC)**.
+
 ## Gas utility availability (worksheet-builder Source 3)
 **Source of truth = `references/va-gas-providers.sqlite`** (not inline URLs here). Query by
 jurisdiction to get the provider + lookup method/URL + how-to notes:
