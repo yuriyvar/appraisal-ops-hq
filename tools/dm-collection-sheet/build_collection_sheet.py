@@ -40,6 +40,11 @@ SRC = {
     "INSP": "Appraiser — confirm at inspection",
 }
 
+# Current Cowork agent persona (the interactive lane). Cowork agents get replaced
+# periodically — this constant is the ONLY place the name is rendered into a worksheet;
+# change it here on rename. Process docs refer to the agent symbolically as COWORK_AGENT.
+COWORK_AGENT = "Ton"
+
 # ---------------------------------------------------------------------------
 # THE CATALOG  — DM 1004 input order. Each field:
 #   (label, token, [dm_names], [mismo], "SRC1/SRC2", forms, gap?, note)
@@ -349,7 +354,7 @@ def build_html():
 <body>
 <div class="wrap">
   <h1>{{{{ADDRESS}}}}, {{{{CITY_STATE_ZIP}}}} &nbsp;&middot;&nbsp; {{{{FORM}}}}</h1>
-  <p class="sub">Subject worksheet &middot; {{{{COUNTY}}}} County &middot; due {{{{DUE}}}} &middot; assembled by Bob from {{{{SOURCES}}}}.</p>
+  <p class="sub">Subject worksheet &middot; {{{{COUNTY}}}} County &middot; due {{{{DUE}}}} &middot; assembled by {agent} from {{{{SOURCES}}}}.</p>
 
   <div class="flagbox">
     <h4>&#9888; Flags for the appraiser (not adjusted &mdash; your call)</h4>
@@ -408,7 +413,7 @@ def build_html():
   </div>
 
   <div class="foot">
-    <span class="cert">NOT CERTIFIED</span> &nbsp; Bob assembles + flags conflicts; the
+    <span class="cert">NOT CERTIFIED</span> &nbsp; {agent} assembles + flags conflicts; the
     licensed appraiser verifies at inspection, judges all adjustments, and certifies.
     Never auto-submitted.
   </div>
@@ -416,7 +421,7 @@ def build_html():
 <script>{js}</script>
 </body>
 </html>
-""".format(css=CSS, js=JS, subject=subject_tab_html(),
+""".format(css=CSS, js=JS, subject=subject_tab_html(), agent=COWORK_AGENT,
            comps=comp_grid_html(), extras=extras_html())
 
 

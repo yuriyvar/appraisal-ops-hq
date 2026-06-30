@@ -8,7 +8,7 @@ description: Run a combined architecture review and QA test pass on a build (a s
 Two passes on one build: an **architecture review** (is it designed right?) and a
 **QA test pass** (does it actually behave?). The point is to certify a build
 before B/C/D are stacked on it, and to fix the cheap real defects on the spot
-rather than just listing them. Bob does the analysis, runs real tests, and
+rather than just listing them. COWORK_AGENT does the analysis, runs real tests, and
 applies fixes; nothing is committed (one-session git rule — review-only).
 
 ## Inputs

@@ -1,12 +1,12 @@
 ---
 name: delegate-to-code
-description: Use whenever Bob (Cowork) needs something done that Cowork CANNOT do or reach — git commits/branches/merges/push, writing or editing anything under `.claude/`, Claude Code's app-internal memory, SOP changes that need a kaizen branch, anything outside the connected folder, or any privileged/irreversible host operation. Do NOT attempt it, and do NOT work around the protection. Instead: write a Code brief FILE, log an inbox pointer, and produce a short copy-paste PROMPT (with the brief's path) for Yuriy to pass to Claude Code. Triggers — "Code needs to…", "commit this", "edit START-HERE", "merge the kaizen branch", "I can't write there", "that's host-only", or any "serious" task Cowork can't safely finish itself.
+description: Use whenever COWORK_AGENT (Cowork) needs something done that Cowork CANNOT do or reach — git commits/branches/merges/push, writing or editing anything under `.claude/`, Claude Code's app-internal memory, SOP changes that need a kaizen branch, anything outside the connected folder, or any privileged/irreversible host operation. Do NOT attempt it, and do NOT work around the protection. Instead: write a Code brief FILE, log an inbox pointer, and produce a short copy-paste PROMPT (with the brief's path) for Yuriy to pass to Claude Code. Triggers — "Code needs to…", "commit this", "edit START-HERE", "merge the kaizen branch", "I can't write there", "that's host-only", or any "serious" task Cowork can't safely finish itself.
 ---
 
 # Delegate-to-Code
 
-Cowork/Bob and Claude Code are two lanes over the same repo. Some things are **structurally
-Code-only**. When Bob hits one, the move is never to force it or route around the guardrail — it's to
+Cowork/COWORK_AGENT and Claude Code are two lanes over the same repo. Some things are **structurally
+Code-only**. When COWORK_AGENT hits one, the move is never to force it or route around the guardrail — it's to
 **hand Code a clean, self-contained work order** and let Yuriy pass it over.
 
 ## Trigger — the "Cowork can't reach / shouldn't do" list
@@ -15,7 +15,7 @@ Code-only**. When Bob hits one, the move is never to force it or route around th
 - **Claude Code's app-internal memory:** `~/.claude/projects/.../memory/*`. (Outside the connected folder.)
 - **SOP changes** under `vault/20-standard-work/` — require a `kaizen/*` branch + human merge (Cowork can't branch).
 - **Anything outside the connected folder**, or any **privileged / irreversible host op**.
-- Rule of thumb: if it's "serious" and Bob can't safely + reversibly finish it in-sandbox → delegate.
+- Rule of thumb: if it's "serious" and COWORK_AGENT can't safely + reversibly finish it in-sandbox → delegate.
 
 ## Procedure (3 steps — always all three)
 1. **Write the brief file.** `appraisal-ops-hq/docs/<YYYY-MM-DD>_<slug>_claude-code-brief.md`.
@@ -27,7 +27,7 @@ Code-only**. When Bob hits one, the move is never to force it or route around th
    `## <date> · Cowork → Code · [OPEN] · <title>` + the ask + the brief path + `Reply-to: INBOX-for-Cowork.md`.
    (Reciprocation: Code replies in `INBOX-for-Cowork.md` and marks the memo `[DONE]`.)
 3. **Produce the prompt for Yuriy** — short, with the path; the brief carries the detail. Template:
-   > Read `appraisal-ops-hq/docs/<file>` and execute it. It's a Code-only work order Bob staged
+   > Read `appraisal-ops-hq/docs/<file>` and execute it. It's a Code-only work order COWORK_AGENT staged
    > (git / `.claude/` / host ops Cowork can't reach). Follow its ordering and guardrails; stop where
    > it says a human merges.
 
@@ -39,8 +39,8 @@ Code-only**. When Bob hits one, the move is never to force it or route around th
 - SOP edits: the brief tells Code to branch + **let a human merge** — Code doesn't merge to `main` itself.
 
 ## Related
-- Memo channel: `interlane/` ("the Cowork-Fixon") — `INBOX-for-Code.md` (Bob→Code) / `INBOX-for-Cowork.md` (Code→Bob); see its README + reciprocation rule.
+- Memo channel: `interlane/` ("the Cowork-Fixon") — `INBOX-for-Code.md` (COWORK_AGENT→Code) / `INBOX-for-Cowork.md` (Code→COWORK_AGENT); see its README + reciprocation rule.
 - Brief pattern lives in `docs/` (e.g. `2026-06-16_bootstrap-and-commit_claude-code-brief.md`).
 - Two-lane handoffs: Cowork `Operations/Session-Handoffs/` · Code `.claude/Session-Handoffs/`.
-- Discovery: this skill must be listed in `START-HERE.md`'s skills lookup so Bob triggers it (Code wires
+- Discovery: this skill must be listed in `START-HERE.md`'s skills lookup so COWORK_AGENT triggers it (Code wires
   that — Cowork can't edit START-HERE). For global effect, Yuriy may also add a one-liner to Settings → Profile.

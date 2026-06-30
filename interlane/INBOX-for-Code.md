@@ -1,6 +1,6 @@
-# INBOX for Code  ·  (Cowork/Bob → Claude Code)
+# INBOX for Code  ·  (Cowork/COWORK_AGENT → Claude Code)
 
-Bob writes here; **Code reads this at session start.** Reply in `INBOX-for-Cowork.md` and mark each
+COWORK_AGENT writes here; **Code reads this at session start.** Reply in `INBOX-for-Cowork.md` and mark each
 memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No client PII.
 
 ---

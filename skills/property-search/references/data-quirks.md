@@ -30,7 +30,7 @@ this file is the cross-cutting exception list.
 
 ## Conventions for this file
 - One row per exception, with a stable ID (`<SRC>-NNN`). Newest can go anywhere; keep the table sorted by source.
-- **Bob writes here PROACTIVELY (CLAUDE.md cardinal rule #2).** The moment you encounter a
+- **COWORK_AGENT writes here PROACTIVELY (CLAUDE.md cardinal rule #2).** The moment you encounter a
   data-mining / data-prep exception or an important handling detail — a source oddity, a format
   fix, a value you had to normalize, a trap that wasted time — add a row immediately, WITHOUT
   being asked. Default to recording; a quirk left uncaptured is muda. Err toward over-capturing.

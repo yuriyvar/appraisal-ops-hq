@@ -1,6 +1,6 @@
 ---
 name: dma-fill-map
-description: Map a Subject-Worksheet HTML to a DataMaster `.dma`'s 1004/UAD fields and emit a "what to enter in DataMaster" list (HTML + JSON), flagging stale/missing/conflicting DM data. READ-ONLY — it never writes the `.dma` (DataMaster owns that file). Use when the user asks to "fill the DM file / .dma", "populate DataMaster from the worksheet", "what do I enter in DataMaster", "map the worksheet to DM", "DM fill-map", or has both a built subject worksheet AND the order's `.dma`. If you are Bob/Cowork (sandboxed), you CANNOT run this against the live OneDrive `.dma` — delegate the run to Code (see delegate-to-code). Does NOT replace the sanctioned DataMaster CSV-import flow; it covers the fields DM doesn't auto-populate.
+description: Map a Subject-Worksheet HTML to a DataMaster `.dma`'s 1004/UAD fields and emit a "what to enter in DataMaster" list (HTML + JSON), flagging stale/missing/conflicting DM data. READ-ONLY — it never writes the `.dma` (DataMaster owns that file). Use when the user asks to "fill the DM file / .dma", "populate DataMaster from the worksheet", "what do I enter in DataMaster", "map the worksheet to DM", "DM fill-map", or has both a built subject worksheet AND the order's `.dma`. If you are COWORK_AGENT/Cowork (sandboxed), you CANNOT run this against the live OneDrive `.dma` — delegate the run to Code (see delegate-to-code). Does NOT replace the sanctioned DataMaster CSV-import flow; it covers the fields DM doesn't auto-populate.
 ---
 
 # DM fill-map — worksheet → DataMaster field list (read-only)
@@ -23,7 +23,7 @@ and surfaces where DM's imported data is stale, missing, or conflicting.
   experiment (byte round-trip + same-length patch). Do **not** use it to fill a real
   order — nothing there is trusted until validated in DataMaster.
 
-## Lane note (READ FIRST if you're Bob/Cowork)
+## Lane note (READ FIRST if you're COWORK_AGENT/Cowork)
 This is a **host Python tool** that reads the live `.dma` from
 `C:\Users\yuriy\OneDrive\Documents\DataMaster\` and writes output under
 `VDV Appraisals\`. **Cowork is sandboxed and cannot run it against those paths.**
@@ -70,4 +70,4 @@ HTML (+ JSON) with one row per worksheet field. Status badges:
   `tools/dma-decoder/` (read-only protobuf wire-walker).
 - `property-search/references/datamaster-handoff.md` — the sanctioned CSV-import flow + "never write .dma" rule.
 - `property-search/references/data-quirks.md` — **DMA-001**, **DMA-002**.
-- `delegate-to-code` — how Bob hands a host-only run to Code.
+- `delegate-to-code` — how COWORK_AGENT hands a host-only run to Code.

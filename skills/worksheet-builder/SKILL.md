@@ -5,7 +5,7 @@ description: Build the tabbed HTML copy-paste worksheet that helps Yuriy fill ou
 
 # Worksheet Builder
 
-> **Runtime: COWORK (Bob).** This is the interactive path — Bob gathers data, asks Yuriy
+> **Runtime: COWORK (COWORK_AGENT).** This is the interactive path — COWORK_AGENT gathers data, asks Yuriy
 > for approvals (e.g. Photos/Map), hand-assembles the record when the assembler isn't available,
 > and renders. The **automated** equivalent for **Claude Code** is the `/build-worksheet` command
 > (`.claude/commands/build-worksheet.md`). Same deliverable + same completeness gate; two front doors.
@@ -16,7 +16,7 @@ description: Build the tabbed HTML copy-paste worksheet that helps Yuriy fill ou
 Produces the **tabbed HTML copy-paste worksheet** that Yuriy pastes into
 DataMaster / ACI. **Default tabs: Subject · Comp grid · Sale/Listing history.**
 **Photos and Map are OPTIONAL — include them only with Yuriy's explicit approval**
-(ask before adding; omit by default). Bob ASSEMBLES the data and RENDERS it; the
+(ask before adding; omit by default). COWORK_AGENT ASSEMBLES the data and RENDERS it; the
 licensed appraiser judges adjustments and certifies. **Never submit.**
 
 Inputs → output: `appraisal-record.json` (per `appraisal-record.schema.json`)

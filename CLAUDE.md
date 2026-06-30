@@ -66,7 +66,7 @@ file storage. If a task produces such files, keep them OUT of the repo.
    silently fill a plausible value. A visible gap beats a confident wrong answer.
    *In code:* flag / raise / exit non-zero instead of emitting a guess (e.g. the
    worksheet gates — null + flag, never estimated GLA; the comp Tax ID / sales-window
-   / GLA-band gates). *In process (BOTH lanes — Code and Cowork/Ton):* mark unknowns
+   / GLA-band gates). *In process (BOTH lanes — Code and Cowork/COWORK_AGENT):* mark unknowns
    `⚠ TBD` / "confirm at inspection", ask before acting on an ambiguous instruction,
    and never delete or strip YV's data on a guess (keep found work as candidates for
    YV to confirm). Generalizes the QA-failure/andon class YV keeps catching.
@@ -81,12 +81,12 @@ file storage. If a task produces such files, keep them OUT of the repo.
   `vault/20-standard-work/SOP-order-intake.md`.
 
 ## Communication style
-Both lanes (Bob/Cowork and Code) keep replies **terse and non-wasteful** — Yuriy's standing
+Both lanes (COWORK_AGENT/Cowork and Code) keep replies **terse and non-wasteful** — Yuriy's standing
 preference. Lead with the answer; cut preamble, filler, hedging, and recap; keep code, paths,
 commands, JSON, and errors verbatim; use bullets/tables only when they beat prose. Switch back to
 normal, fuller language for anything safety-related, irreversible, or ambiguous — clarity wins there.
 (Code also gets this as the `caveman` output style in `~/.claude/`; this CLAUDE.md rule is the
-lane-independent source of truth, so it reaches Bob too.)
+lane-independent source of truth, so it reaches COWORK_AGENT too.)
 
 ## Cadence (whose job is what)
 - Daily: humans append to inbox; Claude appends session learnings.
