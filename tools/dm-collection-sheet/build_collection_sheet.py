@@ -128,6 +128,8 @@ CATALOG = [
   ("Lot size (sf / acres)", "LOT", ["SiteArea","GrossBuildingArea","LotDimensions"],
    [], "APEX/ZIL", "all", False,
    "Often blank in Henrico APEX → go to Zillow immediately; don't leave blank."),
+  ("Parcel dimensions (metes)", "PARCEL_DIMS", ["LotDimensions"],
+   [], "PUB/MLS", "all", True, "Lot metes e.g. 120 x 150 (CoreLogic / MLS parcel measurements)."),
   ("Site shape / location", "SITE_SHAPE", ["CornerLot","InsideLot","CulDeSac"],
    ["_OFF_SITE_IMPROVEMENT._Type"], "APEX/INSP", "all", True,
    "Corner / inside / cul-de-sac — DM flags these."),
@@ -346,6 +348,15 @@ CSS = """
   .legend{font-size:11.5px;color:var(--mut);margin:8px 0 0}
   .foot{margin-top:22px;border-top:1px solid var(--line);padding-top:10px;color:var(--mut);font-size:12px}
   .cert{display:inline-block;background:#fbe9ef;color:var(--red);border-radius:5px;padding:2px 9px;font-weight:700;font-size:12px}
+  .snap{background:#eef6ff;border:1px solid #bcd4ef;border-left:4px solid var(--blue);border-radius:6px;padding:10px 14px;margin:12px 0}
+  .snap-gla{font-size:16px;margin-bottom:6px}
+  .snap-gla b{font-size:19px;color:var(--blue)}
+  .snap-lbl{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .snap-note{color:var(--mut);font-size:12px;margin-left:6px}
+  .snap-grid{width:100%;font-size:13px;border-collapse:collapse}
+  .snap-grid td{padding:3px 8px;border-bottom:1px solid #dce8f6}
+  .snap-grid td:first-child{color:var(--mut);width:46%}
+  .snap-hi{background:#fff6df;font-weight:600}
 """
 
 JS = """
@@ -456,6 +467,20 @@ def build_html():
 <div class="wrap">
   <h1>{{{{ADDRESS}}}}, {{{{CITY_STATE_ZIP}}}} &nbsp;&middot;&nbsp; {{{{FORM}}}}</h1>
   <p class="sub">Subject worksheet &middot; {{{{COUNTY}}}} County &middot; due {{{{DUE}}}} &middot; assembled by {agent} from {{{{SOURCES}}}}.</p>
+
+  <!-- SEARCH SNAPSHOT — what you need to start the comp search (order-specific) -->
+  <div class="snap">
+    <div class="snap-gla"><span class="snap-lbl">Above-grade GLA</span>
+      <b>{{{{SNAP_GLA}}}}</b> sf&nbsp; <span class="snap-note">county-confirmed
+      {{{{SNAP_GLA_COUNTY}}}} &middot; MLS {{{{SNAP_GLA_MLS}}}} &mdash; flag if they differ</span></div>
+    <table class="snap-grid">
+      <tr><td>Comp GLA range (&plusmn;10%)</td><td>{{{{SNAP_GLA_RANGE}}}}</td></tr>
+      <tr><td>Garage / carport</td><td class="snap-hi">{{{{SNAP_CAR}}}}</td></tr>
+      <tr><td>Basement (total / finished sf)</td><td>{{{{SNAP_BASEMENT}}}}</td></tr>
+      <tr><td>Subject county</td><td>{{{{SNAP_COUNTY}}}}</td></tr>
+      <tr><td>Surrounding counties (by distance &mdash; Navica radius)</td><td>{{{{SNAP_SURROUNDING}}}}</td></tr>
+    </table>
+  </div>
 
   <div class="flagbox">
     <h4>&#9888; Flags for the appraiser (not adjusted &mdash; your call)</h4>
