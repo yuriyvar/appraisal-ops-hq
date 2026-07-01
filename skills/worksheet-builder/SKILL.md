@@ -178,5 +178,6 @@ whether the tier is grounded or extrapolated.
 ## Related
 - Renderer + contract: `tools/worksheet-renderer/` (+ README). Mapping: `references/field-map/`.
 - Condition defaults: `references/condition-profiles/` (per-form × new/average/fair).
+- DM collection sheet: `tools/dm-collection-sheet/build_collection_sheet.py` builds the blank worksheet now in the **4 DM/ACI tabs** (Subject +Contract · Neighborhood · Site +parcel dims · Improvements) with a top **search-snapshot** block; regenerate `Operations/Template files/…_DM-complete.html` from it (76 fields), tier pre-fill via `prefill_worksheet.py`.
 - Narrative + adjustment hints: `skills/notes-composer`. Full automation: the `/build-worksheet`
   orchestrator (see `docs/2026-06-13_build-B-assembler-orchestrator_claude-code-brief.md`).

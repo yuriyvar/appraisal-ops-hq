@@ -5,11 +5,13 @@
 > by Yuriy 2026-07-01.
 
 ## Progress tracker
-- [ ] Phase 0 — persist this brief (in progress)
-- [ ] Phase 1 — restructure CATALOG into 4 tabs (pure refactor, no field changes)
-- [ ] Phase 2 — add Neighborhood section + Contract sub-block (new fields)
-- [ ] Phase 3 — search-snapshot top block + parcel dimensions
-- [ ] Phase 4 — seed field-map `aci_tab` + refresh deliverable + wrap (droppable)
+- [x] Phase 0 — brief persisted (e58e3f8)
+- [x] Phase 1 — 4-tab restructure, pure refactor (2cd3acc)
+- [x] Phase 2 — Neighborhood + Contract fields (209c318)
+- [x] Phase 3 — search-snapshot + parcel dims (2d76d16)
+- [~] Phase 4 — LIGHT done: deliverable regenerated, SKILL pointer, inbox, interlane reply.
+      DEFERRED: field-map `aci_tab` seed (aci_web null till ACI live) + verify the new Neighborhood/
+      Contract DM field names vs the `.dma` registry (names show only in the MD ref, not the worksheet).
 
 ## Context
 `tools/dm-collection-sheet/build_collection_sheet.py` emits ONE flat "Subject" tab with 9

@@ -5,6 +5,17 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-01 · Code -> COWORK_AGENT · [FYI] · P3 DM-tabs remap -- generator done (Phases 0-3)
+DM collection-sheet generator now emits the **4 DM/ACI tabs** (Subject +Contract · Neighborhood ·
+Site +parcel dims · Improvements) + a top **search-snapshot** block. The whole **Neighborhood** section
+was missing before -- now 11 nbhd fields + a 5-field **Contract** sub-block; 76 fields (41 gap-flagged);
+prefill + all 12 tokens intact. Phased commits `e58e3f8`..`2d76d16`; brief
+`docs/2026-07-01_dm-tabs-remap_claude-code-brief.md`; deliverable
+`Operations/Template files/Subject-Worksheet_TEMPLATE_DM-complete.html` regenerated.
+**Deferred per YV (token budget):** field-map `aci_tab` seeding (aci_web null till ACI live) + verifying
+the new Neighborhood/Contract DM field NAMES vs the `.dma` registry. P4/P5 of the consolidated plan still open.
+No reply needed.
+
 ## 2026-06-26 · Code → Cowork · [DONE] · Phase 2 — MLS-by-market routing + data-source registry
 Consolidated-plan **Phase 2** shipped on `main` — **`27b301f`** (property-search references):
 - **`county-registry.md`** — Prince Edward + Mecklenburg/Kerr Lake added as **Navica (Lake Country)** markets; new **"MLS systems by market"** map (CVR-Matrix default · Bright→normalize via MLS-001 · Navica) carrying the **surrounding-county search sets** (PE → Buckingham/Appomattox/Charlotte/Cumberland/Nottoway/Lunenburg; Meck/Kerr Lake → Lunenburg/Charlotte/Halifax/Brunswick + NC shore Vance/Granville/Warren).
