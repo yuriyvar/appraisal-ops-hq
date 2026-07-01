@@ -74,8 +74,6 @@ CATALOG = [
    [], "APEX/MLS", "all", False, ""),
   ("Property rights appraised", "RIGHTS", ["PropertyRightsAppraised"],
    [], "PUB", "all", True, "Fee Simple / Leasehold — DM field, template gap."),
-  ("Zoning classification", "ZONING", ["ZoningClassification","ZoningDescription"],
-   [], "APEX", "all", False, ""),
   ("Tax year / RE taxes / assessment", "ASSESSMENT",
    ["TaxYear","RETaxes","AssessmentLand"], [], "APEX", "all", False, ""),
  ]),
@@ -88,6 +86,8 @@ CATALOG = [
    "Corner / inside / cul-de-sac — DM flags these."),
   ("Topography / view", "VIEW", ["ViewTypes","ViewFactor1"],
    ["COMPARISON_VIEW_DETAIL.GSEViewType"], "INSP/ZIL", "all", False, ""),
+  ("Zoning classification", "ZONING", ["ZoningClassification","ZoningDescription"],
+   [], "APEX", "all", False, ""),
   ("Water", "WATER", ["WaterPublic","WaterOther","WaterDescription"],
    ["SITE_UTILITY._Type"], "APEX", "all", False, ""),
   ("Sewer", "SEWER", ["SewerPublic","SewerOther","SewerDescription"],
@@ -229,6 +229,36 @@ FORM_EXTRAS = {
 
 
 # ---------------------------------------------------------------------------
+# TAB GROUPING — the flat CATALOG above stays the data model; this groups its
+# sections into the DM/ACI tabs (Subject · Neighborhood · Site · Improvements)
+# WITHOUT moving field tuples or tokens (prefill_worksheet.py depends on the
+# token ids, not the grouping). New sections added later map here.
+# ---------------------------------------------------------------------------
+TAB_ORDER = ["Subject", "Neighborhood", "Site", "Improvements"]
+SECTION_TAB = {
+    "Identification": "Subject",
+    "Contract": "Subject",
+    "Site": "Site",
+    "General Description": "Improvements",
+    "Foundation / Basement": "Improvements",
+    "Exterior": "Improvements",
+    "Interior": "Improvements",
+    "Heating / Cooling": "Improvements",
+    "Amenities / Car Storage": "Improvements",
+    "Room Count · Size · Quality · Condition": "Improvements",
+}
+
+
+def tabs_with_sections():
+    """Group the flat CATALOG into (tab, [(section, fields), ...]) in TAB_ORDER.
+    Unmapped sections fall to Improvements; a tab with no sections renders pending."""
+    by_tab = {t: [] for t in TAB_ORDER}
+    for section, fields in CATALOG:
+        by_tab[SECTION_TAB.get(section, "Improvements")].append((section, fields))
+    return [(t, by_tab[t]) for t in TAB_ORDER]
+
+
+# ---------------------------------------------------------------------------
 # HTML emit — mirrors the adopted Subject-Worksheet_TEMPLATE.html style.
 # ---------------------------------------------------------------------------
 CSS = """
@@ -286,24 +316,47 @@ def esc(s):
     return html.escape(str(s))
 
 
-def subject_tab_html():
-    out = ['<div class="panel active" id="subj">']
-    for section, fields in CATALOG:
-        out.append("    <h3>{}</h3>\n    <table>".format(esc(section)))
-        for (label, token, dm, mismo, src, forms, gap, note) in fields:
-            star = ' <span class="star" title="DM tracks this; added by the dma audit">&#9733;</span>' if gap else ""
-            ntitle = ' title="{}"'.format(esc(note)) if note else ""
-            out.append(
-                '      <tr><td class="f"{nt}>{lab}{st}</td>'
-                '<td class="v">{{{{{tok}}}}}</td>'
-                '<td class="s">{src}</td></tr>'.format(
-                    nt=ntitle, lab=esc(label), st=star, tok=token, src=esc(src)))
-        out.append("    </table>")
-    out.append('    <p class="legend">Source: APEX = county portal · ZIL = Zillow · '
-               'MLS = Matrix · PUB = public record/deed · INSP = confirm at inspection. '
-               '&#9733; = field DataMaster tracks that the prior template omitted.</p>')
-    out.append("  </div>")
+_PANEL_IDS = {"Subject": "subj", "Neighborhood": "nbhd",
+              "Site": "site", "Improvements": "impr"}
+
+_LEGEND = ('    <p class="legend">Source: APEX = county portal · ZIL = Zillow · '
+           'MLS = Matrix · PUB = public record/deed · INSP = confirm at inspection. '
+           '&#9733; = field DataMaster tracks that the prior template omitted.</p>')
+
+
+def _fields_table(fields):
+    out = ["    <table>"]
+    for (label, token, dm, mismo, src, forms, gap, note) in fields:
+        star = ' <span class="star" title="DM tracks this; added by the dma audit">&#9733;</span>' if gap else ""
+        ntitle = ' title="{}"'.format(esc(note)) if note else ""
+        out.append(
+            '      <tr><td class="f"{nt}>{lab}{st}</td>'
+            '<td class="v">{{{{{tok}}}}}</td>'
+            '<td class="s">{src}</td></tr>'.format(
+                nt=ntitle, lab=esc(label), st=star, tok=token, src=esc(src)))
+    out.append("    </table>")
     return "\n".join(out)
+
+
+def data_tabs_html():
+    """Emit the 4 DM/ACI subject-data panels: Subject · Neighborhood · Site · Improvements."""
+    panels = []
+    first = True
+    for tab, sections in tabs_with_sections():
+        pid = _PANEL_IDS.get(tab, tab.lower())
+        cls = "panel active" if first else "panel"
+        first = False
+        out = ['<div class="{}" id="{}">'.format(cls, pid)]
+        if not sections:
+            out.append('    <p class="pending">Pending &mdash; added in a later build phase.</p>')
+        for section, fields in sections:
+            out.append("    <h3>{}</h3>".format(esc(section)))
+            out.append(_fields_table(fields) if fields
+                       else '    <p class="pending">Pending.</p>')
+        out.append(_LEGEND)
+        out.append("  </div>")
+        panels.append("\n".join(out))
+    return "\n\n".join(panels)
 
 
 def extras_html():
@@ -366,6 +419,9 @@ def build_html():
 
   <div class="tabs">
     <div class="tab active" data-p="subj">Subject</div>
+    <div class="tab" data-p="nbhd">Neighborhood</div>
+    <div class="tab" data-p="site">Site</div>
+    <div class="tab" data-p="impr">Improvements</div>
     <div class="tab" data-p="hist">Sale / Listing History</div>
     <div class="tab" data-p="comps">Comp Grid</div>
     <div class="tab" data-p="forms">Form-specific</div>
@@ -421,7 +477,7 @@ def build_html():
 <script>{js}</script>
 </body>
 </html>
-""".format(css=CSS, js=JS, subject=subject_tab_html(), agent=COWORK_AGENT,
+""".format(css=CSS, js=JS, subject=data_tabs_html(), agent=COWORK_AGENT,
            comps=comp_grid_html(), extras=extras_html())
 
 
@@ -443,18 +499,25 @@ def build_md():
     lines.append("Collect-from legend: **APEX** county portal · **ZIL** Zillow · **MLS** "
                  "Matrix · **PUB** public record/deed · **INSP** appraiser at inspection.")
     lines.append("")
-    for section, fields in CATALOG:
-        lines.append("## {}".format(section))
+    for tab, sections in tabs_with_sections():
+        lines.append("## {} tab".format(tab))
         lines.append("")
-        lines.append("| Field | DataMaster field name(s) | MISMO (XML) | Collect | Note |")
-        lines.append("|---|---|---|---|---|")
-        for (label, token, dm, mismo, src, forms, gap, note) in fields:
-            mark = "★ " if gap else ""
-            dmn = "`" + "`, `".join(dm) + "`" if dm else "—"
-            mis = "`" + "`, `".join(mismo) + "`" if mismo else "—"
-            lines.append("| {}{} | {} | {} | {} | {} |".format(
-                mark, label, dmn, mis, src, note))
-        lines.append("")
+        if not sections:
+            lines.append("_Pending — added in a later build phase._")
+            lines.append("")
+            continue
+        for section, fields in sections:
+            lines.append("### {}".format(section))
+            lines.append("")
+            lines.append("| Field | DataMaster field name(s) | MISMO (XML) | Collect | Note |")
+            lines.append("|---|---|---|---|---|")
+            for (label, token, dm, mismo, src, forms, gap, note) in fields:
+                mark = "★ " if gap else ""
+                dmn = "`" + "`, `".join(dm) + "`" if dm else "—"
+                mis = "`" + "`, `".join(mismo) + "`" if mismo else "—"
+                lines.append("| {}{} | {} | {} | {} | {} |".format(
+                    mark, label, dmn, mis, src, note))
+            lines.append("")
     lines.append("## Form-specific extras (beyond the base 1004 Subject tab)")
     lines.append("")
     for form, items in FORM_EXTRAS.items():
