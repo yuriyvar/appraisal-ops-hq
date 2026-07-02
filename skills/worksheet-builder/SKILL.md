@@ -137,7 +137,9 @@ Block rendering and fix/flag first if any fails:
 - **12-month sales window:** primary CLOSED comps sell **within 12 months** of the effective date.
   Older same-project / same-market sales are **supplemental only, with an explicit dated-sale
   justification — never primary, never unlabeled** (andon 2026-06-26: The Moorings mixed 2023–24
-  sales). The assembler flags any closed comp with a missing or >12-mo `sale_date`.
+  sales). The assembler **hard-flags** a closed comp only when a captured `sale_date` is genuinely
+  >12 mo old; a *missing* date (the single-line CSV never carries one) gets an `INFO:` note —
+  "capture the close date" — not a gate (demoted 2026-07-02; a hard flag on every comp was noise).
 - **Comp-selection rubric (YV) — any criterion out of band → HIGHLIGHT and let YV decide, never
   silently drop or include:**
   - Above-grade **GLA ±10%** (assembler auto-flags; luxury > 5,000 sf widens to ±15%, see below).

@@ -7,7 +7,7 @@
 > If a session resets: read this + `git log --oneline -10`, continue from the first unchecked phase.
 > Plan detail: `C:\Users\yuriy\.claude\plans\woolly-dazzling-rivest.md` (Code-side copy in app memory).
 - [x] Phase 0 — this tracker committed
-- [ ] Phase 1 — data layer: schema v1.1 (subject += assessors_parcel_number · map_reference "GIS" ·
+- [x] Phase 1 — data layer: schema v1.1 (subject += assessors_parcel_number · map_reference "GIS" ·
       walls_trim "Wood" · water/sewer · re_taxes_annual · hoa_amount/period · neighborhood_bounds ·
       neighborhood_description_context; order += contract{}) + assembler defaults (only-when-absent;
       water/sewer NEVER inferred) + HOA-TBD flag + 12-mo flag demotion (missing sale_date →

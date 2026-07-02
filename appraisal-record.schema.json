@@ -8,7 +8,7 @@
   "additionalProperties": false,
   "properties": {
 
-    "schema_version": { "type": "string", "enum": ["1.0"] },
+    "schema_version": { "type": "string", "enum": ["1.0", "1.1"] },
     "generated_at":   { "type": "string" },
     "generated_by":   { "type": "string" },
 
@@ -24,7 +24,19 @@
         "due_date":       { "type": ["string", "null"] },
         "inspection":     { "type": ["string", "null"] },
         "fee":            { "type": ["number", "null"] },
-        "status":         { "type": ["string", "null"] }
+        "status":         { "type": ["string", "null"] },
+        "contract": {
+          "type": ["object", "null"],
+          "description": "Purchase-order contract block (v1.1, 6/19 brief). All nullable; refi orders leave it null.",
+          "additionalProperties": false,
+          "properties": {
+            "contract_price":            { "type": ["number", "null"] },
+            "contract_date":             { "type": ["string", "null"] },
+            "seller_is_owner_of_record": { "type": ["boolean", "null"] },
+            "concessions":               { "type": ["number", "string", "null"] },
+            "financing_type":            { "type": ["string", "null"] }
+          }
+        }
       }
     },
 
@@ -163,6 +175,59 @@
           "properties": {
             "lat": { "type": ["number", "null"] },
             "lon": { "type": ["number", "null"] }
+          }
+        },
+
+        "assessors_parcel_number": {
+          "type": ["string", "null"],
+          "description": "v1.1 (6/19 brief Change 1) — the DM 'Assessor's Parcel #' (= APN / Tax ID), hyphenated per county convention."
+        },
+        "map_reference": {
+          "type": ["string", "null"],
+          "default": "GIS",
+          "description": "v1.1 (Change 2) — assembler defaults to 'GIS' when absent; DM requires a value."
+        },
+        "walls_trim": {
+          "type": ["string", "null"],
+          "default": "Wood",
+          "description": "v1.1 (Change 3) — assembler defaults to 'Wood' when absent; renderer tags the default 'confirm at inspection'."
+        },
+        "water": {
+          "type": ["string", "null"],
+          "description": "v1.1 (Change 4) — from MLS/Matrix only. Null = unknown; NEVER inferred from county/ZIP."
+        },
+        "sewer": {
+          "type": ["string", "null"],
+          "description": "v1.1 (Change 4) — from MLS/Matrix only. Null = unknown; NEVER inferred from county/ZIP."
+        },
+        "re_taxes_annual": {
+          "type": ["number", "null"],
+          "description": "v1.1 (Change 7) — annual tax BILL in dollars (DM 'R.E. Taxes $'), distinct from assessment.total_value. Tax year = assessment.tax_year."
+        },
+        "hoa_amount": { "type": ["number", "null"], "description": "v1.1 (Change 8)." },
+        "hoa_period": {
+          "type": ["string", "null"],
+          "enum": ["monthly", "annually", null],
+          "description": "v1.1 (Change 8)."
+        },
+        "neighborhood_bounds": {
+          "type": ["object", "null"],
+          "description": "v1.1 (Change 6) — bounding roads for the Boundaries template.",
+          "additionalProperties": false,
+          "properties": {
+            "north": { "type": ["string", "null"] },
+            "south": { "type": ["string", "null"] },
+            "east":  { "type": ["string", "null"] },
+            "west":  { "type": ["string", "null"] }
+          }
+        },
+        "neighborhood_description_context": {
+          "type": ["object", "null"],
+          "description": "v1.1 (Change 6) — template inputs for the Market Description paragraph.",
+          "additionalProperties": false,
+          "properties": {
+            "style":     { "type": ["string", "null"] },
+            "amenities": { "type": ["string", "null"] }
           }
         }
       }

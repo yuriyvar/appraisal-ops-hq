@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 # ---------------------------------------------------------------------------
 # constants
 # ---------------------------------------------------------------------------
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 GENERATOR = "claude-cowork"
 
 # Matrix status codes -> canonical record values
@@ -159,14 +159,16 @@ def _months_before(d, months):
 
 
 def _sale_window_flag(status, sale_date, anchor_date, window_months=12):
-    """12-month sales-window gate (vault andon 2026-06-26 #3). For a CLOSED comp,
-    returns a flag string when the sale is missing or older than the window, else
-    None. Active/pending comps are not sold, so they are exempt."""
+    """12-month sales-window gate (vault andon 2026-06-26 #3; demoted 2026-07-02).
+    For a CLOSED comp: a sale genuinely older than the window -> HARD flag; a
+    missing date -> INFO-prefixed note only (the single-line CSV never carries a
+    close date, so a hard flag there fired on every comp = noise). Active/pending
+    comps are not sold, so they are exempt."""
     if status != "closed":
         return None
     if not sale_date:
-        return ("Closed comp has no captured sale date — cannot verify the 12-month "
-                "window; capture it before using as a primary comp")
+        return ("INFO: close date not captured in the single-line export — capture "
+                "the close date (12-month window not yet verified)")
     sd = _parse_date(sale_date)
     if sd is None:
         return "Sale date '{}' is unparseable — verify the 12-month window".format(sale_date)
@@ -407,6 +409,17 @@ def assemble(subject_json_path, comps_csv_path, out_path,
         "status":         order_meta.get("status",         order_base.get("status", "in-progress")),
     }
 
+    # Contract block (v1.1, 6/19 brief) — passthrough from CLI/kwargs, else
+    # subject.json's order.contract; all-null for refi orders.
+    contract_base = order_base.get("contract") or {}
+    order["contract"] = {
+        "contract_price":            order_meta.get("contract_price",            contract_base.get("contract_price")),
+        "contract_date":             order_meta.get("contract_date",             contract_base.get("contract_date")),
+        "seller_is_owner_of_record": order_meta.get("seller_is_owner_of_record", contract_base.get("seller_is_owner_of_record")),
+        "concessions":               order_meta.get("concessions",               contract_base.get("concessions")),
+        "financing_type":            order_meta.get("financing_type",            contract_base.get("financing_type")),
+    }
+
     # -- subject section --
     ch   = subj.get("characteristics") or {}
     ids  = subj.get("identifiers") or {}
@@ -472,7 +485,26 @@ def assemble(subject_json_path, comps_csv_path, out_path,
         "listing":       subj.get("listing"),
         "sales_history": subj.get("sales_history") or [],
         "geo":           subj.get("geo") or {"lat": None, "lon": None},
+
+        # -- v1.1 DM-ready fields (6/19 brief). Defaults ONLY when the source
+        #    value is absent; a supplied value always wins.
+        "assessors_parcel_number": subj.get("assessors_parcel_number"),
+        "map_reference": subj.get("map_reference") or "GIS",   # Change 2
+        "walls_trim":    subj.get("walls_trim") or "Wood",     # Change 3
+        # Change 4: passthrough or null. NEVER inferred from county/ZIP —
+        # rural does not mean Well/Septic; renderer shows TBD when null.
+        "water": subj.get("water"),
+        "sewer": subj.get("sewer"),
+        "re_taxes_annual": subj.get("re_taxes_annual"),        # Change 7: bill, not assessment
+        "hoa_amount": subj.get("hoa_amount"),                  # Change 8
+        "hoa_period": subj.get("hoa_period"),
+        "neighborhood_bounds": subj.get("neighborhood_bounds"),
+        "neighborhood_description_context": subj.get("neighborhood_description_context"),
     }
+
+    # Change 8: HOA is always a DM field — a missing amount must surface, never vanish.
+    if subject["hoa_amount"] is None:
+        _add_flag(subject["flags"], "HOA TBD — get from HOA docs (amount + period not captured)")
 
     # -- market section --
     market_base = subj.get("market") or {}
@@ -544,6 +576,13 @@ def main(argv=None):
     ap.add_argument("--inspection")
     ap.add_argument("--fee", type=float)
     ap.add_argument("--status")
+    # contract block (v1.1) — purchase orders only
+    ap.add_argument("--contract-price", type=float)
+    ap.add_argument("--contract-date")
+    ap.add_argument("--seller-owner", choices=["yes", "no"],
+                    help="Is the seller the owner of record?")
+    ap.add_argument("--concessions")
+    ap.add_argument("--financing-type")
     args = ap.parse_args(argv)
 
     order_meta = {}
@@ -556,6 +595,11 @@ def main(argv=None):
     if args.inspection:     order_meta["inspection"]     = args.inspection
     if args.fee is not None:order_meta["fee"]            = args.fee
     if args.status:         order_meta["status"]         = args.status
+    if args.contract_price is not None: order_meta["contract_price"] = args.contract_price
+    if args.contract_date:  order_meta["contract_date"]  = args.contract_date
+    if args.seller_owner:   order_meta["seller_is_owner_of_record"] = (args.seller_owner == "yes")
+    if args.concessions:    order_meta["concessions"]    = args.concessions
+    if args.financing_type: order_meta["financing_type"] = args.financing_type
 
     assemble(
         subject_json_path=args.subject,

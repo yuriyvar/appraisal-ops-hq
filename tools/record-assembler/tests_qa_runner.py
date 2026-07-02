@@ -177,7 +177,7 @@ try:
     cp = write_csv("empty.csv", [])
     rec = assemble(sp, cp, out("rec_t5.json"), generated_at="2026-06-13T12:00:00Z")
     assert rec["comps"] == []
-    assert rec["schema_version"] == "1.0"
+    assert rec["schema_version"] == "1.1"
     assert rec["review"]["human_reviewed"] is False
     assert rec["adjustments"]["entered_by_appraiser"] is False
     assert rec["generated_by"] == "claude-cowork"
@@ -462,11 +462,23 @@ try:
     assert any("rubric band" in f for f in c1["flags"]), "GLA band flag missing: " + str(c1["flags"])
     assert any("ML# missing" in f for f in c2["flags"]), "ML# flag missing: " + str(c2["flags"])
     assert any("Tax ID / PID missing" in f for f in c3["flags"]), "Tax ID flag missing: " + str(c3["flags"])
-    # every CLOSED comp with no captured sale date is flagged for the 12-mo window
-    assert all(any("12-month window" in f for f in c["flags"]) for c in rec["comps"]), \
-        "sale-window flag missing on a closed comp"
+    # missing close date on a CLOSED comp = INFORMATIONAL note only (demoted
+    # 2026-07-02: single-line CSV never carries the date, so a hard flag there
+    # fired on every comp). Hard flag reserved for a REAL date outside the window.
+    for c in rec["comps"]:
+        info = [f for f in c["flags"] if "capture the close date" in f]
+        assert info, "missing-date info note absent: " + str(c["flags"])
+        assert all(f.startswith("INFO:") for f in info), \
+            "missing-date note not INFO-prefixed: " + str(info)
+        assert not any("month window — supplemental only" in f for f in c["flags"]), \
+            "hard window flag fired without a sale date: " + str(c["flags"])
     # direct check of the window logic with real dates
     assert _sale_window_flag("closed", "05/2023", date(2026, 6, 13)), "old sale not flagged"
+    hard = _sale_window_flag("closed", "05/2023", date(2026, 6, 13))
+    assert not hard.startswith("INFO:") and "outside the 12-month window" in hard, \
+        "genuinely-old sale must stay a HARD flag: " + hard
+    assert _sale_window_flag("closed", None, date(2026, 6, 13)).startswith("INFO:"), \
+        "missing date must be informational"
     assert _sale_window_flag("closed", "2026-03-01", date(2026, 6, 13)) is None, "in-window sale flagged"
     assert _sale_window_flag("active", None, date(2026, 6, 13)) is None, "active comp should be exempt"
     # GLA band helper boundaries
@@ -474,6 +486,71 @@ try:
     ok("T17: Comp-quality gates — GLA ±10% band, ML#/Tax ID capture, 12-mo sales window")
 except Exception as e:
     fail("T17", str(e))
+
+# ---------------------------------------------------------------------------
+# T18: v1.1 defaults + HOA flag + contract passthrough (6/19 brief data layer)
+# ---------------------------------------------------------------------------
+try:
+    # (a) source values ABSENT -> defaults land, HOA flag raised
+    sp = write_subject("subj_t18a.json")  # BASE_SUBJECT has none of the v1.1 keys
+    cp = write_csv("t18.csv", MIX_ROWS)
+    rec = assemble(sp, cp, out("rec_t18a.json"), generated_at="2026-06-13T12:00:00Z")
+    s = rec["subject"]
+    assert rec["schema_version"] == "1.1"
+    assert s["map_reference"] == "GIS", "map_reference default: " + str(s["map_reference"])
+    assert s["walls_trim"] == "Wood", "walls_trim default: " + str(s["walls_trim"])
+    assert s["assessors_parcel_number"] is None
+    assert s["re_taxes_annual"] is None and s["hoa_amount"] is None and s["hoa_period"] is None
+    assert any("HOA TBD" in f for f in s["flags"]), "HOA flag missing: " + str(s["flags"])
+    assert rec["order"]["contract"]["contract_price"] is None  # refi: all-null block present
+
+    # (b) source values SUPPLIED -> passthrough wins, no HOA flag
+    sp2 = write_subject("subj_t18b.json", overrides={
+        "assessors_parcel_number": "778-744-7716",
+        "map_reference": "Tax Map 42-A", "walls_trim": "Plaster",
+        "re_taxes_annual": 2513.0, "hoa_amount": 75.0, "hoa_period": "monthly",
+        "neighborhood_bounds": {"north": "Rt. 53", "south": "Rt. 6",
+                                "east": "Rt. 15", "west": "Rt. 20"},
+        "neighborhood_description_context": {"style": "Ranch", "amenities": "lake access"},
+        "order": dict(BASE_SUBJECT["order"],
+                      contract={"contract_price": 350000, "contract_date": "2026-06-01",
+                                "seller_is_owner_of_record": True, "concessions": 5000,
+                                "financing_type": "Conventional"}),
+    })
+    rec2 = assemble(sp2, cp, out("rec_t18b.json"), generated_at="2026-06-13T12:00:00Z")
+    s2 = rec2["subject"]
+    assert s2["map_reference"] == "Tax Map 42-A", "supplied map_reference overridden"
+    assert s2["walls_trim"] == "Plaster", "supplied walls_trim overridden"
+    assert s2["hoa_amount"] == 75.0 and s2["hoa_period"] == "monthly"
+    assert not any("HOA TBD" in f for f in s2["flags"]), "HOA flag on supplied HOA"
+    assert s2["neighborhood_bounds"]["north"] == "Rt. 53"
+    assert s2["neighborhood_description_context"]["amenities"] == "lake access"
+    ct = rec2["order"]["contract"]
+    assert ct["contract_price"] == 350000 and ct["seller_is_owner_of_record"] is True
+    assert ct["financing_type"] == "Conventional"
+    ok("T18: v1.1 defaults only-when-absent (GIS/Wood), HOA TBD flag, contract passthrough")
+except Exception as e:
+    fail("T18", str(e))
+
+# ---------------------------------------------------------------------------
+# T19: water/sewer — null stays null, passthrough works, no 'likely' guess ever
+# ---------------------------------------------------------------------------
+try:
+    with open(out("rec_t18a.json")) as f:
+        rec_ws = json.load(f)
+    assert rec_ws["subject"]["water"] is None, "water invented: " + str(rec_ws["subject"]["water"])
+    assert rec_ws["subject"]["sewer"] is None, "sewer invented: " + str(rec_ws["subject"]["sewer"])
+    html_ws = render(rec_ws)
+    assert "likely Well" not in html_ws and "likely Septic" not in html_ws, \
+        "renderer emitted a directional utilities guess"
+
+    sp3 = write_subject("subj_t19.json", overrides={"water": "Public", "sewer": "Public"})
+    rec3 = assemble(sp3, write_csv("t19.csv", MIX_ROWS), out("rec_t19.json"),
+                    generated_at="2026-06-13T12:00:00Z")
+    assert rec3["subject"]["water"] == "Public" and rec3["subject"]["sewer"] == "Public"
+    ok("T19: water/sewer null-stays-null + passthrough; no 'likely Well/Septic' in HTML")
+except Exception as e:
+    fail("T19", str(e))
 
 # ---------------------------------------------------------------------------
 # summary
