@@ -14,7 +14,7 @@
       informational; hard flag only when a real date is >12 mo) + QA T18/T19, T17 adjusted
 - [x] Phase 2 — renderer subject tab: Changes 1,2,3,4,5,7,8 render side (APN merge · Map Ref · DEFAULT
       chip walls · TBD utilities · IMPROVEMENTS banner · RE-taxes row · starred HOA) + QA T20
-- [ ] Phase 3 — renderer: Neighborhood tab (Change 6) + search-snapshot block + QA T21
+- [x] Phase 3 — renderer: Neighborhood tab (Change 6) + search-snapshot block + QA T21
 - [ ] Phase 4 — wrap: example fixture regenerated (v1.1) · QA 21/21 · docs/SKILL/README/field-map
       notes · inbox [done] · interlane FYI · handoff
 - NOTE: brief's `subject.tax_year` NOT added — reuse existing `subject.assessment.tax_year`.

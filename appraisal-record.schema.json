@@ -334,7 +334,12 @@
                 "luxury_widened": { "type": ["boolean", "null"] }
               }
             },
-            "mls_systems": { "type": "array", "items": { "type": "string" } }
+            "mls_systems": { "type": "array", "items": { "type": "string" } },
+            "surrounding_counties": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "v1.1 — adjacent counties for comp-search widening. Filled by the orchestrator from the county registry; the deterministic renderer only displays (dash when absent)."
+            }
           }
         },
         "neighborhood_notes": { "type": ["string", "null"] }

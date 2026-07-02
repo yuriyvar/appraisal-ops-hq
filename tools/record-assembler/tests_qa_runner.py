@@ -571,10 +571,12 @@ try:
     # Change 2 — Map Reference always renders; GIS default, supplied value wins
     assert "Map Reference ★" in html_a and ">GIS<" in html_a
     assert "Tax Map 42-A" in html_b
-    # Change 3 — Wood default carries the DEFAULT chip + confirm note (test the
-    # rendered span, not the bare class name — the CSS block is on every page)
-    assert 'class="chip chip-default"' in html_a and "confirm at inspection" in html_a
-    assert "Plaster" in html_b and 'class="chip chip-default"' not in html_b
+    # Change 3 — Wood default carries the DEFAULT chip + confirm note. Target
+    # the walls-specific markup: the Neighborhood tab legitimately puts DEFAULT
+    # chips (Demand/Supply, land use) on every page.
+    walls_default = 'Wood <span class="chip chip-default">DEFAULT</span>'
+    assert walls_default in html_a and "confirm at inspection" in html_a
+    assert "Plaster" in html_b and walls_default not in html_b
     # Change 4 — null utilities say TBD (no guessing); supplied passthrough shows
     assert "Water ★" in html_a and "Sewer ★" in html_a
     assert html_a.count("TBD — verify at inspection") >= 2
@@ -596,6 +598,61 @@ try:
     ok("T20: DM-ready subject tab — labels, defaults, TBDs, banner, taxes, HOA, contract")
 except Exception as e:
     fail("T20", str(e))
+
+# ---------------------------------------------------------------------------
+# T21: Neighborhood tab + search-snapshot (6/19 brief Change 6 + adopted standard)
+# ---------------------------------------------------------------------------
+try:
+    with open(out("rec_t17.json")) as f:
+        rec_n = json.load(f)   # 3 closed comps w/ prices 352/360/420k; style Ranch
+    html_n = render(rec_n)
+
+    # tab registered between Subject and Comp grid, nav + pane both present
+    assert 'data-tab="tab-neighborhood"' in html_n and 'id="tab-neighborhood"' in html_n
+    assert (html_n.index('data-tab="tab-subject"')
+            < html_n.index('data-tab="tab-neighborhood"')
+            < html_n.index('data-tab="tab-comps"')), "neighborhood tab out of order"
+    # Broad Market: Demand/Supply default; the rest TBD
+    assert "In Balance" in html_n and "Demand/Supply" in html_n
+    # Boundaries template with [ROAD] placeholders + inspection caution
+    assert "[ROAD] to the East" in html_n and "Verify bounding roads at inspection" in html_n
+    # Present Land Use % — SFR heuristic zeros
+    assert "2-4 Unit" in html_n and "Multi-Family" in html_n and "0%" in html_n
+    # One-Unit Housing price range derived from the 3 closed comps
+    assert "$352,000" in html_n and "$420,000" in html_n and "$360,000" in html_n
+    assert "derived from 3 closed comps" in html_n
+    # age column TBD (single-line CSV carries no year_built)
+    assert "needs ≥3 closed comps with year built" in html_n
+    # Market Description template: style falls back to subject Ranch; amenities generic
+    assert "mix of Ranch and Custom Built homes" in html_n
+    assert "parks, schools, and local businesses" in html_n
+    assert "Draft via notes-composer" in html_n
+
+    # snapshot strip sits above the tab nav, carries governing GLA + band + county
+    assert 'class="snapshot"' in html_n
+    assert html_n.index('class="snapshot"') < html_n.index('<nav class="tabs">')
+    assert "1,856 sf" in html_n                       # above-grade GLA big number
+    assert "1,484 sf" in html_n and "2,228 sf" in html_n  # band from market.search
+    assert "surrounding: &mdash;" in html_n           # registry lookup NOT done here
+
+    # bounds + surrounding counties render when supplied
+    with open(out("rec_t18b.json")) as f:
+        rec_nb = json.load(f)
+    rec_nb["market"]["search"]["surrounding_counties"] = ["Goochland", "Powhatan"]
+    html_nb = render(rec_nb)
+    assert "Rt. 53 to the North" in html_nb and "Rt. 20 to the West" in html_nb
+    assert "Goochland, Powhatan" in html_nb
+    # computed band fallback when market.search has none
+    rec_nb["market"]["search"]["gla_band"] = {"low_sf": None, "high_sf": None,
+                                              "luxury_widened": False}
+    html_nc = render(rec_nb)
+    assert "computed ±10%" in html_nc and "1,670 sf" in html_nc and "2,042 sf" in html_nc
+
+    # determinism — same record renders byte-identical
+    assert render(rec_n) == html_n, "renderer is not deterministic"
+    ok("T21: Neighborhood tab + snapshot — templates, derived ranges, TBDs, determinism")
+except Exception as e:
+    fail("T21", str(e))
 
 # ---------------------------------------------------------------------------
 # summary

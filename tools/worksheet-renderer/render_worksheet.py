@@ -14,7 +14,8 @@ Design rules (per ADR-002 / session handoff 2026-06-13):
     This renderer therefore shows data + flags, and leaves the adjustment grid
     for the appraiser.
 
-Tabs: Subject · Comp grid · Sale/Listing history · Photos · Map.
+Tabs: Subject · Neighborhood · Comp grid · Sale/Listing history · Photos · Map.
+Above the tabs: the search-snapshot strip (adopted worksheet standard).
 
 Usage:
     python render_worksheet.py RECORD.json [-o OUTPUT.html]
@@ -369,6 +370,174 @@ def build_subject_tab(rec):
                ids=kv_table(id_rows), contract=contract_html,
                assess=kv_table(assess_rows), res=kv_table(res_rows),
                verification=verification)
+
+
+def _tbd(note="appraiser judgment"):
+    return '<span class="muted">TBD — {}</span>'.format(esc(note))
+
+
+def _one_unit_housing(rec):
+    """One-Unit Housing (Price / Age) low/high/predominant derived from the
+    record's CLOSED comps — >=3 data points required per metric, else TBD.
+    Pure function of the record (deterministic): age anchors on the order's
+    effective date, else generated_at — never the clock."""
+    comps = g(rec, "comps", default=[]) or []
+    closed = [c for c in comps if g(c, "status") == "closed"]
+    prices = sorted(p for p in (g(c, "sale", "sale_price") for c in closed) if p)
+    years = sorted(y for y in (g(c, "characteristics", "year_built") for c in closed) if y)
+    anchor = None
+    raw = g(rec, "order", "effective_date") or g(rec, "generated_at")
+    if raw:
+        try:
+            anchor = int(str(raw)[:4])
+        except ValueError:
+            anchor = None
+
+    if len(prices) >= 3:
+        pred = prices[(len(prices) - 1) // 2]  # lower median — deterministic
+        price_html = ("{} low &middot; {} high &middot; {} predominant "
+                      '<span class="muted">(derived from {} closed comps)</span>').format(
+            money(prices[0]), money(prices[-1]), money(pred), len(prices))
+    else:
+        price_html = _tbd("needs ≥3 closed comps")
+    if len(years) >= 3 and anchor:
+        ages = sorted(anchor - y for y in years)
+        pred_age = ages[(len(ages) - 1) // 2]
+        age_html = "{} low &middot; {} high &middot; {} predominant yrs".format(
+            ages[0], ages[-1], pred_age)
+    else:
+        age_html = _tbd("needs ≥3 closed comps with year built")
+    return price_html, age_html
+
+
+def build_neighborhood_tab(rec):
+    """6/19 brief Change 6 — DM Neighborhood tab: templated/derived pre-fill,
+    explicit TBD where only the appraiser can judge. Every value is a pure
+    function of the record (deterministic)."""
+    subj = g(rec, "subject", default={})
+
+    market_rows = [
+        ("Location (Urban/Suburban/Rural)", _tbd()),
+        ("Built-Up", _tbd()),
+        ("Growth", _tbd()),
+        ("Property Values", _tbd()),
+        ("Demand/Supply",
+         'In Balance <span class="chip chip-default">DEFAULT</span> '
+         '<span class="muted">override from MLS market stats when available</span>'),
+        ("Marketing Time", _tbd()),
+    ]
+
+    # Boundaries ★ — template sentence; [ROAD] placeholder when a bound is missing
+    b = g(subj, "neighborhood_bounds", default={}) or {}
+
+    def road(k):
+        return esc(g(b, k)) if g(b, k) else "[ROAD]"
+
+    bounds_sentence = ("The subject is bound by {} to the North, {} to the South, "
+                       "{} to the East, and {} to the West.").format(
+        road("north"), road("south"), road("east"), road("west"))
+    boundaries = (
+        '<h3>Broad Market Boundaries ★</h3>'
+        '<div class="callout">{}</div>'
+        '<p class="note">⚠ Verify bounding roads at inspection.</p>'.format(bounds_sentence))
+
+    # Present Land Use % — SFR neighborhoods default 2-4 Unit / Multi-Family to 0%
+    ptype = (g(subj, "characteristics", "property_type") or "").lower()
+    is_sfr = "sfr" in ptype or "single" in ptype
+    zero = '0% <span class="chip chip-default">DEFAULT</span>' if is_sfr else _tbd()
+    land_rows = [
+        ("One-Unit", _tbd("appraiser fills at inspection")),
+        ("2-4 Unit", zero),
+        ("Multi-Family", zero),
+        ("Commercial", _tbd("appraiser fills at inspection")),
+        ("Other", _tbd("appraiser fills at inspection")),
+    ]
+
+    price_html, age_html = _one_unit_housing(rec)
+    one_unit_rows = [("Price", price_html), ("Age", age_html)]
+
+    # Market Description ★ — template; style falls back to the subject's style,
+    # amenities to the safe generic set.
+    ndc = g(subj, "neighborhood_description_context", default={}) or {}
+    style = g(ndc, "style") or g(subj, "characteristics", "style") or "[STYLE]"
+    amenities = g(ndc, "amenities") or "parks, schools, and local businesses"
+    descr = ("Neighborhood with a mix of {} and Custom Built homes. Amenities include {}. "
+             "Recent sales data is personally verified for accurate market representation."
+             ).format(esc(style), esc(amenities))
+
+    conditions = ("Draft via notes-composer after comps assembled. Include DOM trend, "
+                  "list-to-sale ratio, and any view/waterfront premium observation.")
+
+    return """
+    <section class="tab-pane" id="tab-neighborhood">
+      <div class="two-col">
+        <div>
+          <h3>Broad Market Characteristics</h3>{market}
+          {boundaries}
+          <h3>Present Land Use %</h3>{land}
+        </div>
+        <div>
+          <h3>One-Unit Housing (from closed comps)</h3>{one_unit}
+          <h3>Broad Market Description ★</h3>
+          <div class="callout">{descr}</div>
+          <h3>Market Conditions ★</h3>
+          <p class="note">{conditions}</p>
+        </div>
+      </div>
+    </section>
+    """.format(market=kv_table(market_rows), boundaries=boundaries,
+               land=kv_table(land_rows), one_unit=kv_table(one_unit_rows),
+               descr=descr, conditions=esc(conditions))
+
+
+def build_search_snapshot(rec):
+    """Adopted-standard search-snapshot strip between the header and the tab
+    nav: the numbers needed in view while pulling comps. Surrounding counties
+    come from the orchestrator/registry, never looked up here (deterministic
+    renderer) — dash when absent."""
+    subj = g(rec, "subject", default={})
+    ch = g(subj, "characteristics", default={})
+    gla = g(ch, "gla_sf")
+
+    # county-vs-MLS finished area from the verification rows when captured
+    county_v = mls_v = None
+    for v in g(subj, "verification", default=[]) or []:
+        attr = (g(v, "attribute") or "").lower()
+        if "gla" in attr or "finished" in attr or "sqft" in attr or "sq ft" in attr:
+            county_v = county_v or g(v, "county")
+            mls_v = mls_v or g(v, "mls")
+    cvm = "{} / {}".format(dash(county_v), dash(mls_v)) if (county_v or mls_v) else "&mdash;"
+
+    band = g(rec, "market", "search", "gla_band", default={}) or {}
+    lo, hi = g(band, "low_sf"), g(band, "high_sf")
+    band_note = ""
+    if lo is None and hi is None and gla:
+        lo, hi = round(gla * 0.9), round(gla * 1.1)
+        band_note = ' <span class="muted">(computed ±10%)</span>'
+    band_html = ("{} – {}".format(sf(lo), sf(hi)) + band_note) if (lo or hi) else "&mdash;"
+
+    basement = dash(g(ch, "basement"))
+    bg_fin = g(ch, "below_grade_finished_sf")
+    if bg_fin is not None:
+        basement += ' <span class="muted">({} finished)</span>'.format(sf(bg_fin))
+
+    county_html = dash(g(subj, "address", "county"))
+    surrounding = g(rec, "market", "search", "surrounding_counties", default=[]) or []
+    if surrounding:
+        county_html += ' <span class="muted">+ {}</span>'.format(esc(", ".join(surrounding)))
+    else:
+        county_html += ' <span class="muted">+ surrounding: &mdash;</span>'
+
+    cards = [
+        ('<span class="snap-num">{}</span><span class="snap-k">above-grade GLA (governing)</span>'.format(sf(gla)), " snap-hl"),
+        ('<span class="snap-num">{}</span><span class="snap-k">county / MLS finished area</span>'.format(cvm), ""),
+        ('<span class="snap-num">{}</span><span class="snap-k">comp GLA band</span>'.format(band_html), ""),
+        ('<span class="snap-num">{}</span><span class="snap-k">garage / carport</span>'.format(dash(g(ch, "garage"))), " snap-hl"),
+        ('<span class="snap-num">{}</span><span class="snap-k">basement</span>'.format(basement), ""),
+        ('<span class="snap-num">{}</span><span class="snap-k">county + surrounding</span>'.format(county_html), ""),
+    ]
+    inner = "".join('<div class="snap-card{}">{}</div>'.format(cls, body) for body, cls in cards)
+    return '<div class="snapshot">{}</div>'.format(inner)
 
 
 # Comp grid — URAR-style: features as rows, subject + comps as columns.
@@ -757,6 +926,13 @@ body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,H
 .chip-default{background:#e8eef5;color:#33506b;border:1px dashed #90a8bf}
 .section-banner{margin:18px 0 4px;padding:10px 14px;background:#1a5276;color:#fff;
   border-radius:4px;font-size:1.15em;letter-spacing:.02em}
+.snapshot{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}
+.snap-card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:10px 16px;flex:1 1 160px;min-width:150px}
+.snap-card.snap-hl{background:var(--subj);border-color:var(--accent)}
+.snap-num{display:block;font-size:18px;font-weight:800;color:var(--accent-2)}
+.snap-k{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);margin-top:2px}
 nav.tabs{display:flex;gap:4px;margin:18px 0 14px;flex-wrap:wrap}
 nav.tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);
   padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer}
@@ -832,10 +1008,12 @@ def render(rec, with_photos=False, with_map=False):
     # (via --with-photos / --with-map). Off by default.
     tabs = [
         ("tab-subject", "Subject"),
+        ("tab-neighborhood", "Neighborhood"),
         ("tab-comps", "Comp grid"),
         ("tab-history", "Sale / Listing history"),
     ]
-    panes = build_subject_tab(rec) + build_comps_tab(rec) + build_history_tab(rec)
+    panes = (build_subject_tab(rec) + build_neighborhood_tab(rec)
+             + build_comps_tab(rec) + build_history_tab(rec))
     if with_photos:
         tabs.append(("tab-photos", "Photos"))
         panes += build_photos_tab(rec)
@@ -853,11 +1031,13 @@ def render(rec, with_photos=False, with_map=False):
 <style>{css}</style></head>
 <body><div class="wrap">
 {header}
+{snapshot}
 <nav class="tabs">{nav}</nav>
 {panes}
 {footer}
 </div><script>{js}</script></body></html>""".format(
-        title=title, css=CSS, header=build_header(rec), nav=nav,
+        title=title, css=CSS, header=build_header(rec),
+        snapshot=build_search_snapshot(rec), nav=nav,
         panes=panes, footer=build_sources_footer(rec), js=JS)
 
 
