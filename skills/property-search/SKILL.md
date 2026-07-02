@@ -194,6 +194,33 @@ When the user asks to "get it into DataMaster" or requests computer use:
 5. **TaxID as Double**: `Math.round(a.TaxID)` before `.toString()`.
 6. Record every endpoint discovery in `references/va-data-sources.md`.
 
+## Technique: Navica comp pull (Navica-market adapter)
+> Applies when `references/county-registry.md` routes the market to **Navica** (Lake Country /
+> Southside markets — e.g. Prince Edward, Mecklenburg/Kerr Lake). Matrix steps above do NOT apply.
+
+1. **Resolve the account(s) first** in `references/navica-accounts.md` — some counties (Mecklenburg)
+   require searching **TWO accounts** (South Central 287 + Southern Piedmont 397); comps split across
+   them. ⚠️ **MLS# namespaces are SEPARATE per account** — the same numeric ID is a *different listing*
+   in each; always search a MLS# inside its own account. Credentials/how-to:
+   `Operations/Navica MLS basics.docx` (never store creds in the repo).
+2. **MLS# search = POST via `MlsNosForm`** (the GET quick search `searchValRC` → 500; direct
+   `/Listing/Detail/{id}` URLs → 500 — use neither):
+   navigate `next.navicamls.net/<acct>/Search/Index?accountNo=<acct>`, fill `input[name="mlsNo"]`
+   fields (numeric only — no `R` prefix / `C` suffix), submit `#MlsNosForm` → results at
+   `/<acct>/Search/MlsListToResults`.
+3. **Criteria search:** Search → Residential; Status = Active + Pending + Closed; location BROAD
+   (rural comps cross county lines — use the surrounding-county set from `county-registry.md`);
+   Closing Date 6–12 mo; sort Distance + Close Date. Don't over-filter.
+4. **Listing detail:** click the listing photo/row (TR) in results → `/<acct>/Expanded/Single`;
+   set layout **Traditional** (shows all fields). **No CSV export exists** — read fields off the
+   detail page and extract the FULL per-comp checklist in `references/navica-accounts.md`
+   ("Per-comp data to extract"): rooms/beds/baths, pending date, house type, heating/cooling,
+   porch/deck/patio, basement finish, garage/carport, financing + seller concessions, GLA
+   (**Est Total Htd SqFt**), parcel ID, etc. Fields absent from the summary live in the
+   remarks/photos — mark `⚠ confirm`, never guess.
+5. **DataMaster CSV is built BY HAND** for Navica comps — match the "Appraiser Single Line"
+   headers in `references/datamaster-handoff.md` exactly; save to `Comps files\` as usual.
+
 ## Rules
 - Never present a single-source GLA as verified. Verified = two+ sources agree
   within 5%, or the user has chosen which source governs.

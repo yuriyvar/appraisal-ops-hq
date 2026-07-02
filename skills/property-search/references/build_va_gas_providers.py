@@ -88,6 +88,18 @@ PROVIDERS = [
      None, "phone_only",
      "No online tool and no published phone in this reference. Call the provider directly.",
      None, None, LV),
+
+    # Sentinel row: county VERIFIED to have NO SCC-regulated natural-gas provider.
+    # Distinguishes "confirmed absent" from "county not yet looked up" (no row at all).
+    # Query hit on this row => Gas: Not available; heating fuel = electric / heat pump /
+    # propane / oil / wood — never suggest a gas-availability map check.
+    (90, "(NONE) No SCC-regulated gas provider", "confirmed absent", None,
+     "Counties verified to have no SCC-regulated natural-gas distribution service.",
+     None, "confirmed_absent",
+     "Verified on live orders: Charlotte Co (16560 Kings Hwy, 2026-06-26), Buckingham Co "
+     "(2114 Buckingham Springs Rd, 2026-06-26), Mecklenburg Co (4237 Hall Rd, 2026-06-30) "
+     "- all rural Southside VA; well/septic + electric/heat-pump/propane typical.",
+     None, None, "2026-07-02"),
 ]
 
 # provider_id -> list of jurisdictions. Overlap counties intentionally appear under BOTH
@@ -112,6 +124,8 @@ COUNTIES = {
     7: ["Wise County", "Scott County", "Lee County", "Dickenson County", "Buchanan County",
         "Russell County", "Tazewell County", "Washington County", "Smyth County",
         "Bland County", "Wythe County", "Carroll County", "Grayson County"],
+    # confirmed-absent counties (sentinel id 90) - live-order verified, see provider notes
+    90: ["Charlotte County", "Buckingham County", "Mecklenburg County"],
 }
 
 
