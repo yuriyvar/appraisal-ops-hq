@@ -15,8 +15,10 @@
 - [x] Phase 2 — renderer subject tab: Changes 1,2,3,4,5,7,8 render side (APN merge · Map Ref · DEFAULT
       chip walls · TBD utilities · IMPROVEMENTS banner · RE-taxes row · starred HOA) + QA T20
 - [x] Phase 3 — renderer: Neighborhood tab (Change 6) + search-snapshot block + QA T21
-- [ ] Phase 4 — wrap: example fixture regenerated (v1.1) · QA 21/21 · docs/SKILL/README/field-map
-      notes · inbox [done] · interlane FYI · handoff
+- [x] Phase 4 — wrap: example fixture pair CREATED/regenerated (v1.1; the example JSON referenced
+      by the README had never been committed) · QA 21/21 + double-render byte-identical · docs/
+      SKILL/README/field-map notes · inbox [done] · interlane FYI · handoff
+- **ALL PHASES DONE 2026-07-02.** Every change in this brief is live in the automated path.
 - NOTE: brief's `subject.tax_year` NOT added — reuse existing `subject.assessment.tax_year`.
 
 ---

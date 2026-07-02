@@ -1,0 +1,343 @@
+{
+  "schema_version": "1.1",
+  "generated_at": "2026-07-02T12:00:00Z",
+  "generated_by": "claude-cowork",
+  "order": {
+    "order_id": "EXAMPLE-001",
+    "form_type": "1004",
+    "client": "Example Bank, N.A.",
+    "loan_number": null,
+    "effective_date": "2026-07-01",
+    "due_date": "2026-07-10",
+    "inspection": "2026-07-03 10:00",
+    "fee": 500,
+    "status": "in-progress",
+    "contract": {
+      "contract_price": 345000,
+      "contract_date": "2026-06-20",
+      "seller_is_owner_of_record": true,
+      "concessions": 5000,
+      "financing_type": "Conventional"
+    }
+  },
+  "subject": {
+    "address": {
+      "full": "119 Example Ridge Ln, Henrico, VA 23229",
+      "street": "119 Example Ridge Ln",
+      "city": "Henrico",
+      "state": "VA",
+      "zip": "23229",
+      "county": "Henrico"
+    },
+    "flags": [
+      "HOA TBD — get from HOA docs (amount + period not captured)"
+    ],
+    "characteristics": {
+      "property_type": "SFR",
+      "use_code": "10",
+      "zoning": "R-3",
+      "gla_sf": 1856,
+      "above_grade_sf": 1856,
+      "below_grade_finished_sf": 400,
+      "basement": "Full, partially finished",
+      "year_built": 1972,
+      "stories": 1,
+      "style": "Ranch",
+      "grade_or_condition": "C3/Q4",
+      "bedrooms": 3,
+      "full_baths": 2,
+      "half_baths": 0,
+      "total_rooms": 7,
+      "lot_size_sf": 10890,
+      "lot_size_acres": 0.25,
+      "garage": "1-car attached",
+      "pool": false,
+      "fireplaces": 1,
+      "heating": "FWA",
+      "cooling": "Central A/C",
+      "exterior": "Vinyl"
+    },
+    "identifiers": {
+      "gpin": "778-744-7716",
+      "pid": "078-123456",
+      "apn": "778-744-7716",
+      "subdivision": "Example Ridge",
+      "section": "B",
+      "block": null,
+      "lot": "14",
+      "magisterial_district": "Tuckahoe",
+      "neighborhood_code": "R21",
+      "legal_description": "EXAMPLE RIDGE SEC B LT 14"
+    },
+    "assessment": {
+      "tax_year": 2026,
+      "land_value": 85000,
+      "improvements_value": 210000,
+      "total_value": 295000
+    },
+    "resolution": {
+      "input_was_address_only": true,
+      "method": "county-assessment",
+      "no_tax_id": false,
+      "neighbor_unit_proxy": null,
+      "cached": false,
+      "resolved_on": "2026-07-01"
+    },
+    "verification": [
+      {
+        "attribute": "Finished area (sf)",
+        "county": "1,856",
+        "zillow": "1,850",
+        "realtor": null,
+        "redfin": null,
+        "homes": null,
+        "mls": "1,856",
+        "governing_source": "county",
+        "flag": null
+      }
+    ],
+    "listing": null,
+    "sales_history": [
+      {
+        "date": "2019-05-14",
+        "price": 262000,
+        "deed_book_page": "5844/1102",
+        "qualification": "Qualified",
+        "source": "county CAMA"
+      }
+    ],
+    "geo": {
+      "lat": null,
+      "lon": null
+    },
+    "assessors_parcel_number": "778-744-7716",
+    "map_reference": "GIS",
+    "walls_trim": "Wood",
+    "water": "Public",
+    "sewer": null,
+    "re_taxes_annual": 2513.4,
+    "hoa_amount": null,
+    "hoa_period": null,
+    "neighborhood_bounds": {
+      "north": "Rt. 53",
+      "south": "Rt. 6",
+      "east": "Rt. 15",
+      "west": "Rt. 20"
+    },
+    "neighborhood_description_context": {
+      "style": "Ranch",
+      "amenities": "parks, schools, and local businesses"
+    }
+  },
+  "comps": [
+    {
+      "position": 1,
+      "status": "closed",
+      "address": {
+        "full": "121 Example Ridge Ln, Henrico, VA 23229",
+        "county": "Henrico"
+      },
+      "distance_mi": 0.3,
+      "identifiers": {
+        "mls_number": "VA2411001",
+        "mls_system": "CVR",
+        "pid": "078-201001",
+        "subdivision": "Example Ridge"
+      },
+      "characteristics": {
+        "gla_sf": 1900.0,
+        "above_grade_sf": 1900.0,
+        "year_built": null,
+        "bedrooms": 3,
+        "full_baths": 2,
+        "half_baths": 0,
+        "total_rooms": 7,
+        "property_type": "SFR"
+      },
+      "sale": {
+        "sale_price": 350000.0,
+        "list_price": 355000.0,
+        "original_list_price": 355000.0,
+        "dom": 6,
+        "sale_date": null,
+        "concessions": null
+      },
+      "price_per_sf": 184.21,
+      "gla_delta_vs_subject_sf": 44.0,
+      "flags": [
+        "INFO: close date not captured in the single-line export — capture the close date (12-month window not yet verified)"
+      ],
+      "out_of_county": false,
+      "prior_sale": null,
+      "geo": {
+        "lat": null,
+        "lon": null
+      }
+    },
+    {
+      "position": 2,
+      "status": "closed",
+      "address": {
+        "full": "88 Sample Oak Dr, Henrico, VA 23229",
+        "county": "Henrico"
+      },
+      "distance_mi": 0.5,
+      "identifiers": {
+        "mls_number": "VA2411002",
+        "mls_system": "CVR",
+        "pid": "078-201002",
+        "subdivision": "Sample Oaks"
+      },
+      "characteristics": {
+        "gla_sf": 1810.0,
+        "above_grade_sf": 1810.0,
+        "year_built": null,
+        "bedrooms": 3,
+        "full_baths": 2,
+        "half_baths": 0,
+        "total_rooms": 7,
+        "property_type": "SFR"
+      },
+      "sale": {
+        "sale_price": 338000.0,
+        "list_price": 339900.0,
+        "original_list_price": 342000.0,
+        "dom": 11,
+        "sale_date": null,
+        "concessions": null
+      },
+      "price_per_sf": 186.74,
+      "gla_delta_vs_subject_sf": -46.0,
+      "flags": [
+        "INFO: close date not captured in the single-line export — capture the close date (12-month window not yet verified)"
+      ],
+      "out_of_county": false,
+      "prior_sale": null,
+      "geo": {
+        "lat": null,
+        "lon": null
+      }
+    },
+    {
+      "position": 3,
+      "status": "closed",
+      "address": {
+        "full": "14 Demo Creek Ct, Henrico, VA 23229",
+        "county": "Henrico"
+      },
+      "distance_mi": 0.8,
+      "identifiers": {
+        "mls_number": "VA2411003",
+        "mls_system": "CVR",
+        "pid": "078-201003",
+        "subdivision": "Demo Creek"
+      },
+      "characteristics": {
+        "gla_sf": 1780.0,
+        "above_grade_sf": 1780.0,
+        "year_built": null,
+        "bedrooms": 3,
+        "full_baths": 2,
+        "half_baths": 1,
+        "total_rooms": 7,
+        "property_type": "SFR"
+      },
+      "sale": {
+        "sale_price": 329900.0,
+        "list_price": 332000.0,
+        "original_list_price": 335000.0,
+        "dom": 19,
+        "sale_date": null,
+        "concessions": null
+      },
+      "price_per_sf": 185.34,
+      "gla_delta_vs_subject_sf": -76.0,
+      "flags": [
+        "MLS# normalized: BRT prefix stripped (Bright MLS via CVR)",
+        "INFO: close date not captured in the single-line export — capture the close date (12-month window not yet verified)"
+      ],
+      "out_of_county": false,
+      "prior_sale": null,
+      "geo": {
+        "lat": null,
+        "lon": null
+      }
+    },
+    {
+      "position": 4,
+      "status": "active",
+      "address": {
+        "full": "131 Example Ridge Ln, Henrico, VA 23229",
+        "county": "Henrico"
+      },
+      "distance_mi": 0.4,
+      "identifiers": {
+        "mls_number": "VA2411004",
+        "mls_system": "CVR",
+        "pid": "078-201004",
+        "subdivision": "Example Ridge"
+      },
+      "characteristics": {
+        "gla_sf": 1850.0,
+        "above_grade_sf": 1850.0,
+        "year_built": null,
+        "bedrooms": 3,
+        "full_baths": 2,
+        "half_baths": 0,
+        "total_rooms": 7,
+        "property_type": "SFR"
+      },
+      "sale": {
+        "sale_price": null,
+        "list_price": 359900.0,
+        "original_list_price": 359900.0,
+        "dom": 4,
+        "sale_date": null,
+        "concessions": null
+      },
+      "price_per_sf": null,
+      "gla_delta_vs_subject_sf": -6.0,
+      "flags": [],
+      "out_of_county": false,
+      "prior_sale": null,
+      "geo": {
+        "lat": null,
+        "lon": null
+      }
+    }
+  ],
+  "market": {
+    "search": {
+      "radius_mi": 1.0,
+      "sale_window_months": 12,
+      "gla_band": {
+        "low_sf": 1670,
+        "high_sf": 2042,
+        "luxury_widened": false
+      },
+      "mls_systems": [
+        "CVR MLS"
+      ],
+      "surrounding_counties": [
+        "Goochland",
+        "Powhatan"
+      ]
+    },
+    "neighborhood_notes": null
+  },
+  "photos": [],
+  "sources": [
+    {
+      "name": "Henrico County CAMA (synthetic example)",
+      "url": "https://example.invalid/cama",
+      "retrieved_at": "2026-07-01"
+    }
+  ],
+  "review": {
+    "human_reviewed": false,
+    "notes": null
+  },
+  "adjustments": {
+    "entered_by_appraiser": false
+  }
+}

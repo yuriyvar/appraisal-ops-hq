@@ -22,6 +22,14 @@ files would drift. A DOM change in ACI becomes a data edit in `aci_web`, not cod
   source of truth for *rendering*. The `worksheet` column here **documents** that contract
   so drift is visible; the renderer does not load this YAML (a later refactor may, once the
   map is proven stable — see ADR-003).
+- **Worksheet-lens note (2026-07-02, schema v1.1):** the renderer now also surfaces a
+  `Neighborhood` tab + search-snapshot strip and the DM-ready subject rows
+  (`subject.assessors_parcel_number`, `map_reference`, `walls_trim`, `water/sewer`,
+  `re_taxes_annual`, `hoa_amount/period`, `neighborhood_bounds`,
+  `neighborhood_description_context`, `order.contract`,
+  `market.search.surrounding_counties`). When seeding `worksheet` cells for these
+  record paths, point them at the Subject/Neighborhood tabs accordingly. Existing
+  record paths were NOT renamed.
 - `mismo` + `pdf` columns are **validated** for FNM1004 against the 3 URAR pairs (pair-QA,
   100% value match). Other forms are seeded or stubbed per sample availability.
 

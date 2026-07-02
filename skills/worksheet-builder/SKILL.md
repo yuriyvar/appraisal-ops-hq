@@ -14,7 +14,9 @@ description: Build the tabbed HTML copy-paste worksheet that helps Yuriy fill ou
 > (View A, assignee-blind; Alan's orders included, never skipped at prep). One rule, both lanes.
 
 Produces the **tabbed HTML copy-paste worksheet** that Yuriy pastes into
-DataMaster / ACI. **Default tabs: Subject · Comp grid · Sale/Listing history.**
+DataMaster / ACI. **Default tabs: Subject · Neighborhood · Comp grid ·
+Sale/Listing history, plus the search-snapshot strip above the tabs** (adopted
+standard; renderer emits it automatically since 2026-07-02 — no hand-merge).
 **Photos and Map are OPTIONAL — include them only with Yuriy's explicit approval**
 (ask before adding; omit by default). COWORK_AGENT ASSEMBLES the data and RENDERS it; the
 licensed appraiser judges adjustments and certifies. **Never submit.**
@@ -109,7 +111,11 @@ Source 3 (`Connected` / `Available-not-connected` / `Not available`); never leav
    (e.g. MLS `BRTVA→VA`, Chesterfield TaxID rounding). Don't render un-normalized values.
 3. **Run the COMPLETENESS GATE below — do not render until it passes.**
 4. **Render:** `python tools/worksheet-renderer/render_worksheet.py <record.json> -o <order>/worksheet.html`.
-   Default tabs = Subject · Comp grid · Sale/Listing history. **Photos and Map are OFF by default**
+   Default tabs = Subject · Neighborhood · Comp grid · Sale/Listing history + the search-snapshot
+   strip (all automatic from the record — populate `subject.neighborhood_bounds`,
+   `neighborhood_description_context`, `water/sewer`, `re_taxes_annual`, `hoa_amount/period` and
+   `market.search.surrounding_counties` in subject.json to pre-fill them; anything absent renders
+   TBD/dash, never guessed). **Photos and Map are OFF by default**
    — add `--with-photos` / `--with-map` ONLY after Yuriy explicitly approves including them.
 5. **Self-check the output** (tabs populated, flags surfaced, review gate shows NOT CERTIFIED),
    then hand the worksheet to the appraiser to review / adjust / certify.

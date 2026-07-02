@@ -141,7 +141,8 @@ a self-contained tabbed HTML worksheet for copy-paste into ACI.
 python tools/worksheet-renderer/render_worksheet.py `
     "C:\Users\yuriy\VDV Appraisals\<order-folder>\appraisal-record.json" `
     -o "C:\Users\yuriy\VDV Appraisals\<order-folder>\worksheet.html"
-    # default tabs: Subject · Comp grid · Sale/Listing history
+    # default tabs: Subject · Neighborhood · Comp grid · Sale/Listing history
+    # + search-snapshot strip above the tabs (automatic; DM-ready labels since 2026-07-02)
     # Photos & Map are OPTIONAL — add --with-photos / --with-map ONLY if Yuriy approves
 ```
 

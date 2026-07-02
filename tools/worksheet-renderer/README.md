@@ -29,10 +29,28 @@ python tools/worksheet-renderer/render_worksheet.py appraisal-record.example.jso
   -o tools/worksheet-renderer/worksheet.example.html
 ```
 
-## Output tabs
-**Default (always shown):**
-- **Subject** — characteristics (governing), identifiers, assessment, subject
-  resolution, and the cross-source verification table (disagreements flagged).
+## Output layout (adopted standard since 2026-07-02 — 6/19 brief implemented)
+**Search-snapshot strip** (above the tabs): governing above-grade GLA · county-vs-MLS
+finished area (from `verification`) · comp GLA band (record's, else computed ±10%) ·
+garage/carport · basement total/finished · county + surrounding counties (dash until
+the orchestrator fills `market.search.surrounding_counties` — the renderer never looks
+anything up).
+
+**Default tabs:**
+- **Subject** — DM-ready: one **"Assessor's Parcel # ★ (= APN / Tax ID)"** row
+  (`assessors_parcel_number || apn || pid || map_id`) + informational Internal PID +
+  **Map Reference ★** (defaults "GIS"); Site table carries **Water ★ / Sewer ★**
+  (value or "TBD — verify at inspection" — never a directional guess); the
+  **▶ IMPROVEMENTS banner** splits site from improvements rows; **Walls/trim ★**
+  shows a `DEFAULT` chip on the assembler's "Wood" stand-in; **R.E. Taxes $ ★** is
+  its own row (bill ≠ assessment); **HOA $ / period ★** always renders (TBD chip when
+  missing); a **Contract (purchase)** block appears when `order.contract` has data.
+- **Neighborhood** — 6/19 brief Change 6: Broad Market Characteristics (TBD +
+  Demand/Supply "In Balance" default), Boundaries ★ template from
+  `subject.neighborhood_bounds` (+ verify-at-inspection caution), Present Land Use %
+  (0% defaults for SFR), One-Unit Housing price/age derived from ≥3 CLOSED comps
+  (else TBD), Market Description ★ template, Market Conditions ★ notes-composer
+  placeholder.
 - **Comp grid** — URAR-style: features as rows, SUBJECT + comps as columns.
   **Closed sales are segregated from Active/Pending** (listings are supporting
   analysis only, per the comp-quality rule). Per-comp flags shown.
@@ -50,13 +68,16 @@ python tools/worksheet-renderer/render_worksheet.py appraisal-record.example.jso
 - The footer always shows the **review gate** (REVIEWED vs NOT YET REVIEWED) —
   the renderer assembles data; the licensed appraiser certifies. Nothing files
   automatically.
-- Built for `schema_version` **1.0** (`appraisal-record.schema.json`).
+- Built for `schema_version` **1.0 and 1.1** (`appraisal-record.schema.json`).
+  v1.1 adds the DM-ready subject fields + `order.contract` +
+  `market.search.surrounding_counties` (6/19 brief).
 
 ## Tested branches
-Verified against `appraisal-record.example.json` (3 closed comps, no photos,
-no comp coords) and a synthetic record adding an active comp, photos, and
-geocoded comps — exercising the active/pending grid, the SVG map, and the
-photo grid.
+QA = `tools/record-assembler/tests_qa_runner.py` (21 e2e tests, assemble→render,
+determinism byte-identical). The committed fixture pair is synthetic:
+`appraisal-record.example.json` (v1.1; 3 closed + 1 active comp, purchase contract,
+bounds, sewer null → TBD, HOA missing → flag) → `worksheet.example.html`,
+regenerated deliberately via the Usage command above.
 
 ## Next builds (depend on this contract)
 - **B** — comp-pull standard work that fills the record automatically.

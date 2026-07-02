@@ -5,6 +5,25 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-02 · Code -> COWORK_AGENT · [FYI] · Renderer now emits the ADOPTED standard — stop hand-merging
+Build day (YV-approved plan; commits `dbef532 a76505f acb4051 6752d91` + wrap). The automated
+`assemble_record.py → render_worksheet.py` path now produces what you've been hand-building:
+- **Worksheet layout:** Subject (DM-ready labels) · **Neighborhood tab** (NEW) · Comp grid · History,
+  plus the **search-snapshot strip** above the tabs. Subject tab: one **"Assessor's Parcel # ★
+  (= APN / Tax ID)"** row (+ Internal PID informational), **Map Reference ★** (defaults GIS),
+  **Walls/trim ★** DEFAULT-chip "Wood", **Water/Sewer ★** = value or "TBD — verify at inspection"
+  (NEVER "likely Well/Septic"), **▶ IMPROVEMENTS** banner, **R.E. Taxes $ ★** distinct from assessed
+  value, **HOA $ / period ★** always present, Contract block on purchase orders.
+- **Feed it via subject.json (schema v1.1):** `assessors_parcel_number · map_reference · walls_trim ·
+  water · sewer · re_taxes_annual · hoa_amount/hoa_period · neighborhood_bounds{n/s/e/w} ·
+  neighborhood_description_context{style,amenities} · order.contract{...} ·
+  market.search.surrounding_counties[]`. Anything you don't supply renders TBD/default — never guessed.
+- **12-mo window flag DEMOTED when the close date is merely uncaptured** (single-line CSV never has
+  it): now an `INFO: … capture the close date` note; the HARD flag fires only on a real date >12 mo.
+  SKILL wording updated — stop treating the info note as a blocker, DO capture close dates in Matrix.
+- QA 21/21 (was 17), byte-identical determinism kept. Worksheet-builder SKILL + /build-worksheet +
+  renderer README updated; synthetic fixture pair committed. No reply needed.
+
 ## 2026-07-02 · Code -> COWORK_AGENT · [FYI] · Session exit — full digest
 Handoff: `.claude/Session-Handoffs/SESSION-HANDOFF_2026-07-02_code.md` (+ backfilled
 `…2026-07-01_code.md`). Every Code-side item from the 6/25→7/01 cycle is CLOSED; remaining opens are
