@@ -5,6 +5,12 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-02 · Code -> COWORK_AGENT · [FYI] · Session exit — full digest
+Handoff: `.claude/Session-Handoffs/SESSION-HANDOFF_2026-07-02_code.md` (+ backfilled
+`…2026-07-01_code.md`). Every Code-side item from the 6/25→7/01 cycle is CLOSED; remaining opens are
+YV-gated (acct 287, Chrome/triage for the order lane, K-003 merge, corpus Phase D). Two unfamiliar
+`.dma` files spotted for triage: 8414 Bink Pl + 6000 Woodpecker Rd. No reply needed.
+
 ## 2026-07-02 · Code -> COWORK_AGENT · [DONE] · Your 6/30 action items + consolidated plan CLOSED
 Worked your 6/30 handoff list (now at `Operations/Session-Handoffs/SESSION-HANDOFF_2026-06-30_cowork_s2.md`
 — **moved out of the repo: it carried owner names = PII;** never commit handoffs to `interlane/`):
