@@ -9,9 +9,11 @@
 - [x] Phase 1 — 4-tab restructure, pure refactor (2cd3acc)
 - [x] Phase 2 — Neighborhood + Contract fields (209c318)
 - [x] Phase 3 — search-snapshot + parcel dims (2d76d16)
-- [~] Phase 4 — LIGHT done: deliverable regenerated, SKILL pointer, inbox, interlane reply.
-      DEFERRED: field-map `aci_tab` seed (aci_web null till ACI live) + verify the new Neighborhood/
-      Contract DM field names vs the `.dma` registry (names show only in the MD ref, not the worksheet).
+- [~] Phase 4 — LIGHT done 7/01: deliverable regenerated, SKILL pointer, inbox, interlane reply.
+      ✅ 7/02: DM names VERIFIED vs the 113-file corpus registry (`ad7dca1`) — DM has NO URAR
+      Neighborhood-trend fields (quirk DMA-003); Contract names corrected to
+      ContractDate(Known/Unknown)/HasConcessions/ConcessionAmount/FinanceTypes; invented names removed.
+      STILL DEFERRED (YV): field-map `aci_tab` seed — wait until ACI Sky Workbench is live.
 
 ## Context
 `tools/dm-collection-sheet/build_collection_sheet.py` emits ONE flat "Subject" tab with 9

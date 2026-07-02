@@ -6,7 +6,7 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 ---
 
 ## 2026-06-26 · Bob → Code · [ACTION] · Consolidated phased plan — work the open items in order
-> ✅ **Phases 0–2 DONE 2026-06-29** — P0 renderer Tax ID + completeness gate, P1 comp-data gates, P2 MLS-by-market routing (commits 58aea64 · 2e554e3 · 2fe05b4 · dedb5b6 · 27b301f; QA 17/17; replies in INBOX-for-Cowork.md). **P3–P5 remain** for next session(s).
+> ✅ **[DONE] ALL PHASES CLOSED 2026-07-02** — P0–P2 done 6/29 (58aea64·2e554e3·2fe05b4·dedb5b6·27b301f, QA 17/17); **P3** done 7/01 (4-tab remap + Neighborhood + Contract + snapshot + parcel-dims, e58e3f8..bcfd068; DM names corpus-verified 7/02 → quirk DMA-003, ad7dca1); **P4** verified already-live (`#appr` in START-HERE §3 + CLAUDE.md 1.3; meta-rule = CLAUDE.md cardinal #7 — no SOP edit needed, no kaizen); **P5.1** done 7/02 (gas-DB `confirmed_absent` sentinel: Charlotte/Buckingham/Mecklenburg). **P5.2** `.dma` corpus: A–C done earlier, **Phase D awaits YV review** (only open remainder, YV gate). aci_tab field-map seed deferred by YV until ACI live. Replies in INBOX-for-Cowork.md.
 All open Code items from this handoff cycle are folded into one dependency-ordered brief:
 **`docs/2026-06-26_code-implementation-plan_consolidated-handoffs.md`**. Phases: 0 renderer Tax ID
 commit + render-gate → 1 comp-data gates (12-mo window, comp-selection rubric, ML#+Tax ID) → 2 MLS-by-county
