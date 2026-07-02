@@ -553,6 +553,51 @@ except Exception as e:
     fail("T19", str(e))
 
 # ---------------------------------------------------------------------------
+# T20: DM-ready subject tab (6/19 brief Changes 1,2,3,4,5,7,8 render side)
+# ---------------------------------------------------------------------------
+try:
+    with open(out("rec_t18a.json")) as f:
+        rec_a = json.load(f)   # defaults case (nothing supplied)
+    with open(out("rec_t18b.json")) as f:
+        rec_b = json.load(f)   # everything supplied
+    with open(out("rec_t19.json")) as f:
+        rec_c = json.load(f)   # water/sewer = Public
+    html_a, html_b, html_c = render(rec_a), render(rec_b), render(rec_c)
+
+    # Change 1 — merged parcel row + informational PID row (kv_table esc()'s
+    # labels, so the apostrophe is entity-encoded in the HTML — compare esc'd)
+    assert esc("Assessor's Parcel # ★ (= APN / Tax ID)") in html_a
+    assert "Internal PID (county portal)" in html_a
+    # Change 2 — Map Reference always renders; GIS default, supplied value wins
+    assert "Map Reference ★" in html_a and ">GIS<" in html_a
+    assert "Tax Map 42-A" in html_b
+    # Change 3 — Wood default carries the DEFAULT chip + confirm note (test the
+    # rendered span, not the bare class name — the CSS block is on every page)
+    assert 'class="chip chip-default"' in html_a and "confirm at inspection" in html_a
+    assert "Plaster" in html_b and 'class="chip chip-default"' not in html_b
+    # Change 4 — null utilities say TBD (no guessing); supplied passthrough shows
+    assert "Water ★" in html_a and "Sewer ★" in html_a
+    assert html_a.count("TBD — verify at inspection") >= 2
+    assert "TBD — verify at inspection" not in html_c or "Public" in html_c
+    assert "Public" in html_c
+    # Change 5 — IMPROVEMENTS banner with the brief's CSS class
+    assert 'class="section-banner"' in html_a and "▶ IMPROVEMENTS" in html_a
+    assert ".section-banner" in html_a  # CSS block present
+    # Change 7 — tax bill its own row, distinct from assessed value
+    assert "R.E. Taxes $ ★" in html_a and "Total assessed" in html_a
+    assert "$2,513.00" in html_b and "(tax year 2025)" in html_b
+    # Change 8 — HOA always present + starred; TBD chip when missing
+    assert "HOA $ / period ★" in html_a
+    assert "TBD — get from HOA docs" in html_a
+    assert "$75 / monthly" in html_b and "TBD — get from HOA docs" not in html_b
+    # Contract block renders only when supplied
+    assert "Contract (purchase)" in html_b and "$350,000" in html_b
+    assert "Contract (purchase)" not in html_a
+    ok("T20: DM-ready subject tab — labels, defaults, TBDs, banner, taxes, HOA, contract")
+except Exception as e:
+    fail("T20", str(e))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

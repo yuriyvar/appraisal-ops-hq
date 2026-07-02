@@ -12,7 +12,7 @@
       neighborhood_description_context; order += contract{}) + assembler defaults (only-when-absent;
       water/sewer NEVER inferred) + HOA-TBD flag + 12-mo flag demotion (missing sale_date →
       informational; hard flag only when a real date is >12 mo) + QA T18/T19, T17 adjusted
-- [ ] Phase 2 — renderer subject tab: Changes 1,2,3,4,5,7,8 render side (APN merge · Map Ref · DEFAULT
+- [x] Phase 2 — renderer subject tab: Changes 1,2,3,4,5,7,8 render side (APN merge · Map Ref · DEFAULT
       chip walls · TBD utilities · IMPROVEMENTS banner · RE-taxes row · starred HOA) + QA T20
 - [ ] Phase 3 — renderer: Neighborhood tab (Change 6) + search-snapshot block + QA T21
 - [ ] Phase 4 — wrap: example fixture regenerated (v1.1) · QA 21/21 · docs/SKILL/README/field-map

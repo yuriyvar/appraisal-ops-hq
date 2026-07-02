@@ -28,7 +28,7 @@ import os
 import sys
 from datetime import datetime
 
-SCHEMA_VERSION_SUPPORTED = "1.0"
+SCHEMA_VERSIONS_SUPPORTED = ("1.0", "1.1")
 
 
 # ----------------------------------------------------------------------------
@@ -209,10 +209,34 @@ def build_subject_tab(rec):
     res = g(subj, "resolution", default={})
     assess = g(subj, "assessment", default={})
 
-    char_rows = [
+    def util(v):
+        # 6/19 brief Change 4: value or an explicit TBD — NEVER a directional
+        # guess ("likely Well/Septic"); rural county does not imply Well/Septic.
+        return esc(v) if v else '<span class="muted">TBD — verify at inspection</span>'
+
+    # URAR Site rows (Change 5 splits the old single characteristics table)
+    site_rows = [
         ("Property type", dash(g(ch, "property_type"))),
         ("Use code", dash(g(ch, "use_code"))),
         ("Zoning", dash(g(ch, "zoning"))),
+        ("Lot size", dash(
+            (num(g(ch, "lot_size_sf")) + " sf") if g(ch, "lot_size_sf") else None)
+            + ((" (" + num(g(ch, "lot_size_acres")) + " ac)")
+               if g(ch, "lot_size_acres") else "")),
+        ("Water ★", util(g(subj, "water"))),
+        ("Sewer ★", util(g(subj, "sewer"))),
+    ]
+
+    # Change 3: "Wood" is the assembler's stand-in default -> tag it so DM entry
+    # knows it was not inspected/verified data.
+    walls = g(subj, "walls_trim")
+    if walls == "Wood":
+        walls_html = ('Wood <span class="chip chip-default">DEFAULT</span> '
+                      '<span class="muted">confirm at inspection</span>')
+    else:
+        walls_html = dash(walls)
+
+    imp_rows = [
         ("GLA (governing)", sf(g(ch, "gla_sf"))),
         ("Above-grade", sf(g(ch, "above_grade_sf"))),
         ("Below-grade finished", sf(g(ch, "below_grade_finished_sf"))),
@@ -224,21 +248,22 @@ def build_subject_tab(rec):
         ("Bedrooms", dash(g(ch, "bedrooms"))),
         ("Baths", baths(ch)),
         ("Total rooms", dash(g(ch, "total_rooms"))),
-        ("Lot size", dash(
-            (num(g(ch, "lot_size_sf")) + " sf") if g(ch, "lot_size_sf") else None)
-            + ((" (" + num(g(ch, "lot_size_acres")) + " ac)")
-               if g(ch, "lot_size_acres") else "")),
         ("Garage", dash(g(ch, "garage"))),
         ("Pool", "Yes" if g(ch, "pool") else ("No" if g(ch, "pool") is False else "&mdash;")),
         ("Fireplaces", dash(g(ch, "fireplaces"))),
         ("Heating / cooling", dash(g(ch, "heating")) + " / " + dash(g(ch, "cooling"))),
         ("Exterior", dash(g(ch, "exterior"))),
+        ("Walls / trim ★", walls_html),
     ]
 
     id_rows = [
+        # Change 1: ONE DM-ready parcel row; PID demoted to informational.
+        ("Assessor's Parcel # ★ (= APN / Tax ID)",
+         dash(g(subj, "assessors_parcel_number") or g(ids, "apn")
+              or g(ids, "pid") or g(ids, "map_id"))),
+        ("Internal PID (county portal)", dash(g(ids, "pid"))),
+        ("Map Reference ★", esc(g(subj, "map_reference") or "GIS")),  # Change 2: never blank
         ("GPIN", dash(g(ids, "gpin"))),
-        ("PID", dash(g(ids, "pid"))),
-        ("APN / Tax ID", dash(g(ids, "apn") or g(ids, "pid") or g(ids, "map_id"))),
         ("Subdivision", dash(g(ids, "subdivision"))),
         ("Section / Block / Lot",
          "{} / {} / {}".format(dash(g(ids, "section")), dash(g(ids, "block")), dash(g(ids, "lot")))),
@@ -248,12 +273,45 @@ def build_subject_tab(rec):
         ("County", dash(g(addr, "county"))),
     ]
 
+    # Change 7: the annual tax BILL is DM's "R.E. Taxes $" — its own row,
+    # distinct from the assessed-value breakdown.
+    tax_year = g(assess, "tax_year")
+    re_tax = g(subj, "re_taxes_annual")
+    re_tax_html = money2(re_tax) if re_tax is not None else "&mdash;"
+    if re_tax is not None and tax_year:
+        re_tax_html += ' <span class="muted">(tax year {})</span>'.format(esc(tax_year))
+
+    # Change 8: HOA is always a DM field — always render, always starred.
+    hoa_amt = g(subj, "hoa_amount")
+    if hoa_amt is not None:
+        hoa_html = money(hoa_amt) + " / " + esc(g(subj, "hoa_period") or "period TBD")
+    else:
+        hoa_html = '<span class="chip chip-warn">TBD — get from HOA docs</span>'
+
     assess_rows = [
-        ("Tax year", dash(g(assess, "tax_year"))),
+        ("R.E. Taxes $ ★", re_tax_html),
+        ("Tax year", dash(tax_year)),
         ("Land value", money(g(assess, "land_value"))),
-        ("Improvements", money(g(assess, "improvements_value"))),
+        ("Improvements value", money(g(assess, "improvements_value"))),
         ("Total assessed", money(g(assess, "total_value"))),
+        ("HOA $ / period ★", hoa_html),
     ]
+
+    # Contract block (v1.1) — purchase orders only; hidden when all-null (refi).
+    ct = g(rec, "order", "contract", default={}) or {}
+    if any(v is not None for v in ct.values()):
+        seller = g(ct, "seller_is_owner_of_record")
+        contract_rows = [
+            ("Contract price", money(g(ct, "contract_price"))),
+            ("Contract date", dash(g(ct, "contract_date"))),
+            ("Seller is owner of record",
+             "Yes" if seller else ("No" if seller is False else "&mdash;")),
+            ("Concessions", dash(g(ct, "concessions"))),
+            ("Financing type", dash(g(ct, "financing_type"))),
+        ]
+        contract_html = "<h3>Contract (purchase)</h3>" + kv_table(contract_rows)
+    else:
+        contract_html = ""
 
     res_rows = [
         ("Address-only input", "Yes" if g(res, "input_was_address_only") else "No"),
@@ -293,16 +351,22 @@ def build_subject_tab(rec):
     return """
     <section class="tab-pane" id="tab-subject">
       <div class="two-col">
-        <div><h3>Characteristics (governing)</h3>{char}</div>
+        <div>
+          <h3>Site &amp; identity (governing)</h3>{site}
+          <h2 class="section-banner">▶ IMPROVEMENTS — General Desc → Exterior → Interior → HVAC → Amenities → Room Count / Quality / Condition</h2>
+          {imp}
+        </div>
         <div>
           <h3>Identifiers</h3>{ids}
-          <h3>Assessment</h3>{assess}
+          {contract}
+          <h3>Assessment &amp; taxes</h3>{assess}
           <h3>Subject resolution</h3>{res}
         </div>
       </div>
       {verification}
     </section>
-    """.format(char=kv_table(char_rows), ids=kv_table(id_rows),
+    """.format(site=kv_table(site_rows), imp=kv_table(imp_rows),
+               ids=kv_table(id_rows), contract=contract_html,
                assess=kv_table(assess_rows), res=kv_table(res_rows),
                verification=verification)
 
@@ -690,6 +754,9 @@ body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,H
 .chip-warn{background:var(--warn-bg);color:var(--warn-ink)}
 .chip-ok{background:var(--ok-bg);color:var(--ok-ink)}
 .chip-flag{background:#eef1f4;color:#475260}
+.chip-default{background:#e8eef5;color:#33506b;border:1px dashed #90a8bf}
+.section-banner{margin:18px 0 4px;padding:10px 14px;background:#1a5276;color:#fff;
+  border-radius:4px;font-size:1.15em;letter-spacing:.02em}
 nav.tabs{display:flex;gap:4px;margin:18px 0 14px;flex-wrap:wrap}
 nav.tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);
   padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer}
@@ -809,10 +876,10 @@ def main(argv=None):
         rec = json.load(f)
 
     ver = rec.get("schema_version")
-    if ver != SCHEMA_VERSION_SUPPORTED:
+    if ver not in SCHEMA_VERSIONS_SUPPORTED:
         sys.stderr.write(
             "WARNING: record schema_version={!r}, renderer built for {!r}. "
-            "Rendering anyway.\n".format(ver, SCHEMA_VERSION_SUPPORTED))
+            "Rendering anyway.\n".format(ver, SCHEMA_VERSIONS_SUPPORTED))
 
     out = args.output or os.path.join(os.path.dirname(os.path.abspath(args.record)), "worksheet.html")
     html_doc = render(rec, with_photos=args.with_photos, with_map=args.with_map)
