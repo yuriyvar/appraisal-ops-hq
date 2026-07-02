@@ -3,6 +3,22 @@
 **Affects:** `tools/worksheet-renderer/render_worksheet.py` · `tools/record-assembler/assemble_record.py`  
 **Source:** Field review of 34 Chatham Ln worksheet; corrections validated against live DataMaster session.
 
+## Progress tracker (added 2026-07-02 — plan approved by YV; durable resume doc for a token-limited build)
+> If a session resets: read this + `git log --oneline -10`, continue from the first unchecked phase.
+> Plan detail: `C:\Users\yuriy\.claude\plans\woolly-dazzling-rivest.md` (Code-side copy in app memory).
+- [x] Phase 0 — this tracker committed
+- [ ] Phase 1 — data layer: schema v1.1 (subject += assessors_parcel_number · map_reference "GIS" ·
+      walls_trim "Wood" · water/sewer · re_taxes_annual · hoa_amount/period · neighborhood_bounds ·
+      neighborhood_description_context; order += contract{}) + assembler defaults (only-when-absent;
+      water/sewer NEVER inferred) + HOA-TBD flag + 12-mo flag demotion (missing sale_date →
+      informational; hard flag only when a real date is >12 mo) + QA T18/T19, T17 adjusted
+- [ ] Phase 2 — renderer subject tab: Changes 1,2,3,4,5,7,8 render side (APN merge · Map Ref · DEFAULT
+      chip walls · TBD utilities · IMPROVEMENTS banner · RE-taxes row · starred HOA) + QA T20
+- [ ] Phase 3 — renderer: Neighborhood tab (Change 6) + search-snapshot block + QA T21
+- [ ] Phase 4 — wrap: example fixture regenerated (v1.1) · QA 21/21 · docs/SKILL/README/field-map
+      notes · inbox [done] · interlane FYI · handoff
+- NOTE: brief's `subject.tax_year` NOT added — reuse existing `subject.assessment.tax_year`.
+
 ---
 
 ## Background
