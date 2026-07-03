@@ -418,6 +418,61 @@ except Exception as ex:
     fail("C13", str(ex))
 
 # ---------------------------------------------------------------------------
+# C14: ArcGIS adapter — canned-fixture mapping, no network, loud failures
+# ---------------------------------------------------------------------------
+try:
+    from fetch_arcgis import (query_layer, map_features, apply_to_skeleton,
+                              FetchError, FIELD_MAPS)
+    canned = {"features": [{"attributes": {
+        "SITEADDRESS": "9400 SAMPLE TRACE DR",
+        "TAXID": "770-68-91-23-456", "LEGALDESC": "SAMPLE TRACE SEC A LT 9",
+        "YEARBUILT": 1998, "ACREAGE": 0.31, "ZONING": "R-9",
+        "TOTALVALUE": 315000, "SUBDIVISION": None,
+    }}]}
+    mapped, missing = map_features("Chesterfield", canned)
+    assert mapped["identifiers.apn"] == "770-68-91-23-456"
+    assert mapped["characteristics.year_built"] == 1998
+    assert "SUBDIVISION" in missing                    # null attr -> pull manually
+    # merge fills nulls only, never overwrites, flags the pull as unverified
+    sk = {"identifiers": {"apn": None, "legal_description": "KEEP ME"},
+          "characteristics": {"year_built": None}, "flags": []}
+    filled, set_paths = apply_to_skeleton(sk, mapped, "Chesterfield")
+    assert filled["identifiers"]["apn"] == "770-68-91-23-456"
+    assert filled["identifiers"]["legal_description"] == "KEEP ME"
+    assert "identifiers.legal_description" not in set_paths
+    assert any("FIELD MAP UNVERIFIED" in f for f in filled["flags"])
+    assert sk["identifiers"]["apn"] is None            # input not mutated
+    # 0 rows / >1 rows / all-attrs-missing all raise (never auto-pick)
+    for bad in ({"features": []},
+                {"features": [{"attributes": {}}, {"attributes": {}}]},
+                {"features": [{"attributes": {"UNRELATED": 1}}]}):
+        try:
+            map_features("Chesterfield", bad)
+            raise AssertionError("bad response did not raise: " + str(bad))
+        except FetchError:
+            pass
+    # network failure path via injected opener -> FetchError, nothing written
+    def dead_opener(url):
+        raise OSError("no route to host")
+    try:
+        query_layer("Chesterfield", "1 X St", opener=dead_opener)
+        raise AssertionError("dead opener did not raise")
+    except FetchError as e:
+        assert "manual pull sheet" in str(e)
+    # server-side error payload also raises
+    def err_opener(url):
+        return json.dumps({"error": {"code": 400, "message": "Invalid query"}})
+    try:
+        query_layer("Chesterfield", "1 X St", opener=err_opener)
+        raise AssertionError("server error did not raise")
+    except FetchError:
+        pass
+    assert all("layer_url" in v and "attrs" in v for v in FIELD_MAPS.values())
+    ok("C14: ArcGIS — canned mapping, fill-nulls-only, unverified flag, loud failures")
+except Exception as ex:
+    fail("C14", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

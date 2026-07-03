@@ -13,7 +13,8 @@
       routing → `subject.skeleton.json` + `pull-sheet.md`)
 - [x] Phase 3 — ingest + normalize: `ingest_subject.py` (raw pull → validated subject.json →
       cache put) + fix the assembler-README phantom `subject.example.json`
-- [ ] Phase 4 (STRETCH, droppable) — ArcGIS FeatureServer auto-adapter (Chesterfield/Hanover)
+- [x] Phase 4 (STRETCH — landed) — ArcGIS adapter, canned-fixture tested; FIELD_MAPS ship
+      `verified: false` — first live pull must confirm the attribute names + flip the flag
 - [ ] Phase 5 — wrap: `/resolve-subject` command · SKILL wiring (property-search +
       worksheet-builder cache-first step) · README · inbox · interlane FYI · handoff
 
