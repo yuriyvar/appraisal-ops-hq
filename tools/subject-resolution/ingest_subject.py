@@ -186,6 +186,27 @@ def ingest(raw, resolved_on=None, source=None, as_of=None):
     return subj, flags
 
 
+def tick_run_log(raw_path, as_of=None):
+    """BD1: ingest ticks its own step in the resolver's run-log.md (same dir as
+    the raw file). Missing log = nothing to tick (P2's provenance gate handles
+    the visibility). Returns True when a tick happened."""
+    rl = os.path.join(os.path.dirname(os.path.abspath(raw_path)), "run-log.md")
+    if not os.path.isfile(rl):
+        return False
+    with open(rl, "r", encoding="utf-8-sig") as fh:
+        text = fh.read()
+    needle = "- [ ] 3. ingest_subject"
+    if needle not in text:
+        return False
+    stamp = str(as_of)[:10] if as_of else date.today().isoformat()
+    text = text.replace(
+        needle + " — subject.json written + cached",
+        "- [x] 3. ingest_subject — subject.json written + cached @ " + stamp, 1)
+    with open(rl, "w", encoding="utf-8") as fh:
+        fh.write(text)
+    return True
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Build C — normalize + gate a raw subject pull")
     ap.add_argument("raw", help="subject.skeleton.json (hand-filled)")
@@ -224,6 +245,8 @@ def main(argv=None):
                         args.source or subject["resolution"].get("method") or "ingest",
                         db_path=args.db)
         print("CACHED key=" + key)
+    if tick_run_log(args.raw, args.as_of):
+        print("run-log.md: step 3 ticked")
     return 0
 
 

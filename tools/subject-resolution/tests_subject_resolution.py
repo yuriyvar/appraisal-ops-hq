@@ -473,6 +473,44 @@ except Exception as ex:
     fail("C14", str(ex))
 
 # ---------------------------------------------------------------------------
+# C15: run-log — resolver writes it (MISS + HIT variants), ingest ticks step 3
+# ---------------------------------------------------------------------------
+try:
+    from ingest_subject import main as ingest_main
+    out15 = os.path.join(TMP, "order15")
+    resolve("42 Runlog Rd, Henrico, VA 23229", county="Henrico", out_dir=out15,
+            db_path=DB, as_of="2026-07-02", order_id="T-15")
+    rl_path = os.path.join(out15, "run-log.md")
+    with open(rl_path, encoding="utf-8") as f:
+        rl = f.read()
+    assert "order T-15" in rl
+    assert "- [x] 1. resolve_subject — MISS @ 2026-07-02" in rl
+    assert "- [ ] 2. pull sheet executed" in rl
+    assert "- [ ] 3. ingest_subject" in rl and "- [ ] 6. render_worksheet" in rl
+    # ingest ticks its own box
+    sk15 = os.path.join(out15, "subject.skeleton.json")
+    rc = ingest_main([sk15, "--out", os.path.join(out15, "subject.json"),
+                      "--db", DB, "--resolved-on", "2026-07-02",
+                      "--source", "APEX pull", "--as-of", "2026-07-02"])
+    assert rc == 0
+    with open(rl_path, encoding="utf-8") as f:
+        rl2 = f.read()
+    assert "- [x] 3. ingest_subject — subject.json written + cached @ 2026-07-02" in rl2
+    assert "- [ ] 3." not in rl2 and "- [ ] 4." in rl2       # only its own box
+    # HIT variant: steps 1-3 pre-ticked, re-verify wording present
+    out15b = os.path.join(TMP, "order15b")
+    resolve("42 Runlog Road, Henrico County, VA 23229", county="Henrico",
+            out_dir=out15b, db_path=DB, as_of="2026-07-02")
+    with open(os.path.join(out15b, "run-log.md"), encoding="utf-8") as f:
+        rlh = f.read()
+    assert "- [x] 1. resolve_subject — CACHE HIT @ 2026-07-02" in rlh
+    assert "RE-VERIFY" in rlh and "- [x] 3. ingest — n/a" in rlh
+    assert "- [ ] 4." in rlh and "- [ ] 6." in rlh           # human steps stay open
+    ok("C15: run-log — MISS/HIT variants, ingest ticks only step 3, human steps stay open")
+except Exception as ex:
+    fail("C15", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

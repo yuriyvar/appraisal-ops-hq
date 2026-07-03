@@ -243,6 +243,38 @@ def build_pull_sheet(address, county_name, entry, gas):
 
 
 # ---------------------------------------------------------------------------
+# run log (BD1 standard-work enforcement)
+# ---------------------------------------------------------------------------
+def build_run_log(address, order_meta, hit_info, as_of=None):
+    """The per-order standard-work checklist. Tools tick their own steps
+    (resolver = 1, ingester = 3); humans tick 2 and 4. Bypassing a step leaves
+    an unchecked box that the weekly review audits."""
+    from datetime import date as _date
+    stamp = str(as_of)[:10] if as_of else _date.today().isoformat()
+    oid = order_meta.get("order_id") or "-"
+    L = ["# Run log — {} (order {})".format(address, oid),
+         "",
+         "Standard work: resolve → pull → ingest → comps → assemble → render.",
+         "Do NOT improvise — gaps stay null + flagged, never guessed.",
+         ""]
+    if hit_info:
+        resolved_on, age = hit_info
+        L.append("- [x] 1. resolve_subject — CACHE HIT @ {} (vintage {}, {} days; "
+                 "staleness flags are in subject.json)".format(stamp, resolved_on, age))
+        L.append("- [x] 2. pull sheet — n/a on a cache hit; RE-VERIFY the flagged items instead")
+        L.append("- [x] 3. ingest — n/a; cached subject.json written")
+    else:
+        L.append("- [x] 1. resolve_subject — MISS @ {} (skeleton + pull-sheet written)".format(stamp))
+        L.append("- [ ] 2. pull sheet executed (SOR → Zillow → gas; unknowns left null)")
+        L.append("- [ ] 3. ingest_subject — subject.json written + cached")
+    L.append("- [ ] 4. comps pulled per property-search SKILL (GLA band · 12-mo · ML#+TaxID gates)")
+    L.append("- [ ] 5. assemble_record — appraisal-record.json built")
+    L.append("- [ ] 6. render_worksheet — comp Tax-ID gate exit 0")
+    L.append("")
+    return "\n".join(L)
+
+
+# ---------------------------------------------------------------------------
 # resolve
 # ---------------------------------------------------------------------------
 def _check_out_dir(out_dir):
@@ -277,6 +309,8 @@ def resolve(address, county=None, out_dir=".", db_path=None, as_of=None,
         path = os.path.join(out, "subject.json")
         with open(path, "w", encoding="utf-8") as fh:
             json.dump(subject, fh, indent=2, ensure_ascii=False)
+        with open(os.path.join(out, "run-log.md"), "w", encoding="utf-8") as fh:
+            fh.write(build_run_log(address, order_meta, (resolved_on, age), as_of))
         print("CACHE HIT (resolved {}, {} days old) -> {}".format(resolved_on, age, path))
         for f in flags:
             print("FLAG  " + f)
@@ -292,9 +326,13 @@ def resolve(address, county=None, out_dir=".", db_path=None, as_of=None,
         json.dump(skeleton, fh, indent=2, ensure_ascii=False)
     with open(ps_path, "w", encoding="utf-8") as fh:
         fh.write(sheet)
+    rl_path = os.path.join(out, "run-log.md")
+    with open(rl_path, "w", encoding="utf-8") as fh:
+        fh.write(build_run_log(address, order_meta, None, as_of))
     print("CACHE MISS -> pull needed. Wrote:")
     print("  " + sk_path)
     print("  " + ps_path)
+    print("  " + rl_path)
     print("Run the pull sheet, fill the skeleton, then ingest_subject.py.")
     return 0
 
