@@ -591,6 +591,73 @@ except Exception as ex:
     fail("C17", str(ex))
 
 # ---------------------------------------------------------------------------
+# C18: BD2 variance matrix — supported / unsupported / missing-source / zillow
+# ---------------------------------------------------------------------------
+try:
+    base18 = {"address": {"full": "8 Variance Way, Henrico, VA 23229",
+                          "county": "Henrico"},
+              "characteristics": {}}
+
+    # (a) disagree + justification -> MLS governs WITH the reason, triage flag
+    a = dict(base18, source_values={"gla_sf": {"county": 1856, "mls": 2256}},
+             variance_notes={"gla_sf": "MLS includes the 400sf finished basement per remarks"})
+    s, f = ingest(json.loads(json.dumps(a)), resolved_on="2026-07-02")
+    assert s["characteristics"]["gla_sf"] == 2256
+    row = s["verification"][0]
+    assert row["governing_source"] == "mls (justified)"
+    assert "variance SUPPORTED" in row["flag"] and "finished basement" in row["flag"]
+    assert any("manual triage" in fl for fl in f)             # header chip too
+
+    # (b) disagree, no justification -> County rules, triage flag
+    b = dict(base18, source_values={"gla_sf": {"county": 1856, "mls": 2256}})
+    s, f = ingest(json.loads(json.dumps(b)), resolved_on="2026-07-02")
+    assert s["characteristics"]["gla_sf"] == 1856
+    assert s["verification"][0]["governing_source"] == "county"
+    assert "County rules" in s["verification"][0]["flag"]
+    assert any("manual triage" in fl for fl in f)
+
+    # (c) agree within tolerance -> county governs quietly
+    c = dict(base18, source_values={"gla_sf": {"county": 1856, "mls": 1850}})
+    s, f = ingest(json.loads(json.dumps(c)), resolved_on="2026-07-02")
+    assert s["verification"][0]["flag"] is None
+    assert not any("manual triage" in fl for fl in f)
+
+    # (d) exact-tolerance field: year built off by one = triage
+    d = dict(base18, source_values={"year_built": {"county": 1972, "mls": 1973}})
+    s, f = ingest(json.loads(json.dumps(d)), resolved_on="2026-07-02")
+    assert s["characteristics"]["year_built"] == 1972
+    assert "manual triage" in s["verification"][0]["flag"]
+
+    # (e) county missing -> MLS governs with a verify note (no triage)
+    e18 = dict(base18, source_values={"bedrooms": {"mls": 3}})
+    s, f = ingest(json.loads(json.dumps(e18)), resolved_on="2026-07-02")
+    assert s["characteristics"]["bedrooms"] == 3
+    assert s["verification"][0]["governing_source"] == "mls"
+    assert "verify" in s["verification"][0]["flag"] and "triage" not in s["verification"][0]["flag"]
+
+    # (f) Zillow-only -> weakest-source note; Zillow lone disagreement stays informational
+    f18 = dict(base18, source_values={"lot_size_acres": {"zillow": 0.25}})
+    s, _ = ingest(json.loads(json.dumps(f18)), resolved_on="2026-07-02")
+    assert s["verification"][0]["governing_source"] == "zillow"
+    assert "weakest source" in s["verification"][0]["flag"]
+    g18 = dict(base18, source_values={"gla_sf": {"county": 1856, "mls": 1856, "zillow": 2100}})
+    s, f = ingest(json.loads(json.dumps(g18)), resolved_on="2026-07-02")
+    assert s["characteristics"]["gla_sf"] == 1856
+    assert "informational" in s["verification"][0]["flag"]
+    assert not any("manual triage" in fl for fl in f)
+
+    # (g) canonical 2.1 baths still gets the Matrix split downstream
+    h18 = dict(base18, source_values={"full_baths": {"county": 2.1}})
+    s, f = ingest(json.loads(json.dumps(h18)), resolved_on="2026-07-02")
+    assert s["characteristics"]["full_baths"] == 2 and s["characteristics"]["half_baths"] == 1
+
+    # (h) helper blocks never reach the output
+    assert "source_values" not in s and "variance_notes" not in s
+    ok("C18: variance matrix — supported/unsupported/agree/exact/missing/zillow/split/strip")
+except Exception as ex:
+    fail("C18", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

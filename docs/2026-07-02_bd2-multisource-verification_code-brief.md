@@ -8,7 +8,7 @@
 
 ## Progress tracker
 - [x] Phase 0 — this brief committed
-- [ ] Phase 1 — ingest engine: `source_values` + `variance_notes` helper blocks → canonical
+- [x] Phase 1 — ingest engine: `source_values` + `variance_notes` helper blocks → canonical
       value + `verification[]` row + triage flags; `gla_mls_sf` back-compat; QA C18 matrix
 - [ ] Phase 2 — resolver: pull sheet reordered MLS → County → Zillow + variance-protocol box;
       skeleton seeds the helper blocks; QA C19 (+ e2e triage chip renders)

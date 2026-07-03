@@ -17,7 +17,11 @@ Normalizations / gates:
   * tax_year vs effective-date sanity flags
   * helper key "photo_derived": [field, ...] -> per-field "confirm at
     inspection" flags (Zillow rule); helper keys never reach the output
-  * helper key "gla_mls_sf" -> cross-source verification row (county governs)
+  * BD2 multi-source verification: helper blocks "source_values"
+    {field: {mls, county, zillow}} + "variance_notes" {field: reason} ->
+    canonical value + verification row per YV's protocol (listing supports the
+    variance -> MLS governs with the reason; else County rules; either way
+    "inconsistent — manual triage" until YV clears). "gla_mls_sf" back-compat.
 
 Usage:
     python ingest_subject.py subject.skeleton.json --out subject.json \
@@ -49,7 +53,18 @@ _NUM_FIELDS_I = {
     "characteristics": ["year_built", "bedrooms", "total_rooms", "fireplaces"],
     "assessment": ["tax_year"],
 }
-_HELPER_KEYS = ("photo_derived", "gla_mls_sf")
+_HELPER_KEYS = ("photo_derived", "gla_mls_sf", "source_values", "variance_notes")
+
+# BD2 multi-source verification: field -> (verification label, tolerance).
+# tolerance 0 = exact match required; else fractional (0.02 = 2%).
+_MULTI_SOURCE = {
+    "gla_sf":         ("Finished area (sf)", 0.02),
+    "year_built":     ("Year built", 0),
+    "lot_size_acres": ("Lot size (ac)", 0.02),
+    "bedrooms":       ("Bedrooms", 0),
+    "full_baths":     ("Baths (N.M)", 0),
+    "stories":        ("Stories", 0),
+}
 
 
 def _num(v):
@@ -71,6 +86,88 @@ def _num(v):
 def _add(flags, msg):
     if msg not in flags:
         flags.append(msg)
+
+
+def _fmt_src(field, v):
+    if v is None:
+        return None
+    if field == "gla_sf":
+        return "{:,.0f}".format(v)
+    return str(int(v)) if float(v) == int(v) else str(v)
+
+
+def _resolve_sources(subj, raw, flags):
+    """BD2 — YV's variance protocol (2026-07-02). Per tracked field with
+    per-source values: county-vs-MLS agreement -> county governs quietly;
+    disagreement + a variance_notes justification -> MLS governs WITH the reason;
+    disagreement without one -> County rules; EITHER WAY the row is flagged
+    'inconsistent — manual triage' until YV clears it. Zillow never governs
+    unless it's the only source; a lone Zillow disagreement is informational."""
+    sv = dict(raw.get("source_values") or {})
+    notes = raw.get("variance_notes") or {}
+    ch = subj.setdefault("characteristics", {})
+
+    # back-compat: the Build-C-era gla_mls_sf helper folds into source_values
+    legacy = _num(raw.get("gla_mls_sf"))
+    if legacy is not None:
+        entry = dict(sv.get("gla_sf") or {})
+        entry.setdefault("mls", legacy)
+        sv["gla_sf"] = entry
+
+    ver = subj.setdefault("verification", [])
+    for field, (label, tol) in _MULTI_SOURCE.items():
+        entry = sv.get(field) or {}
+        if not any(v is not None for v in entry.values()):
+            continue                        # skeleton's empty slots / untracked pull
+        county = _num(entry.get("county"))
+        if county is None:
+            county = _num(ch.get(field))    # value already pulled = the county card
+        mls = _num(entry.get("mls"))
+        zil = _num(entry.get("zillow"))
+        if county is None and mls is None and zil is None:
+            continue
+
+        def differ(a, b):
+            if a is None or b is None:
+                return False
+            if tol == 0:
+                return a != b
+            base = max(abs(a), abs(b)) or 1.0
+            return abs(a - b) / base > tol
+
+        vflag = None
+        just = str(notes.get(field) or "").strip()
+        if county is not None and mls is not None and differ(county, mls):
+            if just:
+                canonical, governing = mls, "mls (justified)"
+                vflag = ("county vs MLS {} differ — variance SUPPORTED: {} — "
+                         "inconsistent, manual triage until YV clears".format(label, just))
+            else:
+                canonical, governing = county, "county"
+                delta = "differ >{:.0f}%".format(tol * 100) if tol else "differ"
+                vflag = ("county vs MLS {} {} — inconsistent, manual triage "
+                         "(no supporting listing evidence); County rules".format(label, delta))
+        elif county is not None:
+            canonical, governing = county, "county"
+        elif mls is not None:
+            canonical, governing = mls, "mls"
+            vflag = "county value not captured — verify {} at the SOR".format(label)
+        else:
+            canonical, governing = zil, "zillow"
+            vflag = "Zillow-only {} — weakest source, verify".format(label)
+
+        if zil is not None and differ(zil, canonical) and "manual triage" not in (vflag or ""):
+            note = "Zillow differs (informational; Zillow never governs)"
+            vflag = (vflag + "; " + note) if vflag else note
+
+        ch[field] = canonical
+        ver.append({"attribute": label,
+                    "county": _fmt_src(field, county), "zillow": _fmt_src(field, zil),
+                    "realtor": None, "redfin": None, "homes": None,
+                    "mls": _fmt_src(field, mls),
+                    "governing_source": governing, "flag": vflag})
+        if vflag and "manual triage" in vflag:
+            _add(flags, vflag)              # header chip, not just the row
 
 
 def ingest(raw, resolved_on=None, source=None, as_of=None):
@@ -98,6 +195,10 @@ def ingest(raw, resolved_on=None, source=None, as_of=None):
             subj[k] = _num(subj.get(k))
 
     ch = subj.setdefault("characteristics", {})
+
+    # BD2 — multi-source resolution runs BEFORE the gates so they apply to the
+    # canonical values (e.g. a resolved 2.1 still gets the baths split below).
+    _resolve_sources(subj, raw, flags)
 
     # fractional full_baths -> Matrix N.M split
     fb = ch.get("full_baths")
@@ -156,20 +257,6 @@ def ingest(raw, resolved_on=None, source=None, as_of=None):
     # Zillow / photo-derived rule
     for field in (raw.get("photo_derived") or []):
         _add(flags, "{} derived from Zillow photos — confirm at inspection".format(field))
-
-    # cross-source verification seed (county SOR governs GLA)
-    mls_gla = _num(raw.get("gla_mls_sf"))
-    if mls_gla is not None and ch.get("gla_sf"):
-        vflag = None
-        if abs(mls_gla - ch["gla_sf"]) / ch["gla_sf"] > 0.02:
-            vflag = "county vs MLS finished area differ >2% — reconcile before comps"
-            _add(flags, vflag)
-        ver = subj.setdefault("verification", [])
-        ver.append({"attribute": "Finished area (sf)",
-                    "county": "{:,.0f}".format(ch["gla_sf"]),
-                    "zillow": None, "realtor": None, "redfin": None, "homes": None,
-                    "mls": "{:,.0f}".format(mls_gla),
-                    "governing_source": "county", "flag": vflag})
 
     # helper keys never reach the output
     for k in _HELPER_KEYS:
