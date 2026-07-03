@@ -27,7 +27,7 @@ python tools/worksheet-renderer/render_worksheet.py `
 |------|---------|
 | `assemble_record.py` | Main assembler script |
 | `appraisal-record.schema.json` | JSON Schema v1.0 (repo root) |
-| `subject.example.json` | Example/template for subject.json |
+| `subject.example.json` | Synthetic v1.1 example/template for subject.json (also the renderer-fixture input) |
 
 ## Inputs
 

@@ -1,0 +1,135 @@
+{
+  "order": {
+    "order_id": "EXAMPLE-001",
+    "form_type": "1004",
+    "client": "Example Bank, N.A.",
+    "loan_number": null,
+    "effective_date": "2026-07-01",
+    "due_date": "2026-07-10",
+    "inspection": "2026-07-03 10:00",
+    "fee": 500,
+    "status": "in-progress",
+    "contract": {
+      "contract_price": 345000,
+      "contract_date": "2026-06-20",
+      "seller_is_owner_of_record": true,
+      "concessions": 5000,
+      "financing_type": "Conventional"
+    }
+  },
+  "address": {
+    "full": "119 Example Ridge Ln, Henrico, VA 23229",
+    "street": "119 Example Ridge Ln",
+    "city": "Henrico",
+    "state": "VA",
+    "zip": "23229",
+    "county": "Henrico"
+  },
+  "identifiers": {
+    "gpin": "778-744-7716",
+    "pid": "078-123456",
+    "apn": "778-744-7716",
+    "subdivision": "Example Ridge",
+    "section": "B",
+    "block": null,
+    "lot": "14",
+    "magisterial_district": "Tuckahoe",
+    "neighborhood_code": "R21",
+    "legal_description": "EXAMPLE RIDGE SEC B LT 14"
+  },
+  "characteristics": {
+    "property_type": "SFR",
+    "use_code": "10",
+    "zoning": "R-3",
+    "gla_sf": 1856,
+    "above_grade_sf": 1856,
+    "below_grade_finished_sf": 400,
+    "basement": "Full, partially finished",
+    "year_built": 1972,
+    "stories": 1,
+    "style": "Ranch",
+    "grade_or_condition": "C3/Q4",
+    "bedrooms": 3,
+    "full_baths": 2,
+    "half_baths": 0,
+    "total_rooms": 7,
+    "lot_size_sf": 10890,
+    "lot_size_acres": 0.25,
+    "garage": "1-car attached",
+    "pool": false,
+    "fireplaces": 1,
+    "heating": "FWA",
+    "cooling": "Central A/C",
+    "exterior": "Vinyl"
+  },
+  "assessment": {
+    "tax_year": 2026,
+    "land_value": 85000,
+    "improvements_value": 210000,
+    "total_value": 295000
+  },
+  "resolution": {
+    "input_was_address_only": true,
+    "method": "county-assessment",
+    "no_tax_id": false,
+    "neighbor_unit_proxy": null,
+    "cached": false,
+    "resolved_on": "2026-07-01"
+  },
+  "verification": [
+    {
+      "attribute": "Finished area (sf)",
+      "county": "1,856",
+      "zillow": "1,850",
+      "realtor": null,
+      "redfin": null,
+      "homes": null,
+      "mls": "1,856",
+      "governing_source": "county",
+      "flag": null
+    }
+  ],
+  "listing": null,
+  "sales_history": [
+    {
+      "date": "2019-05-14",
+      "price": 262000,
+      "deed_book_page": "5844/1102",
+      "qualification": "Qualified",
+      "source": "county CAMA"
+    }
+  ],
+  "flags": [],
+  "geo": { "lat": null, "lon": null },
+  "market": {
+    "search": {
+      "radius_mi": 1.0,
+      "sale_window_months": 12,
+      "gla_band": { "low_sf": 1670, "high_sf": 2042, "luxury_widened": false },
+      "mls_systems": ["CVR MLS"],
+      "surrounding_counties": ["Goochland", "Powhatan"]
+    },
+    "neighborhood_notes": null
+  },
+  "sources": [
+    {
+      "name": "Henrico County CAMA (synthetic example)",
+      "url": "https://example.invalid/cama",
+      "retrieved_at": "2026-07-01"
+    }
+  ],
+  "assessors_parcel_number": "778-744-7716",
+  "water": "Public",
+  "sewer": null,
+  "re_taxes_annual": 2513.4,
+  "neighborhood_bounds": {
+    "north": "Rt. 53",
+    "south": "Rt. 6",
+    "east": "Rt. 15",
+    "west": "Rt. 20"
+  },
+  "neighborhood_description_context": {
+    "style": "Ranch",
+    "amenities": "parks, schools, and local businesses"
+  }
+}

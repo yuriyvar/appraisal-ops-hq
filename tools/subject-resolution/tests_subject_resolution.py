@@ -281,6 +281,143 @@ except Exception as ex:
     fail("C10", str(ex))
 
 # ---------------------------------------------------------------------------
+# C11: ingest — normalization happy path
+# ---------------------------------------------------------------------------
+try:
+    from ingest_subject import ingest
+    raw = {
+        "order": {"effective_date": "2026-07-02"},
+        "address": {"full": "9400 Sample Trace Dr, North Chesterfield, VA 23237",
+                    "county": "Chesterfield"},
+        "identifiers": {"apn": "123-45-67"},
+        "characteristics": {"gla_sf": "1,856 sf", "lot_size_sf": "10,890",
+                            "lot_size_acres": 0.25, "full_baths": "2.1",
+                            "year_built": "1972"},
+        "assessment": {"total_value": "$295,000", "tax_year": "2026"},
+        "re_taxes_annual": "$2,513.40",
+        "resolution": {"method": "ArcGIS"},
+        "photo_derived": ["garage"],
+        "gla_mls_sf": "1,850",
+    }
+    subj, flags = ingest(raw, resolved_on="2026-07-02")
+    ch = subj["characteristics"]
+    assert ch["gla_sf"] == 1856.0 and ch["year_built"] == 1972
+    assert subj["assessment"]["total_value"] == 295000.0
+    assert subj["re_taxes_annual"] == 2513.4
+    assert ch["full_baths"] == 2 and ch["half_baths"] == 1
+    assert any("Matrix N.M convention" in f for f in flags)
+    assert subj["assessors_parcel_number"] == "1234567"       # dashes stripped
+    assert subj["identifiers"]["apn"] == "123-45-67"          # SOR format kept
+    assert any("Chesterfield TaxID normalized" in f for f in flags)
+    assert any("garage derived from Zillow photos" in f for f in flags)
+    ver = subj["verification"]
+    assert ver and ver[0]["county"] == "1,856" and ver[0]["mls"] == "1,850"
+    assert ver[0]["governing_source"] == "county" and ver[0]["flag"] is None  # <2% apart
+    assert "photo_derived" not in subj and "gla_mls_sf" not in subj
+    assert subj["resolution"]["resolved_on"] == "2026-07-02"
+    assert not any("lot size mismatch" in f for f in flags)   # 10890 == 0.25 ac exactly
+    ok("C11: ingest — numerics, baths split, APN quirk, photo flags, verification seed")
+except Exception as ex:
+    fail("C11", str(ex))
+
+# ---------------------------------------------------------------------------
+# C12: ingest — gates fire; hard errors refuse
+# ---------------------------------------------------------------------------
+try:
+    bad = {
+        "order": {"effective_date": "2026-07-02"},
+        "address": {"full": "1 Gate Ln, Henrico, VA 23229", "county": "Henrico"},
+        "characteristics": {"gla_sf": "", "lot_size_sf": 10890,
+                            "lot_size_acres": 0.5},
+        "assessment": {"tax_year": 2025},
+    }
+    subj, flags = ingest(bad, resolved_on="2026-07-02")
+    assert subj["characteristics"]["gla_sf"] is None
+    assert any("GLA unverified" in f for f in flags)
+    assert any("lot size mismatch" in f for f in flags)       # 10890 vs 21780
+    assert any("tax year 2025 is behind" in f for f in flags)
+    # county+MLS GLA >2% apart -> verification row carries the flag
+    tw = {"address": {"full": "2 Twist Rd, Henrico, VA 23229", "county": "Henrico"},
+          "characteristics": {"gla_sf": 2000}, "gla_mls_sf": 1800}
+    s2, f2 = ingest(tw, resolved_on="2026-07-02")
+    assert any("differ >2%" in f for f in f2)
+    assert s2["verification"][0]["flag"]
+    # no county -> refuse (and nothing to cache)
+    try:
+        ingest({"address": {"full": "3 Nowhere St"}}, resolved_on="2026-07-02")
+        raise AssertionError("missing county did not raise")
+    except ValueError:
+        pass
+    # junk numeric -> refuse
+    try:
+        ingest({"address": {"full": "4 Junk St, Henrico, VA 23229", "county": "Henrico"},
+                "characteristics": {"gla_sf": "about two thousand"}},
+               resolved_on="2026-07-02")
+        raise AssertionError("junk numeric did not raise")
+    except ValueError:
+        pass
+    ok("C12: ingest gates — GLA null+flag, lot mismatch, tax-year, GLA-diff; refusals raise")
+except Exception as ex:
+    fail("C12", str(ex))
+
+# ---------------------------------------------------------------------------
+# C13: end-to-end — resolve(miss) -> fill -> ingest -> cache -> resolve(hit)
+#      -> assemble -> render (full pipeline on a synthetic order)
+# ---------------------------------------------------------------------------
+try:
+    sys.path.insert(0, os.path.join(REPO, "tools", "record-assembler"))
+    sys.path.insert(0, os.path.join(REPO, "tools", "worksheet-renderer"))
+    from assemble_record import assemble
+    from render_worksheet import render, audit_comp_tax_ids
+    import csv as _csv
+
+    out13 = os.path.join(TMP, "order13")
+    resolve("777 Pipeline Way, Henrico, VA 23229", county="Henrico",
+            out_dir=out13, db_path=DB, as_of="2026-07-02",
+            order_id="T-13", form_type="1004", effective_date="2026-07-02")
+    with open(os.path.join(out13, "subject.skeleton.json")) as f:
+        sk = json.load(f)
+    # simulate the human pull filling the skeleton
+    sk["characteristics"].update({"gla_sf": "1,700", "year_built": 1985,
+                                  "bedrooms": 3, "full_baths": 2,
+                                  "style": "Colonial", "property_type": "SFR"})
+    sk["identifiers"]["apn"] = "777-000-1111"
+    sk["assessment"].update({"tax_year": 2026, "total_value": 250000})
+    sk["water"] = "Public"
+    raw13 = os.path.join(out13, "filled.json")
+    with open(raw13, "w") as f:
+        json.dump(sk, f)
+    subj13, _ = ingest(sk, resolved_on="2026-07-02", source="APEX pull")
+    sj_path = os.path.join(out13, "subject.json")
+    with open(sj_path, "w") as f:
+        json.dump(subj13, f)
+    put(subj13["address"]["full"], subj13, "APEX pull", db_path=DB,
+        put_at="2026-07-02T15:00:00")
+    # second order on the same subject -> HIT, no pull sheet
+    out13b = os.path.join(TMP, "order13b")
+    resolve("777 Pipeline Way, Henrico, VA 23229", county="Henrico",
+            out_dir=out13b, db_path=DB, as_of="2026-07-02", order_id="T-13b")
+    assert os.path.exists(os.path.join(out13b, "subject.json"))
+    assert not os.path.exists(os.path.join(out13b, "pull-sheet.md"))
+    # assemble (empty comps) + render — the whole chain holds
+    empty_csv = os.path.join(out13, "comps.csv")
+    with open(empty_csv, "w", newline="") as f:
+        w = _csv.writer(f)
+        w.writerow(["Distance", "#", "ML #", "PID", "Status", "Address",
+                    "Total Finished Area", "MLS"])
+    rec = assemble(sj_path, empty_csv, os.path.join(out13, "record.json"),
+                   generated_at="2026-07-02T15:00:00Z")
+    html13 = render(rec)
+    assert audit_comp_tax_ids(rec, html13) == []
+    assert "777 Pipeline Way" in html13
+    assert "1,700 sf" in html13 and "Colonial" in html13
+    assert "Public" in html13                                  # water passthrough
+    assert "TBD — verify at inspection" in html13              # sewer still TBD
+    ok("C13: e2e — miss->fill->ingest->cache->hit->assemble->render, gates green")
+except Exception as ex:
+    fail("C13", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

@@ -11,7 +11,7 @@
       + staleness-as-flag + QA runner `tests_subject_resolution.py`
 - [x] Phase 2 — resolver skeleton + per-county pull sheet: `resolve_subject.py` (cache-first →
       routing → `subject.skeleton.json` + `pull-sheet.md`)
-- [ ] Phase 3 — ingest + normalize: `ingest_subject.py` (raw pull → validated subject.json →
+- [x] Phase 3 — ingest + normalize: `ingest_subject.py` (raw pull → validated subject.json →
       cache put) + fix the assembler-README phantom `subject.example.json`
 - [ ] Phase 4 (STRETCH, droppable) — ArcGIS FeatureServer auto-adapter (Chesterfield/Hanover)
 - [ ] Phase 5 — wrap: `/resolve-subject` command · SKILL wiring (property-search +
