@@ -536,6 +536,61 @@ except Exception as ex:
     fail("C16", str(ex))
 
 # ---------------------------------------------------------------------------
+# C17: add_county — all-or-nothing add to registry + routing together
+# ---------------------------------------------------------------------------
+try:
+    import shutil
+    from add_county import main as addc_main
+    reg_src = os.path.join(REPO, "skills", "property-search", "references",
+                           "county-registry.md")
+    rt_src = os.path.join(HERE, "county_routing.json")
+    reg_t = os.path.join(TMP, "registry.md")
+    rt_t = os.path.join(TMP, "routing.json")
+    shutil.copy(reg_src, reg_t)
+    shutil.copy(rt_src, rt_t)
+
+    rc = addc_main(["--jurisdiction", "Halifax", "--vendor", "qPublic",
+                    "--sor-url", "https://qpublic.example/halifax",
+                    "--technique", "address search; tax card on parcel page",
+                    "--mls", "CVR-Matrix", "--mls", "Navica",
+                    "--surrounding", "Mecklenburg,Charlotte",
+                    "--registry", reg_t, "--routing", rt_t])
+    assert rc == 0
+    with open(reg_t, encoding="utf-8") as f:
+        reg_after = f.read()
+    assert "| Halifax | qPublic" in reg_after
+    ext_pos = reg_after.index("## Extended coverage")
+    assert reg_after.index("| Halifax |") > ext_pos, "row landed outside Extended coverage"
+    routing_t = load_routing(rt_t)
+    assert "Halifax" in routing_t and routing_t["Halifax"]["gas_key"] == "Halifax County"
+    assert find_county(routing_t, "Halifax County", "x")[0] == "Halifax"
+    assert "Mecklenburg" in routing_t["Halifax"]["surrounding_counties"]
+
+    # duplicate -> refused, BOTH files untouched
+    with open(rt_t, "rb") as f:
+        rt_bytes = f.read()
+    rc2 = addc_main(["--jurisdiction", "Henrico", "--vendor", "X",
+                     "--sor-url", "u", "--technique", "t", "--mls", "M",
+                     "--registry", reg_t, "--routing", rt_t])
+    assert rc2 == 2
+    with open(rt_t, "rb") as f:
+        assert f.read() == rt_bytes, "routing changed on a refused add"
+
+    # missing routing file -> refused, registry untouched
+    with open(reg_t, "rb") as f:
+        reg_bytes = f.read()
+    rc3 = addc_main(["--jurisdiction", "Nottoway", "--vendor", "X",
+                     "--sor-url", "u", "--technique", "t", "--mls", "M",
+                     "--registry", reg_t,
+                     "--routing", os.path.join(TMP, "nope.json")])
+    assert rc3 == 2
+    with open(reg_t, "rb") as f:
+        assert f.read() == reg_bytes, "registry changed on a refused add"
+    ok("C17: add_county — both files together; duplicates + missing-file refused untouched")
+except Exception as ex:
+    fail("C17", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

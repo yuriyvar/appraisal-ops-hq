@@ -13,7 +13,7 @@
 - [x] Phase 2 — provenance gates: ingest warns + flags when no pull-sheet sibling;
       assembler flags subject.json lacking a resolution stamp ("produced outside standard
       work" — renders as a header chip); QA C16 + Build B T22
-- [ ] Phase 3 — `add_county.py`: scaffolds the registry row + `county_routing.json` entry
+- [x] Phase 3 — `add_county.py`: scaffolds the registry row + `county_routing.json` entry
       TOGETHER (drift rule mechanical; refuses partial adds); QA C17
 - [ ] Phase 4 — wrap: `/appraise`+boot/SKILL hard wording ("no portal browsing before the
       resolver answers HIT/MISS") · weekly `/review` order-lane audit item · docs · inbox ·
