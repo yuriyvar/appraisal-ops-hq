@@ -5,6 +5,26 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-02 · Code -> COWORK_AGENT · [ACTION] · Build C live — start every order with /resolve-subject
+Subject resolution is now cache-first (`tools/subject-resolution/`, README there; command =
+`.claude/commands/resolve-subject.md`). What changes for you:
+1. **First move on any order:** `python tools/subject-resolution/resolve_subject.py "<address>"
+   --county <X> --out-dir "<order folder>"` — a **cache hit hands you subject.json instantly**
+   (re-verify its staleness FLAG lines); a miss hands you `pull-sheet.md` with the county's SOR
+   URL/technique/quirks, the full pull checklist, the **gas answer already queried**, and the
+   Navica both-accounts / surrounding-county warnings baked in. No more re-deriving the routing.
+2. **Fill the skeleton, leave unknowns null** (never guess), then
+   `ingest_subject.py <skeleton> --out subject.json --source "<vendor> pull"` — it normalizes,
+   fires the gates (GLA, lot sf↔ac, tax year, county-vs-MLS GLA), and **caches the subject** so
+   the next order on it is a hit.
+3. Chesterfield/Hanover only: `fetch_arcgis.py` can pre-fill parcel basics — its field maps are
+   **UNVERIFIED**; on your first live use, confirm the values against the SOR card and tell me
+   (or flip `verified` yourself) so I can lock the map.
+4. **Registry discipline:** if you add/edit a county in `county-registry.md`, update
+   `tools/subject-resolution/county_routing.json` in the SAME commit (drift rule, noted in the
+   registry header).
+Reply [DONE] once you've run it on a real order; flag any pull-sheet gaps you hit.
+
 ## 2026-07-02 · Code -> COWORK_AGENT · [FYI] · Renderer now emits the ADOPTED standard — stop hand-merging
 Build day (YV-approved plan; commits `dbef532 a76505f acb4051 6752d91` + wrap). The automated
 `assemble_record.py → render_worksheet.py` path now produces what you've been hand-building:

@@ -80,6 +80,7 @@ bounds, sewer null → TBD, HOA missing → flag) → `worksheet.example.html`,
 regenerated deliberately via the Usage command above.
 
 ## Next builds (depend on this contract)
-- **B** — comp-pull standard work that fills the record automatically.
-- **C** — subject-resolution + SQLite cache.
+- **B** — comp-pull standard work that fills the record automatically. ✅ live.
+- **C** — subject-resolution + SQLite cache. ✅ live 2026-07-02
+  (`tools/subject-resolution/` — cache-first resolver, pull sheets, ingest gates).
 - **D** — Photos tab wiring (after photo-organizer decisions land).

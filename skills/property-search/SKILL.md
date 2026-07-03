@@ -39,6 +39,11 @@ conflicts are flagged.
 > When you hit a new quirk on a live order, ADD it there.
 
 ### 1. Resolve data sources
+- **Run `/resolve-subject` FIRST** (`tools/subject-resolution/resolve_subject.py`):
+  a cache hit skips the portal pull entirely (re-verify its staleness flags); a miss
+  hands you `pull-sheet.md` with the SOR/technique/gas/MLS routing pre-answered and a
+  v1.1 `subject.skeleton.json` to fill. Ingest via `ingest_subject.py` when done —
+  that's the only path into the subject cache.
 - Look up the county in `references/va-data-sources.md` (assessment site, GIS
   site, known live REST endpoints, quirks).
 - Check `references/data-quirks.md` for any source-specific exception that applies

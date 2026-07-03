@@ -5,6 +5,9 @@ remains the Operational Records Google Sheet, tab "VA Counties Assessment & GIS
 Records" (doc `12zZgU1ULHasOrgh_WHDOME40HdqEkKIL`, gid `686822370`). This file is
 the local mirror. Reconcile per the skill's Step 1.
 > Source quirks & handling exceptions (MLS-format, GIS gotchas): see `data-quirks.md`.
+> **Drift rule (Build C):** any edit to the coverage tables below MUST update
+> `tools/subject-resolution/county_routing.json` in the SAME commit — the resolver
+> routes orders from that mirror.
 
 ## Proposed sheet/registry columns (extend the existing tab)
 | Column | Meaning |

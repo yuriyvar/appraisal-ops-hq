@@ -15,8 +15,11 @@
       cache put) + fix the assembler-README phantom `subject.example.json`
 - [x] Phase 4 (STRETCH — landed) — ArcGIS adapter, canned-fixture tested; FIELD_MAPS ship
       `verified: false` — first live pull must confirm the attribute names + flip the flag
-- [ ] Phase 5 — wrap: `/resolve-subject` command · SKILL wiring (property-search +
-      worksheet-builder cache-first step) · README · inbox · interlane FYI · handoff
+- [x] Phase 5 — wrap: `/resolve-subject` command · SKILL wiring (property-search +
+      worksheet-builder cache-first step) · README · inbox · interlane [ACTION] · handoff
+- **ALL PHASES DONE 2026-07-02 (same-day build).** First live pull must verify the ArcGIS
+  FIELD_MAPS attribute names (ship `verified: false`) and COWORK_AGENT owes a [DONE] after
+  running `/resolve-subject` on a real order.
 
 ## Context — the muda being killed
 Subject data pull is the slowest manual step on every order (~65–90/mo): COWORK_AGENT hand-browses

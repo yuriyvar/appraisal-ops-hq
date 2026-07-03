@@ -28,6 +28,9 @@ Inputs → output: `appraisal-record.json` (per `appraisal-record.schema.json`)
 
 Learned from 3355 Darbytown Rd: pulling a subset and then adding fields on request wastes
 rounds. Run this checklist in full before declaring subject data complete.
+> **Start with `/resolve-subject`** — a cache hit skips this checklist entirely (re-verify its
+> staleness flags); a miss prints this checklist as a per-order `pull-sheet.md` with the county's
+> SOR URL/technique + gas answer baked in, and gives you the v1.1 skeleton to fill.
 
 ### Source 1 — County assessment portal (SOR)
 Pull in a single session; record every field even if blank (blank is data):
