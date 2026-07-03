@@ -1,4 +1,4 @@
-<!-- build-plan: name=bd2-multisource-verification status=active -->
+<!-- build-plan: name=bd2-multisource-verification status=done -->
 # Code brief — BD2: multi-source verification + variance protocol
 
 > Track 2 of the automation roadmap. Encodes YV's decision (2026-07-02) into the pipeline:
@@ -12,8 +12,9 @@
       value + `verification[]` row + triage flags; `gla_mls_sf` back-compat; QA C18 matrix
 - [x] Phase 2 — resolver: pull sheet reordered MLS → County → Zillow + variance-protocol box;
       skeleton seeds the helper blocks; QA C19 (+ e2e triage chip renders)
-- [ ] Phase 3 — wrap: docs/SKILL wording · triage-clearing procedure documented · inbox ·
-      interlane FYI · handoff · tag done + BD2 ticked in the master queue
+- [x] Phase 3 — wrap: docs/SKILL wording · triage-clearing procedure documented (README) ·
+      inbox · interlane [ACTION] · handoff · tag done + BD2 ticked in the master queue
+- **ALL PHASES DONE 2026-07-02.**
 
 ## Design (locked)
 - **Tracked fields** (`_MULTI_SOURCE`): gla_sf ("Finished area (sf)", ±2%) · year_built (exact) ·

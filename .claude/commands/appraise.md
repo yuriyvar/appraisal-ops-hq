@@ -17,7 +17,9 @@ provenance chips and the weekly audit catch. (YV: "Discipline prevents entropy."
   together), then re-run. Never hand-edit just one of the two files.
 
 ## Step 2 — Pull + ingest (MISS only)
-Work `pull-sheet.md` top to bottom (SOR → Zillow → gas; unknowns stay null — never guessed).
+Work `pull-sheet.md` top to bottom (**MLS → County SOR → Zillow → gas**; unknowns stay null —
+never guessed). Tracked fields: per-source values into `source_values`, county-vs-MLS conflicts
+per the sheet's variance protocol (`variance_notes` reason or County rules; triage chip either way).
 Chesterfield/Hanover: `fetch_arcgis.py` may pre-fill parcel basics first.
 Tick run-log step 2 by hand, then:
 `ingest_subject.py <skeleton> --out subject.json --source "<vendor> pull"` (ticks step 3,

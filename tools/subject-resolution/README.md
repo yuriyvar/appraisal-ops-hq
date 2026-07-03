@@ -55,6 +55,19 @@ python tools/subject-resolution/subject_cache.py get "<address>" --as-of 2026-07
 | `add_county.py` | BD1: adds a jurisdiction to registry + routing TOGETHER (all-or-nothing) |
 | `tests_subject_resolution.py` | QA runner (17 tests, no network) |
 
+## Multi-source verification (BD2, 2026-07-02)
+- Pull order **MLS → County/GIS → Zillow** (the pull sheet walks it). Per-source values
+  for the tracked fields (gla_sf · year_built · lot_size_acres · bedrooms · full_baths ·
+  stories) go into the skeleton's `source_values.<field>.{mls,county,zillow}` slots.
+- **YV's variance protocol:** county-vs-MLS agree → county governs quietly. Disagree →
+  read the listing; if it SUPPORTS the variance, one line in `variance_notes.<field>` →
+  MLS governs WITH the reason; if not → County rules. **Either way** the field carries
+  an "inconsistent — manual triage" chip (verification row + worksheet header) until
+  YV clears it. Zillow never governs (informational; lone-source fallback with a
+  "weakest source" note only).
+- **Clearing a triage chip** = YV decides → re-ingest with `variance_notes` filled
+  (supported) or the wrong source value corrected. Never hand-delete the flag string.
+
 ## Standard-work enforcement (BD1, 2026-07-02)
 - Every resolve writes **`run-log.md`** — the order's checklist. Tools tick their own
   steps (resolver=1, ingester=3); humans tick 2 (pull) and 4 (comps). Unchecked boxes

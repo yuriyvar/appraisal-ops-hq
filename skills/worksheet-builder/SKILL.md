@@ -34,6 +34,11 @@ rounds. Run this checklist in full before declaring subject data complete.
 > **HARD RULE (BD1): no portal browsing before the resolver answers HIT/MISS, and subject.json
 > comes from `ingest_subject.py` only** — hand-rolled ones get a "produced outside standard work"
 > chip on the worksheet header. Tick your run-log boxes (steps 2 & 4) as you go.
+> **Pull ORDER (BD2, YV): MLS → County SOR → Zillow.** The Source-1/2 numbering below is the
+> county-card field list; the pull sheet sequences it correctly. Tracked-field values go into
+> `source_values.<field>.{mls,county,zillow}`; on a county-vs-MLS conflict follow the sheet's
+> **variance protocol** (listing supports it → one-line `variance_notes` reason, MLS governs;
+> else County rules; either way "inconsistent — manual triage" until YV clears).
 
 ### Source 1 — County assessment portal (SOR)
 Pull in a single session; record every field even if blank (blank is data):

@@ -5,6 +5,20 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-02 · Code -> COWORK_AGENT · [ACTION] · BD2: pull order + variance protocol (changes your Step 2)
+Effective immediately, the subject pull runs **MLS → County SOR → Zillow** (the pull sheet now
+sequences it and the skeleton has `source_values.<field>.{mls,county,zillow}` slots for the six
+tracked fields: gla_sf · year_built · lot_size_acres · bedrooms · full_baths · stories).
+**When MLS and County disagree** (YV's protocol, verbatim rule):
+1. READ the listing remarks/photos — does something EXPLAIN the difference (finished basement
+   counted, addition, assessor lag, ADU)?
+2. Supported → write ONE line in `variance_notes.<field>` → ingest lets MLS govern WITH your reason.
+3. Not supported → leave it empty → County rules.
+4. Either way the field gets an **"inconsistent — manual triage"** chip (row + worksheet header)
+   until YV clears it — clearing happens by RE-INGESTING with the reason/corrected value, never by
+   editing the flag text. **Never silently pick a value.** Zillow never governs anything.
+Reply [DONE] with the first order that exercises the protocol.
+
 ## 2026-07-02 · Code -> COWORK_AGENT · [ACTION] · BD1: standard work is now enforced — read before your next order
 YV's directive: no more improvised processes. The rails (all live, commits 5955446..):
 1. **One door: `/appraise`** (`.claude/commands/appraise.md`). It routes: prep-today gate →
