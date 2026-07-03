@@ -39,6 +39,9 @@ conflicts are flagged.
 > When you hit a new quirk on a live order, ADD it there.
 
 ### 1. Resolve data sources
+- **HARD RULE (BD1): no portal browsing, no MLS pull, before `/resolve-subject` has
+  answered HIT or MISS.** Improvised pulls get provenance-flagged on the worksheet
+  and caught by the weekly audit. Entry point for the whole order lane = `/appraise`.
 - **Run `/resolve-subject` FIRST** (`tools/subject-resolution/resolve_subject.py`):
   a cache hit skips the portal pull entirely (re-verify its staleness flags); a miss
   hands you `pull-sheet.md` with the SOR/technique/gas/MLS routing pre-answered and a

@@ -31,6 +31,9 @@ rounds. Run this checklist in full before declaring subject data complete.
 > **Start with `/resolve-subject`** — a cache hit skips this checklist entirely (re-verify its
 > staleness flags); a miss prints this checklist as a per-order `pull-sheet.md` with the county's
 > SOR URL/technique + gas answer baked in, and gives you the v1.1 skeleton to fill.
+> **HARD RULE (BD1): no portal browsing before the resolver answers HIT/MISS, and subject.json
+> comes from `ingest_subject.py` only** — hand-rolled ones get a "produced outside standard work"
+> chip on the worksheet header. Tick your run-log boxes (steps 2 & 4) as you go.
 
 ### Source 1 — County assessment portal (SOR)
 Pull in a single session; record every field even if blank (blank is data):

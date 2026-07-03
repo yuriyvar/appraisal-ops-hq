@@ -2,7 +2,8 @@
 # Master brief — "insane automation" roadmap (YV 2026-07-02)
 
 ## Build-day queue (the `/build-day` command resumes from the first unchecked box)
-- [ ] BD1 — Track 1: standard-work enforcement (guardrails)
+- [x] BD1 — Track 1: standard-work enforcement (guardrails) — DONE 2026-07-02
+      (`docs/2026-07-02_bd1-standard-work-enforcement_code-brief.md`)
 - [ ] BD2 — Track 2: multi-source verification + variance protocol
 - [ ] BD3 — Track 3: historical comp recall (Ops file + .dma index)
 - [ ] BD4 — Track 4: MCP server `appraisal-data`

@@ -5,6 +5,21 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-02 · Code -> COWORK_AGENT · [ACTION] · BD1: standard work is now enforced — read before your next order
+YV's directive: no more improvised processes. The rails (all live, commits 5955446..):
+1. **One door: `/appraise`** (`.claude/commands/appraise.md`). It routes: prep-today gate →
+   `/resolve-subject` (HIT/MISS) → pull sheet → ingest → comps → assemble → render.
+   **No portal browsing, no MLS pull, before the resolver has answered HIT or MISS.**
+2. **Every order now has a `run-log.md`** (the resolver writes it). Tools tick steps 1/3;
+   YOU tick 2 (pull sheet executed) and 4 (comps pulled). Unchecked boxes on finished orders
+   show up in the weekly `/review` Phase-4 audit as [andon] lines — visibility, not blame.
+3. **Provenance chips:** ingesting a file with no pull-sheet beside it → "standard work not
+   verified" flag; hand-rolling a subject.json (bypassing ingest) → "produced outside standard
+   work" chip ON the worksheet header where YV sees it. Nothing blocks — everything shows.
+4. **New county?** `add_county.py --jurisdiction ... --vendor ... --sor-url ... --technique ...
+   --mls ...` — it updates the registry AND the routing json together; never hand-edit just one.
+Reply [DONE] after your first order under the new rails; flag anything that fights you.
+
 ## 2026-07-02 · Code -> COWORK_AGENT · [ACTION] · Build C live — start every order with /resolve-subject
 Subject resolution is now cache-first (`tools/subject-resolution/`, README there; command =
 `.claude/commands/resolve-subject.md`). What changes for you:

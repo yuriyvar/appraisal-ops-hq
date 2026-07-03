@@ -11,10 +11,12 @@ python tools/subject-resolution/resolve_subject.py "<address>" --county <Jurisdi
     --order-id <id> --form-type <1004|2055|...> --effective-date <YYYY-MM-DD> `
     --out-dir "C:\Users\yuriy\VDV Appraisals\<order-folder>"
 ```
-- **CACHE HIT** → `subject.json` written (`resolution.cached=true`, original pull date
-  preserved). **Read the FLAG lines** — stale (>180d) or tax-year-behind data must be
-  re-verified before use, per CLAUDE.md rule 7. Then skip to comps (property-search).
-- **CACHE MISS** → `subject.skeleton.json` + `pull-sheet.md` written. Continue below.
+- **CACHE HIT** → `subject.json` + `run-log.md` written (`resolution.cached=true`, original
+  pull date preserved). **Read the FLAG lines** — stale (>180d) or tax-year-behind data must
+  be re-verified before use, per CLAUDE.md rule 7. Then skip to comps (property-search).
+- **CACHE MISS** → `subject.skeleton.json` + `pull-sheet.md` + `run-log.md` written. Continue
+  below. The run-log is the order's standard-work checklist: tools tick steps 1/3, you tick
+  2/4 — unchecked boxes on finished orders surface in the weekly `/review` audit.
 - Unknown county → add it to `skills/property-search/references/county-registry.md`
   AND `tools/subject-resolution/county_routing.json` (same commit), then re-run.
 

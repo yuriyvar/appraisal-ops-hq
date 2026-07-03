@@ -1,4 +1,4 @@
-<!-- build-plan: name=bd1-standard-work-enforcement status=active -->
+<!-- build-plan: name=bd1-standard-work-enforcement status=done -->
 # Code brief — BD1: standard-work enforcement (guardrails)
 
 > Track 1 of the automation roadmap (`2026-07-02_automation-roadmap_master-brief.md`).
@@ -15,9 +15,11 @@
       work" — renders as a header chip); QA C16 + Build B T22
 - [x] Phase 3 — `add_county.py`: scaffolds the registry row + `county_routing.json` entry
       TOGETHER (drift rule mechanical; refuses partial adds); QA C17
-- [ ] Phase 4 — wrap: `/appraise`+boot/SKILL hard wording ("no portal browsing before the
-      resolver answers HIT/MISS") · weekly `/review` order-lane audit item · docs · inbox ·
-      interlane [ACTION] · handoff · flip tag to done + tick BD1 in the master queue
+- [x] Phase 4 — wrap: `/appraise` command created (the one door) · property-search +
+      worksheet-builder hard wording · memory-review Phase-4 order-lane audit ·
+      /resolve-subject + README updated · inbox · interlane [ACTION] · handoff ·
+      tag flipped + BD1 ticked in the master queue
+- **ALL PHASES DONE 2026-07-02** (same-day with the roadmap itself — three builds today).
 
 ## Design (locked)
 - **run-log.md** (written by the resolver next to the skeleton/subject.json):

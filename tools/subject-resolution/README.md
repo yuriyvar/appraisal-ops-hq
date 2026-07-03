@@ -52,7 +52,19 @@ python tools/subject-resolution/subject_cache.py get "<address>" --as-of 2026-07
 | `county_routing.json` | committed mirror of the county registry (routing only) |
 | `ingest_subject.py` | normalizer + fail-loud gates; the ONLY cache write path |
 | `fetch_arcgis.py` | stretch: FeatureServer auto-pull (fill-nulls-only) |
-| `tests_subject_resolution.py` | QA runner (14 tests, no network) |
+| `add_county.py` | BD1: adds a jurisdiction to registry + routing TOGETHER (all-or-nothing) |
+| `tests_subject_resolution.py` | QA runner (17 tests, no network) |
+
+## Standard-work enforcement (BD1, 2026-07-02)
+- Every resolve writes **`run-log.md`** — the order's checklist. Tools tick their own
+  steps (resolver=1, ingester=3); humans tick 2 (pull) and 4 (comps). Unchecked boxes
+  on finished orders surface in the weekly `/review` Phase-4 audit.
+- **Provenance chips (warn loud, never block):** ingest without a `pull-sheet.md`
+  sibling → "standard work not verified" flag; a subject.json with no
+  `resolution.resolved_on` (i.e. it bypassed ingest) → "produced outside standard
+  work" chip on the rendered worksheet header.
+- New counties go in via `add_county.py` — never hand-edit only one of
+  registry/routing (the drift rule is mechanical now).
 
 ## Rules encoded
 - **Cache DB lives in the client zone** (`C:\Users\yuriy\VDV Appraisals\Subject cache\

@@ -37,6 +37,17 @@ kaizen'd / pruned.
 Inbox throughput, notes due vs reviewed, SOPs with open andon flags, and the
 single biggest gap noticed (e.g., "QC has no SOP but generated 4 kaizen items").
 
+## Phase 4 — Order-lane standard-work audit (BD1, 2026-07-02)
+Sample the week's order folders under `C:\Users\yuriy\VDV Appraisals\` (client zone —
+read-only look, nothing copied into the repo):
+1. Each worked order should carry `run-log.md` + `pull-sheet.md` (or a cache-HIT run-log)
+   from `/resolve-subject`. Missing = the pipeline was bypassed.
+2. In each `run-log.md`: unchecked boxes for steps already done = ticks skipped;
+   worksheets carrying the "produced outside standard work" / "standard work not
+   verified" chips = hand-rolled inputs.
+3. Every miss becomes ONE inbox line (`[andon] standard-work bypass: <order> — <what>`)
+   for the retro — the point is visibility, not blame. Repeat offenders → kaizen item.
+
 ## Rules
 - Never silently change an SOP — that path runs only through kaizen-retro + human approval.
 - Bias to pruning: a small accurate vault beats a large stale one.
