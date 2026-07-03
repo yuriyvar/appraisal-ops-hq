@@ -177,6 +177,110 @@ except Exception as e:
     fail("C6", str(e))
 
 # ---------------------------------------------------------------------------
+# C7: routing table loads, covers the registry, entries complete
+# ---------------------------------------------------------------------------
+try:
+    from resolve_subject import load_routing, find_county, resolve
+    routing = load_routing()
+    assert len(routing) >= 12, "expected >=12 jurisdictions, got " + str(len(routing))
+    for name, e in routing.items():
+        for k in ("vendor", "sor_url", "technique", "mls", "gas_key"):
+            assert e.get(k), "{} missing {}".format(name, k)
+    # alias + address-segment resolution
+    assert find_county(routing, "Henrico County", "x")[0] == "Henrico"
+    assert find_county(routing, None, "4237 Hall Rd, Boydton, VA 23917")[0] == "Mecklenburg"
+    assert find_county(routing, "N. Chesterfield", "x")[0] == "Chesterfield"
+    try:
+        find_county(routing, "Narnia", "1 Wardrobe Ln, Narnia, VA 00000")
+        raise AssertionError("unknown county did not raise")
+    except ValueError as e:
+        assert "Henrico" in str(e), "coverage list missing from the error"
+    ok("C7: routing — 12 jurisdictions, complete entries, aliases, loud unknown")
+except Exception as ex:
+    fail("C7", str(ex))
+
+# ---------------------------------------------------------------------------
+# C8: resolver MISS -> skeleton + pull sheet (Henrico APEX + gas provider)
+# ---------------------------------------------------------------------------
+try:
+    out8 = os.path.join(TMP, "order8")
+    rc = resolve("456 Fresh Pull Rd, Henrico, VA 23229", county="Henrico",
+                 out_dir=out8, db_path=DB, as_of="2026-07-02",
+                 order_id="T-8", form_type="1004", effective_date="2026-07-02")
+    assert rc == 0
+    with open(os.path.join(out8, "subject.skeleton.json")) as f:
+        sk = json.load(f)
+    assert sk["address"]["county"] == "Henrico" and sk["address"]["zip"] == "23229"
+    assert sk["order"]["order_id"] == "T-8" and sk["order"]["form_type"] == "1004"
+    assert sk["resolution"]["cached"] is False and sk["resolution"]["method"] == "APEX"
+    assert sk["characteristics"]["gla_sf"] is None            # never guessed
+    assert sk["water"] is None and sk["assessors_parcel_number"] is None  # v1.1 keys present
+    assert sk["market"]["search"]["mls_systems"] == ["CVR-Matrix"]
+    with open(os.path.join(out8, "pull-sheet.md"), encoding="utf-8") as f:
+        ps = f.read()
+    assert "realestate.henrico.gov" in ps and "APEX" in ps
+    assert "Above-grade GLA" in ps and "Sketch codes" in ps
+    assert "Richmond Gas Works" in ps                          # gas DB row surfaced
+    assert "Zillow" in ps and "confirm at inspection" in ps
+    ok("C8: miss -> v1.1 skeleton (all-null data) + pull sheet w/ APEX + gas + checklist")
+except Exception as ex:
+    fail("C8", str(ex))
+
+# ---------------------------------------------------------------------------
+# C9: resolver HIT -> subject.json cached=true + staleness flag, original date kept
+# ---------------------------------------------------------------------------
+try:
+    stale = json.loads(json.dumps(SUBJ))
+    stale["resolution"]["resolved_on"] = "2026-01-01"
+    stale["assessment"]["tax_year"] = 2025
+    put("300 Stale Ct, Henrico, VA 23229", stale, "county-assessment",
+        db_path=DB, put_at="2026-01-01T09:00:00")
+    out9 = os.path.join(TMP, "order9")
+    rc = resolve("300 Stale Court, Henrico County, VA 23229", county="Henrico",
+                 out_dir=out9, db_path=DB, as_of="2026-07-02", order_id="T-9")
+    assert rc == 0
+    with open(os.path.join(out9, "subject.json")) as f:
+        sj = json.load(f)
+    assert sj["resolution"]["cached"] is True
+    assert sj["resolution"]["resolved_on"] == "2026-01-01"     # vintage preserved
+    assert any("days old" in fl for fl in sj["flags"]), sj["flags"]
+    assert any("tax year 2025 is behind 2026" in fl for fl in sj["flags"]), sj["flags"]
+    assert sj["order"]["order_id"] == "T-9"                    # override merged
+    assert sj["characteristics"]["gla_sf"] == 1856             # cached data intact
+    assert not os.path.exists(os.path.join(out9, "pull-sheet.md")), "hit wrote a pull sheet"
+    ok("C9: hit -> cached=true, vintage kept, staleness+tax-year flags, order merged")
+except Exception as ex:
+    fail("C9", str(ex))
+
+# ---------------------------------------------------------------------------
+# C10: Mecklenburg pull sheet — both-accounts warning, NC surrounding set,
+#      confirmed-absent gas; out-dir inside repo refused
+# ---------------------------------------------------------------------------
+try:
+    out10 = os.path.join(TMP, "order10")
+    rc = resolve("1234 Kerr Lake Dr, Boydton, VA 23917", county="Mecklenburg",
+                 out_dir=out10, db_path=DB, as_of="2026-07-02")
+    assert rc == 0
+    with open(os.path.join(out10, "pull-sheet.md"), encoding="utf-8") as f:
+        ps = f.read()
+    assert "BOTH Navica accounts" in ps and "R57xxx" in ps
+    assert "Vance NC" in ps and "Halifax" in ps
+    assert "CONFIRMED: no SCC gas" in ps                      # sentinel row honored
+    assert "ConciseCAMA" in ps and "manufactured homes" in ps
+    with open(os.path.join(out10, "subject.skeleton.json")) as f:
+        sk10 = json.load(f)
+    assert "Vance NC" in sk10["market"]["search"]["surrounding_counties"]
+    try:
+        resolve("1 Evil St, Henrico, VA 23229", county="Henrico",
+                out_dir=os.path.join(REPO, "tools"), db_path=DB)
+        raise AssertionError("repo out-dir did not raise")
+    except ValueError:
+        pass
+    ok("C10: Mecklenburg sheet — both-accounts, NC set, gas confirmed-absent; repo out-dir refused")
+except Exception as ex:
+    fail("C10", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

@@ -9,7 +9,7 @@
 - [x] Phase 0 — this brief committed
 - [x] Phase 1 — cache core: `tools/subject-resolution/subject_cache.py` + address normalization
       + staleness-as-flag + QA runner `tests_subject_resolution.py`
-- [ ] Phase 2 — resolver skeleton + per-county pull sheet: `resolve_subject.py` (cache-first →
+- [x] Phase 2 — resolver skeleton + per-county pull sheet: `resolve_subject.py` (cache-first →
       routing → `subject.skeleton.json` + `pull-sheet.md`)
 - [ ] Phase 3 — ingest + normalize: `ingest_subject.py` (raw pull → validated subject.json →
       cache put) + fix the assembler-README phantom `subject.example.json`

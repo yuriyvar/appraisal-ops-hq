@@ -1,0 +1,154 @@
+{
+  "_meta": {
+    "source_of_truth": "skills/property-search/references/county-registry.md (mirror of the Google Sheet tab 'VA Counties Assessment & GIS Records')",
+    "drift_rule": "registry.md coverage-table edits MUST update this file in the SAME commit (Build C brief, constraint 4)",
+    "seeded": "2026-07-02"
+  },
+  "jurisdictions": {
+    "Henrico": {
+      "aliases": ["Henrico County", "Henrico Co"],
+      "gas_key": "Henrico County",
+      "vendor": "APEX",
+      "sor_url": "https://realestate.henrico.gov",
+      "technique": "Enter at the ROOT (deep links f?p=...:1 get 410'd by the URL firewall); search via the form (apex.submit {request:'SEARCH'}); open result detail (f?p=510101:5...).",
+      "sales_gis": "N",
+      "comp_source": "MLS-only",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": "Do NOT use AGO 'Tax Parcels 0322' (735-row SAMPLE). APEX acreage often blank -> Zillow immediately."
+    },
+    "Chesterfield": {
+      "aliases": ["Chesterfield County", "Chesterfield Co", "North Chesterfield", "N. Chesterfield", "South Chesterfield"],
+      "gas_key": "Chesterfield County",
+      "vendor": "ArcGIS",
+      "sor_url": "https://services3.arcgis.com/TsynfzBSE6sXfoLq/arcgis/rest/services/Cadastral_ProdA/FeatureServer/3",
+      "technique": "Query the FeatureServer REST endpoint (JSON); layer 3 carries SaleDate/SalePrice.",
+      "sales_gis": "Y",
+      "comp_source": "GIS+MLS",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": "Strip dashes from TaxID. Gas OVERLAP: N. Chesterfield = Richmond Gas Works (instant_map), S. Chesterfield = Columbia Gas — the gas DB returns BOTH."
+    },
+    "Hanover": {
+      "aliases": ["Hanover County", "Hanover Co"],
+      "gas_key": "Hanover County",
+      "vendor": "CivQuest",
+      "sor_url": "https://maps.civ.quest (Hanover/Public/FeatureServer; Sales layer = 38)",
+      "technique": "Find the live FeatureServer via performance.getEntriesByType('resource') filtered for rest/services; query parcel/improvements/sales layers.",
+      "sales_gis": "Y",
+      "comp_source": "GIS+MLS",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": "AGO mirror is STALE — use civ.quest."
+    },
+    "Richmond City": {
+      "aliases": ["Richmond", "City of Richmond"],
+      "gas_key": "Richmond City",
+      "vendor": "actdatascout",
+      "sor_url": "https://www.actdatascout.com/RealProperty/Virginia/RichmondCity",
+      "technique": "Portal search by address.",
+      "sales_gis": "TODO",
+      "comp_source": "MLS-only (assume)",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": "Verify sales layer on next order."
+    },
+    "Goochland": {
+      "aliases": ["Goochland County", "Goochland Co"],
+      "gas_key": "Goochland County",
+      "vendor": "county GIS",
+      "sor_url": "https://gis.co.goochland.va.us",
+      "technique": "County GIS portal; address search.",
+      "sales_gis": "TODO",
+      "comp_source": "MLS-only (assume)",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": "River Notch / Rivergate area orders."
+    },
+    "Powhatan": {
+      "aliases": ["Powhatan County", "Powhatan Co"],
+      "gas_key": "Powhatan County",
+      "vendor": "CivQuest",
+      "sor_url": "https://maps.civ.quest (Powhatan)",
+      "technique": "CivQuest portal; AGO Vision_Powhatan has SALEHIST — verify on next order.",
+      "sales_gis": "TODO",
+      "comp_source": "TBD",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": ""
+    },
+    "New Kent": {
+      "aliases": ["New Kent County", "New Kent Co"],
+      "gas_key": "New Kent County",
+      "vendor": "Vision + CivQuest",
+      "sor_url": "https://gis.vgsi.com/newkentva",
+      "technique": "Vision/vgsi: search by address -> Parcel.aspx?Pid=N. CivQuest as backup.",
+      "sales_gis": "TODO",
+      "comp_source": "TBD",
+      "mls": ["CVR-Matrix"],
+      "surrounding_counties": [],
+      "quirks": ""
+    },
+    "Chesapeake City": {
+      "aliases": ["Chesapeake", "City of Chesapeake"],
+      "gas_key": "Chesapeake City",
+      "vendor": "CivQuest",
+      "sor_url": "https://maps.civ.quest (Chesapeake)",
+      "technique": "CivQuest portal; address search.",
+      "sales_gis": "TODO",
+      "comp_source": "TBD",
+      "mls": ["confirm — both? (Navica?)"],
+      "surrounding_counties": [],
+      "quirks": "Confirm the MLS before pulling comps."
+    },
+    "Charlotte": {
+      "aliases": ["Charlotte County", "Charlotte Co"],
+      "gas_key": "Charlotte County",
+      "vendor": "InteractiveGIS-style portal",
+      "sor_url": "https://charlottecountypropertycards.com",
+      "technique": "Search by address or record#. Tax card shows building sections (A/B), foundation, ext walls, heat/AC, sketch.",
+      "sales_gis": "N",
+      "comp_source": "MLS-only",
+      "mls": ["CVR-Matrix", "Navica"],
+      "surrounding_counties": [],
+      "quirks": "Parcel# format: 086--A---7-A (keep as-is). County phone: (434) 542-5546. Well/septic typical."
+    },
+    "Buckingham": {
+      "aliases": ["Buckingham County", "Buckingham Co"],
+      "gas_key": "Buckingham County",
+      "vendor": "InteractiveGIS",
+      "sor_url": "https://buckcova.interactivegis.com",
+      "technique": "Accept terms -> Go to Map -> Quick Search by address -> click parcel -> Tax Cards icon opens PDF at /resources/landcards/000{ACCT#}.pdf.",
+      "sales_gis": "N",
+      "comp_source": "MLS-only",
+      "mls": ["CVR-Matrix", "Navica"],
+      "surrounding_counties": [],
+      "quirks": "Parcel# format: 188-2-6A. Acct# zero-padded 9 digits + 3-digit suffix (e.g. 000011611-001). Well/septic typical."
+    },
+    "Prince Edward": {
+      "aliases": ["Prince Edward County", "Prince Edward Co"],
+      "gas_key": "Prince Edward County",
+      "vendor": "TXApps property cards",
+      "sor_url": "https://epayments.co.prince-edward.va.us",
+      "technique": "TXApps property-card search.",
+      "sales_gis": "N",
+      "comp_source": "MLS-only",
+      "mls": ["Navica (Lake Country)"],
+      "surrounding_counties": ["Buckingham", "Appomattox", "Charlotte", "Cumberland", "Nottoway", "Lunenburg"],
+      "quirks": "CVR returns ~0 sales here — pull comps in Navica (andon 2026-06-26)."
+    },
+    "Mecklenburg": {
+      "aliases": ["Mecklenburg County", "Mecklenburg Co", "Kerr Lake", "Boydton", "Clarksville"],
+      "gas_key": "Mecklenburg County",
+      "vendor": "ConciseCAMA",
+      "sor_url": "https://mecklenburg.cama.concisesystems.com",
+      "technique": "ConciseCAMA search. May have NO building record for manufactured homes — get GLA from client or MLS history.",
+      "sales_gis": "N",
+      "comp_source": "MLS-only",
+      "mls": ["Navica acct 287 (South Central)", "Navica acct 397 (Southern Piedmont)"],
+      "navica_both_accounts": "MUST search BOTH Navica accounts — comps split by namespace: R57xxx = South Central (287); R70xxx-R71xxx = Southern Piedmont (397). Separate MLS# namespaces!",
+      "surrounding_counties": ["Lunenburg", "Charlotte", "Halifax", "Brunswick", "Vance NC", "Granville NC", "Warren NC"],
+      "quirks": "CVR returns ~0 sales. Full workflow + logins -> skills/property-search/references/navica-accounts.md."
+    }
+  }
+}
