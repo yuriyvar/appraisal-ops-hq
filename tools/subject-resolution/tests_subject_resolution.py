@@ -658,6 +658,54 @@ except Exception as ex:
     fail("C18", str(ex))
 
 # ---------------------------------------------------------------------------
+# C19: BD2 resolver — pull order, helper seeds, e2e triage chip on the worksheet
+# ---------------------------------------------------------------------------
+try:
+    out19 = os.path.join(TMP, "order19")
+    resolve("15 Triage Ter, Henrico, VA 23229", county="Henrico", out_dir=out19,
+            db_path=DB, as_of="2026-07-02", order_id="T-19",
+            effective_date="2026-07-02")
+    with open(os.path.join(out19, "pull-sheet.md"), encoding="utf-8") as f:
+        ps19 = f.read()
+    assert (ps19.index("Source 1 — MLS") < ps19.index("Source 2 — county SOR")
+            < ps19.index("Source 3 — Zillow") < ps19.index("Source 4 — gas")), \
+        "pull order is not MLS -> County -> Zillow -> gas"
+    assert "Variance protocol" in ps19 and "variance_notes" in ps19
+    assert "NEVER silently pick a value" in ps19
+    with open(os.path.join(out19, "subject.skeleton.json")) as f:
+        sk19 = json.load(f)
+    assert set(sk19["source_values"]) == {"gla_sf", "year_built", "lot_size_acres",
+                                          "bedrooms", "full_baths", "stories"}
+    assert sk19["source_values"]["gla_sf"] == {"mls": None, "county": None, "zillow": None}
+    assert sk19["variance_notes"] == {}
+    with open(os.path.join(out19, "run-log.md"), encoding="utf-8") as f:
+        assert "MLS → SOR → Zillow" in f.read()
+
+    # e2e: unsupported variance -> triage chip visible on the rendered worksheet
+    sk19["characteristics"].update({"property_type": "SFR", "style": "Ranch"})
+    sk19["source_values"]["gla_sf"] = {"mls": 2256, "county": 1856, "zillow": None}
+    sk19["identifiers"]["apn"] = "191-919-1919"
+    subj19, f19 = ingest(sk19, resolved_on="2026-07-02")
+    assert subj19["characteristics"]["gla_sf"] == 1856      # County rules
+    assert "source_values" not in subj19
+    sj19 = os.path.join(out19, "subject.json")
+    with open(sj19, "w") as f:
+        json.dump(subj19, f)
+    empty19 = os.path.join(out19, "comps.csv")
+    with open(empty19, "w", newline="") as f:
+        _csv.writer(f).writerow(["Distance", "#", "ML #", "PID", "Status",
+                                 "Address", "Total Finished Area", "MLS"])
+    rec19 = assemble(sj19, empty19, os.path.join(out19, "record.json"),
+                     generated_at="2026-07-02T18:00:00Z")
+    html19 = render(rec19)
+    assert "manual triage" in html19, "triage chip missing from the worksheet"
+    assert "row-flagged" in html19                           # verification row highlighted
+    assert "1,856" in html19 and "2,256" in html19           # both values visible
+    ok("C19: pull order + seeds + e2e — County ruled, triage chip renders, both values shown")
+except Exception as ex:
+    fail("C19", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

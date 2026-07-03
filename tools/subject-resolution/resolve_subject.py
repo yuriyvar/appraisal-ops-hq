@@ -34,6 +34,7 @@ REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 
 from subject_cache import get as cache_get, staleness_flags, normalize_address
+from ingest_subject import _MULTI_SOURCE
 
 ROUTING_PATH = os.path.join(HERE, "county_routing.json")
 GAS_DB = os.path.join(REPO, "skills", "property-search", "references",
@@ -169,6 +170,13 @@ def build_skeleton(address, county_name, entry, order_meta):
         "hoa_period": None,
         "neighborhood_bounds": None,
         "neighborhood_description_context": None,
+
+        # BD2 helper blocks (stripped at ingest): record each source's value for
+        # the tracked fields here; a one-line reason in variance_notes[field]
+        # marks a county-vs-MLS variance as SUPPORTED by the listing.
+        "source_values": {f: {"mls": None, "county": None, "zillow": None}
+                          for f in _MULTI_SOURCE},
+        "variance_notes": {},
     }
 
 
@@ -182,11 +190,20 @@ def build_pull_sheet(address, county_name, entry, gas):
     L.append("County: **{}** · comp source: {} · sales-GIS: {}".format(
         county_name, entry.get("comp_source", "?"), entry.get("sales_gis", "?")))
     L.append("")
-    L.append("## Source 1 — county SOR ({})".format(entry["vendor"]))
+    L.append("## Source 1 — MLS (pull FIRST — YV order: MLS → County → Zillow)")
+    L.append("- System(s): {}".format(" + ".join(entry.get("mls", ["?"]))))
+    L.append("- Subject listing/history: finished area · beds/baths · year built · stories ·")
+    L.append("  lot · **water/sewer (MLS is the ONLY legit source — never inferred)** ·")
+    L.append("  TaxAnnualAmount · status/DOM · concessions/contract if pending.")
+    L.append("- Record tracked-field values into `source_values.<field>.mls` in the skeleton.")
+    L.append("")
+    L.append("## Source 2 — county SOR ({}) — the governing record".format(entry["vendor"]))
     L.append("- URL: {}".format(entry["sor_url"]))
     L.append("- Technique: {}".format(entry["technique"]))
     if entry.get("quirks"):
         L.append("- ⚠ Quirks: {}".format(entry["quirks"]))
+    L.append("- Tracked fields go into `source_values.<field>.county`; everything else")
+    L.append("  straight into the skeleton.")
     L.append("- Pull in ONE pass (blank is data — record it):")
     L.append("  - Identification: GPIN, PID, Subdivision, Section/Block/Lot, Zoning")
     L.append("  - Legal description (needed for DM Subject tab)")
@@ -198,12 +215,21 @@ def build_pull_sheet(address, county_name, entry, gas):
     L.append("  - Sketch codes (WDK=deck, PCO/PCU=covered porch, OP=open porch, GR1/GR2=garage, WS=workshop) + sf each")
     L.append("  - Tax bill $ (R.E. Taxes — distinct from assessed value) + tax year")
     L.append("")
-    L.append("## Source 2 — Zillow (supplement + cross-check, immediately after SOR)")
+    L.append("## Source 3 — Zillow (cross-check + photos; NEVER governs)")
     L.append("- Lot size when SOR blank · legal description · photo scan:")
     L.append("  floors / fireplace / porch type / rear deck-patio / garage")
     L.append("  (flag photo-derived items 'Zillow — confirm at inspection')")
+    L.append("- Tracked-field values into `source_values.<field>.zillow`.")
     L.append("")
-    L.append("## Source 3 — gas availability (BEFORE inferring heating fuel)")
+    L.append("## ⚖ Variance protocol (YV 2026-07-02) — when MLS and County disagree")
+    L.append("- READ the listing remarks/photos: does something EXPLAIN the difference")
+    L.append("  (finished basement counted, addition, assessor lag, ADU)?")
+    L.append("- SUPPORTED → one line in `variance_notes.<field>` (ingest lets MLS govern")
+    L.append("  WITH your reason). NOT supported → leave it empty (County rules).")
+    L.append("- Either way the field gets an 'inconsistent — manual triage' chip until YV")
+    L.append("  clears it. NEVER silently pick a value.")
+    L.append("")
+    L.append("## Source 4 — gas availability (BEFORE inferring heating fuel)")
     if gas is None:
         L.append("- ⚠ va-gas-providers.sqlite NOT FOUND — query it manually per the registry.")
     elif not gas:
@@ -265,7 +291,7 @@ def build_run_log(address, order_meta, hit_info, as_of=None):
         L.append("- [x] 3. ingest — n/a; cached subject.json written")
     else:
         L.append("- [x] 1. resolve_subject — MISS @ {} (skeleton + pull-sheet written)".format(stamp))
-        L.append("- [ ] 2. pull sheet executed (SOR → Zillow → gas; unknowns left null)")
+        L.append("- [ ] 2. pull sheet executed (MLS → SOR → Zillow → gas; variances noted; unknowns left null)")
         L.append("- [ ] 3. ingest_subject — subject.json written + cached")
     L.append("- [ ] 4. comps pulled per property-search SKILL (GLA band · 12-mo · ML#+TaxID gates)")
     L.append("- [ ] 5. assemble_record — appraisal-record.json built")
