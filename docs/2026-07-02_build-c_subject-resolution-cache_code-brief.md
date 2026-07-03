@@ -7,7 +7,7 @@
 
 ## Progress tracker
 - [x] Phase 0 — this brief committed
-- [ ] Phase 1 — cache core: `tools/subject-resolution/subject_cache.py` + address normalization
+- [x] Phase 1 — cache core: `tools/subject-resolution/subject_cache.py` + address normalization
       + staleness-as-flag + QA runner `tests_subject_resolution.py`
 - [ ] Phase 2 — resolver skeleton + per-county pull sheet: `resolve_subject.py` (cache-first →
       routing → `subject.skeleton.json` + `pull-sheet.md`)
