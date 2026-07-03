@@ -1,3 +1,4 @@
+<!-- build-plan: name=renderer-fixes-6-19 status=done -->
 # Code Brief — Worksheet Renderer & Assembler Fixes
 **Date:** 2026-06-19  
 **Affects:** `tools/worksheet-renderer/render_worksheet.py` · `tools/record-assembler/assemble_record.py`  

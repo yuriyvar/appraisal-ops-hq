@@ -1,3 +1,4 @@
+<!-- build-plan: name=dm-tabs-remap status=done -->
 # Code brief — P3: DM-tabs remap + DM-complete worksheet fold (phased)
 
 > Durable resume doc for a token/context-limited build. Each phase is committable; if a

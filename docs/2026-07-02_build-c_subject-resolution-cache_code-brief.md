@@ -1,3 +1,4 @@
+<!-- build-plan: name=build-c-subject-resolution status=done -->
 # Code brief — Build C: subject-resolution + cache (phased)
 
 > Durable resume doc for a token/context-limited build. Each phase is committable; if a session

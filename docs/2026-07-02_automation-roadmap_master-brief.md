@@ -1,4 +1,12 @@
+<!-- build-plan: name=automation-roadmap kind=master status=active -->
 # Master brief — "insane automation" roadmap (YV 2026-07-02)
+
+## Build-day queue (the `/build-day` command resumes from the first unchecked box)
+- [ ] BD1 — Track 1: standard-work enforcement (guardrails)
+- [ ] BD2 — Track 2: multi-source verification + variance protocol
+- [ ] BD3 — Track 3: historical comp recall (Ops file + .dma index)
+- [ ] BD4 — Track 4: MCP server `appraisal-data`
+- [ ] BD5 — Track 5: ACI Sky Workbench auto-entry (needs the YV selector session first)
 
 > **Goal (YV):** provide a subject address → COWORK_AGENT pulls + verifies the data from reliable
 > sources **in order: MLS → County/GIS → Zillow**, comps get pulled (incl. historical recall),
