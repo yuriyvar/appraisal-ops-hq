@@ -506,6 +506,14 @@ def assemble(subject_json_path, comps_csv_path, out_path,
     if subject["hoa_amount"] is None:
         _add_flag(subject["flags"], "HOA TBD — get from HOA docs (amount + period not captured)")
 
+    # BD1 provenance gate: ingest_subject.py always stamps resolution.resolved_on,
+    # so a subject.json without one bypassed resolve→pull→ingest entirely.
+    # Flag it where YV sees it (worksheet header chip) — warn loud, never block.
+    if not subject["resolution"].get("resolved_on"):
+        _add_flag(subject["flags"],
+                  "produced outside standard work (resolve→pull→ingest) — "
+                  "subject.json has no resolution stamp; verify provenance")
+
     # -- market section --
     market_base = subj.get("market") or {}
     market = {

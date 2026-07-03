@@ -655,6 +655,25 @@ except Exception as e:
     fail("T21", str(e))
 
 # ---------------------------------------------------------------------------
+# T22: BD1 provenance gate — unstamped subject.json flagged on the worksheet
+# ---------------------------------------------------------------------------
+try:
+    sp = write_subject("subj_t22.json", overrides={"resolution": {}})  # no stamp
+    cp = write_csv("t22.csv", MIX_ROWS)
+    rec = assemble(sp, cp, out("rec_t22.json"), generated_at="2026-06-13T12:00:00Z")
+    assert any("produced outside standard work" in f for f in rec["subject"]["flags"]), \
+        rec["subject"]["flags"]
+    html_t22 = render(rec)
+    assert "produced outside standard work" in html_t22, "flag not visible on the worksheet"
+    # stamped subjects (the standard path) stay clean
+    with open(out("rec_t9.json")) as f:
+        rec_ok = json.load(f)
+    assert not any("produced outside standard work" in f for f in rec_ok["subject"]["flags"])
+    ok("T22: provenance — unstamped subject flagged + rendered; stamped path clean")
+except Exception as e:
+    fail("T22", str(e))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

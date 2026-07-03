@@ -511,6 +511,31 @@ except Exception as ex:
     fail("C15", str(ex))
 
 # ---------------------------------------------------------------------------
+# C16: provenance gate — ingest without a pull-sheet sibling flags the subject
+# ---------------------------------------------------------------------------
+try:
+    lone_dir = os.path.join(TMP, "order16_lone")
+    os.makedirs(lone_dir, exist_ok=True)
+    lone_raw = os.path.join(lone_dir, "handmade.json")
+    with open(lone_raw, "w") as f:
+        json.dump({"address": {"full": "5 Rogue St, Henrico, VA 23229",
+                               "county": "Henrico"},
+                   "characteristics": {"gla_sf": 1500}}, f)
+    rc = ingest_main([lone_raw, "--out", os.path.join(lone_dir, "subject.json"),
+                      "--db", DB, "--resolved-on", "2026-07-02", "--source", "hand"])
+    assert rc == 0                                            # warn, never block
+    with open(os.path.join(lone_dir, "subject.json")) as f:
+        rogue = json.load(f)
+    assert any("standard work not verified" in fl for fl in rogue["flags"]), rogue["flags"]
+    # the standard path (order15: pull-sheet present) must NOT carry the flag
+    with open(os.path.join(TMP, "order15", "subject.json")) as f:
+        clean = json.load(f)
+    assert not any("standard work not verified" in fl for fl in clean["flags"]), clean["flags"]
+    ok("C16: provenance — pull-sheet-less ingest flags + warns (rc 0); standard path clean")
+except Exception as ex:
+    fail("C16", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()

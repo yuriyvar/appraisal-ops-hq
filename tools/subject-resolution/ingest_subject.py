@@ -227,6 +227,15 @@ def main(argv=None):
         sys.stderr.write("INGEST REFUSED: {}\n".format(e))
         return 2
 
+    # BD1 provenance gate — warn loud, never block: a raw file with no resolver
+    # pull sheet beside it means the standard work was bypassed upstream.
+    ps = os.path.join(os.path.dirname(os.path.abspath(args.raw)), "pull-sheet.md")
+    if not os.path.isfile(ps):
+        msg = "ingested without a resolver pull sheet — standard work not verified"
+        if msg not in subject["flags"]:
+            subject["flags"].append(msg)
+        sys.stderr.write("WARNING: {} (run resolve_subject.py first next time)\n".format(msg))
+
     out = args.out or os.path.join(os.path.dirname(os.path.abspath(args.raw)),
                                    "subject.json")
     ap_out = os.path.abspath(out)

@@ -10,7 +10,7 @@
 - [x] Phase 0 — this brief committed
 - [x] Phase 1 — run-log: `resolve_subject.py` emits `run-log.md` (HIT and MISS variants);
       `ingest_subject.py` ticks its own step; QA C15
-- [ ] Phase 2 — provenance gates: ingest warns + flags when no pull-sheet sibling;
+- [x] Phase 2 — provenance gates: ingest warns + flags when no pull-sheet sibling;
       assembler flags subject.json lacking a resolution stamp ("produced outside standard
       work" — renders as a header chip); QA C16 + Build B T22
 - [ ] Phase 3 — `add_county.py`: scaffolds the registry row + `county_routing.json` entry
