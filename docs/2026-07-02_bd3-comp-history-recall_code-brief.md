@@ -7,10 +7,17 @@
 
 ## Progress tracker
 - [x] Phase 0 — this brief committed
-- [ ] Phase 1 — Ops-sheet import (Chrome IS connected this session — pull 2025+2026 tabs live
-      to the client zone; `import_ops_history.py` is header-driven + refetchable)
-- [ ] Phase 2 — `.dma` indexer: `build_index.py` re-extracts per-comp rows path-aware from
-      `C:\Users\yuriy\OneDrive\Documents\DataMaster` (READ-ONLY; 194 files) → client-zone SQLite
+- [x] Phase 1 — Ops-sheet import: 2025+2026 tabs pulled LIVE via Chrome/gviz →
+      `Past Reports\_analysis\ops-history\ops-202{5,6}.csv` (client zone); layout is POSITIONAL
+      (col0 order-date · 1 order# · 2 client · 3 street · 4 zip · 5 form · 6 due/done ·
+      10 appraised value · 11 status) — parser in `comp_history.py` skips the summary junk
+- [x] Phase 2 — index builder (SCOPE AMENDED after live recon — see below): filename + mtime +
+      Ops join + June-corpus subject facts + comp HINTS → client-zone SQLite. **Structured
+      per-comp re-extraction DEFERRED:** the .dma value slots carry unique numeric IDs
+      (`3.5[k].1` / `4.5[k].1`, 560 unique in the probe file) but the schema-name entries
+      (`3.3[k]`/`4.3[k]`) carry no matching ID — positional pairing provably misaligns, and the
+      June extractor that DID pair them was never committed. Reverse-engineering the link is its
+      own build day (quirk DMA-004 filed).
 - [ ] Phase 3 — recall wiring: resolver queries the index (county + GLA ±15%, ≤12 mo) →
       "PRIOR WORK" section on the pull sheet / cache-hit output; QA
 - [ ] Phase 4 — wrap: README · SKILL/command notes · refresh ritual · inbox · interlane FYI ·
