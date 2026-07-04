@@ -18,8 +18,9 @@
       (`3.3[k]`/`4.3[k]`) carry no matching ID — positional pairing provably misaligns, and the
       June extractor that DID pair them was never committed. Reverse-engineering the link is its
       own build day (quirk DMA-004 filed).
-- [ ] Phase 3 — recall wiring: resolver queries the index (county + GLA ±15%, ≤12 mo) →
-      "PRIOR WORK" section on the pull sheet / cache-hit output; QA
+- [x] Phase 3 — recall wiring: MISS → "Prior work" section ON the pull sheet; HIT →
+      `prior-work.md` beside subject.json (uses the cached GLA for the band); absent index /
+      any failure → one-line notice, never a crash; QA C20
 - [ ] Phase 4 — wrap: README · SKILL/command notes · refresh ritual · inbox · interlane FYI ·
       handoff · tag done + BD3 ticked
 

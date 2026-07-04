@@ -269,6 +269,24 @@ def build_pull_sheet(address, county_name, entry, gas):
 
 
 # ---------------------------------------------------------------------------
+# prior work (BD3 comp-history recall) — CANDIDATES only, never auto-selected
+# ---------------------------------------------------------------------------
+def _prior_work(address, county_name, gla=None, as_of=None, history_db=None):
+    """Query the comp-history index. Absent index / any failure -> a one-line
+    notice, never a crash (recall is an assist, not a gate)."""
+    try:
+        sys.path.insert(0, os.path.join(REPO, "tools", "comp-history"))
+        from comp_history import search as _hsearch, format_hits as _hfmt
+        zip_code = parse_address(address).get("zip")
+        hits = _hsearch(address, zip_code=zip_code, county=county_name,
+                        gla=gla, as_of=as_of, db_path=history_db)
+        return _hfmt(hits)
+    except Exception as e:
+        return ("## Prior work (comp-history index)\n"
+                "- lookup failed: {} (non-blocking)\n".format(e))
+
+
+# ---------------------------------------------------------------------------
 # run log (BD1 standard-work enforcement)
 # ---------------------------------------------------------------------------
 def build_run_log(address, order_meta, hit_info, as_of=None):
@@ -313,7 +331,7 @@ def _check_out_dir(out_dir):
 
 
 def resolve(address, county=None, out_dir=".", db_path=None, as_of=None,
-            ttl_days=180, routing_path=None, **order_meta):
+            ttl_days=180, routing_path=None, history_db=None, **order_meta):
     routing = load_routing(routing_path)
     county_name, entry = find_county(routing, county, address)
     out = _check_out_dir(out_dir)
@@ -340,12 +358,20 @@ def resolve(address, county=None, out_dir=".", db_path=None, as_of=None,
         print("CACHE HIT (resolved {}, {} days old) -> {}".format(resolved_on, age, path))
         for f in flags:
             print("FLAG  " + f)
+        prior = _prior_work(address, county_name,
+                            gla=((subject.get("characteristics") or {}).get("gla_sf")),
+                            as_of=as_of, history_db=history_db)
+        with open(os.path.join(out, "prior-work.md"), "w", encoding="utf-8") as fh:
+            fh.write(prior)
+        print("Prior-work recall -> {}".format(os.path.join(out, "prior-work.md")))
         print("Next: assemble comps as usual; re-verify flagged items.")
         return 0
 
     skeleton = build_skeleton(address, county_name, entry, order_meta)
     gas = gas_lookup(entry.get("gas_key", county_name))
     sheet = build_pull_sheet(address, county_name, entry, gas)
+    sheet += "\n" + _prior_work(address, county_name, as_of=as_of,
+                                history_db=history_db)
     sk_path = os.path.join(out, "subject.skeleton.json")
     ps_path = os.path.join(out, "pull-sheet.md")
     with open(sk_path, "w", encoding="utf-8") as fh:
@@ -372,6 +398,7 @@ def main(argv=None):
     ap.add_argument("--as-of", help="date for staleness math (YYYY-MM-DD)")
     ap.add_argument("--ttl-days", type=int, default=180)
     ap.add_argument("--routing", help="routing JSON override (tests)")
+    ap.add_argument("--history-db", help="comp-history index override (tests)")
     ap.add_argument("--order-id")
     ap.add_argument("--form-type")
     ap.add_argument("--client")
@@ -385,7 +412,7 @@ def main(argv=None):
         return resolve(
             args.address, county=args.county, out_dir=args.out_dir,
             db_path=args.db, as_of=args.as_of, ttl_days=args.ttl_days,
-            routing_path=args.routing,
+            routing_path=args.routing, history_db=args.history_db,
             order_id=args.order_id, form_type=args.form_type, client=args.client,
             loan_number=args.loan_number, effective_date=args.effective_date,
             due_date=args.due_date, inspection=args.inspection, fee=args.fee)

@@ -706,6 +706,61 @@ except Exception as ex:
     fail("C19", str(ex))
 
 # ---------------------------------------------------------------------------
+# C20: BD3 prior-work recall wired into the resolver (assist, never a gate)
+# ---------------------------------------------------------------------------
+try:
+    import csv as _csv20
+    sys.path.insert(0, os.path.join(REPO, "tools", "comp-history"))
+    from comp_history import build as hist_build
+    hops = os.path.join(TMP, "hist_ops.csv")
+    with open(hops, "w", newline="", encoding="utf-8") as f:
+        w = _csv20.writer(f)
+        w.writerow(["1/15/2026", "900001", "Class", "40 Recall Rd", "23229", "1004",
+                    "1/19/2026", "$350", "$0", "$350", "$305,000", "Paid and Xfered",
+                    "", "", "", "", "1", "1"])
+    hcorpus = os.path.join(TMP, "hist_corpus.json")
+    with open(hcorpus, "w") as f:
+        json.dump({"files": {"40 Recall Rd.dma": {
+            "COUNTY": "Henrico", "PROPERTY_ZIP_CODE": "23229",
+            "BLDG_ABOVE_GRADE_SQFT": "1800"}}}, f)
+    hdb = os.path.join(TMP, "hist.sqlite")
+    hist_build([hops], hcorpus, os.path.join(TMP, "no_dma_dir"), hdb)
+
+    # MISS on the SAME street -> exact prior work lands on the pull sheet
+    out20 = os.path.join(TMP, "order20")
+    resolve("40 Recall Road, Henrico, VA 23229", county="Henrico", out_dir=out20,
+            db_path=DB, as_of="2026-07-02", history_db=hdb)
+    with open(os.path.join(out20, "pull-sheet.md"), encoding="utf-8") as f:
+        ps20 = f.read()
+    assert "Prior work (comp-history index)" in ps20
+    assert "SAME PROPERTY appraised before" in ps20 and "40 Recall Rd" in ps20
+    assert "CANDIDATES ONLY" in ps20 and "YV decides" in ps20
+
+    # cache HIT path writes prior-work.md (uses the cached GLA for the band)
+    put("41 Recall Rd, Henrico, VA 23229",
+        dict(SUBJ, address={"full": "41 Recall Rd, Henrico, VA 23229",
+                            "county": "Henrico"},
+             characteristics={"gla_sf": 1810}),
+        "test", db_path=DB, put_at="2026-06-01T09:00:00")
+    out20b = os.path.join(TMP, "order20b")
+    resolve("41 Recall Rd, Henrico, VA 23229", county="Henrico", out_dir=out20b,
+            db_path=DB, as_of="2026-07-02", history_db=hdb)
+    with open(os.path.join(out20b, "prior-work.md"), encoding="utf-8") as f:
+        pw = f.read()
+    assert "Similar within 12 mo" in pw and "40 Recall Rd" in pw  # 1800 vs 1810 in band
+
+    # absent index -> notice, never a crash
+    out20c = os.path.join(TMP, "order20c")
+    resolve("42 Recall Rd, Henrico, VA 23229", county="Henrico", out_dir=out20c,
+            db_path=DB, as_of="2026-07-02",
+            history_db=os.path.join(TMP, "missing.sqlite"))
+    with open(os.path.join(out20c, "pull-sheet.md"), encoding="utf-8") as f:
+        assert "index not built" in f.read()
+    ok("C20: recall — exact hit on pull sheet, similar via cached GLA, absent index safe")
+except Exception as ex:
+    fail("C20", str(ex))
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 print()
