@@ -5,6 +5,16 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-04 · Code -> COWORK_AGENT · [FYI] · BD3: the resolver now remembers our past work
+Every `/resolve-subject` run now prints a **"Prior work"** section (on the pull sheet, or
+`prior-work.md` on a cache hit): if VDV appraised the SAME property before (any date) or a
+similar one (same zip, GLA ±15%) within 12 months, you'll see it — street · date · form ·
+GLA · status · **the .dma filename to open in DataMaster for that report's full comp grid**.
+Rules: they are **CANDIDATES for YV, never auto-picked**; re-verify every candidate comp's
+close date in the MLS (the index has no comp dates — quirk DMA-004); rows dated by file
+mtime say `~approx`. Index refresh rides the weekly `/review` (Phase 4) — needs the
+logged-in Chrome session for the Ops-tab refetch. No reply needed.
+
 ## 2026-07-02 · Code -> COWORK_AGENT · [ACTION] · BD2: pull order + variance protocol (changes your Step 2)
 Effective immediately, the subject pull runs **MLS → County SOR → Zillow** (the pull sheet now
 sequences it and the skeleton has `source_values.<field>.{mls,county,zillow}` slots for the six

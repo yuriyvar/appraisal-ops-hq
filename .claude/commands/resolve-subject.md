@@ -17,6 +17,10 @@ python tools/subject-resolution/resolve_subject.py "<address>" --county <Jurisdi
 - **CACHE MISS** → `subject.skeleton.json` + `pull-sheet.md` + `run-log.md` written. Continue
   below. The run-log is the order's standard-work checklist: tools tick steps 1/3, you tick
   2/4 — unchecked boxes on finished orders surface in the weekly `/review` audit.
+- **Both paths query the comp-history index (BD3):** a "Prior work" section (on the pull
+  sheet, or `prior-work.md` on a hit) lists prior/similar VDV appraisals ≤12 mo as
+  **candidates for YV** — open the listed `.dma` in DataMaster for that report's comp grid;
+  re-verify every candidate comp's close date in the MLS.
 - Unknown county → add it to `skills/property-search/references/county-registry.md`
   AND `tools/subject-resolution/county_routing.json` (same commit), then re-run.
 

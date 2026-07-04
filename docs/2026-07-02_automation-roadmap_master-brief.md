@@ -6,7 +6,9 @@
       (`docs/2026-07-02_bd1-standard-work-enforcement_code-brief.md`)
 - [x] BD2 — Track 2: multi-source verification + variance protocol — DONE 2026-07-02
       (`docs/2026-07-02_bd2-multisource-verification_code-brief.md`)
-- [ ] BD3 — Track 3: historical comp recall (Ops file + .dma index)
+- [x] BD3 — Track 3: historical comp recall — DONE 2026-07-04
+      (`docs/2026-07-02_bd3-comp-history-recall_code-brief.md`; per-comp .dma extraction
+      deferred per quirk DMA-004)
 - [ ] BD4 — Track 4: MCP server `appraisal-data`
 - [ ] BD5 — Track 5: ACI Sky Workbench auto-entry (needs the YV selector session first)
 

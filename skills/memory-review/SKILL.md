@@ -47,6 +47,10 @@ read-only look, nothing copied into the repo):
    verified" chips = hand-rolled inputs.
 3. Every miss becomes ONE inbox line (`[andon] standard-work bypass: <order> — <what>`)
    for the retro — the point is visibility, not blame. Repeat offenders → kaizen item.
+4. **Comp-history refresh (BD3):** when Chrome is connected, refetch the Ops-tab CSVs
+   (gviz → `Past Reports\_analysis\ops-history\`) and run
+   `python tools/comp-history/comp_history.py build` — keeps the resolver's prior-work
+   recall current with the week's orders.
 
 ## Rules
 - Never silently change an SOP — that path runs only through kaizen-retro + human approval.

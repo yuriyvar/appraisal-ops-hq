@@ -1,4 +1,4 @@
-<!-- build-plan: name=bd3-comp-history-recall status=active -->
+<!-- build-plan: name=bd3-comp-history-recall status=done -->
 # Code brief — BD3: historical comp recall (Ops file + .dma corpus index)
 
 > Track 3 of the automation roadmap. YV: index all historical properties; a similar subject
@@ -21,8 +21,10 @@
 - [x] Phase 3 — recall wiring: MISS → "Prior work" section ON the pull sheet; HIT →
       `prior-work.md` beside subject.json (uses the cached GLA for the band); absent index /
       any failure → one-line notice, never a crash; QA C20
-- [ ] Phase 4 — wrap: README · SKILL/command notes · refresh ritual · inbox · interlane FYI ·
-      handoff · tag done + BD3 ticked
+- [x] Phase 4 — wrap: README · /resolve-subject note · /review Phase-4 refresh ritual ·
+      inbox · interlane FYI · handoff · tag done + BD3 ticked
+- **ALL PHASES DONE 2026-07-04.** Live index: 572 ops + 113 corpus + 191 .dma → 592 rows
+  (20 orphans). Deferred follow-up (own build day when wanted): DMA-004 per-comp extraction.
 
 ## Recon facts (verified this session)
 - Decoder: `tools/dma-decoder/dma_decode.py` (stdlib wire-walker; `decode_dma()` → path tree,
