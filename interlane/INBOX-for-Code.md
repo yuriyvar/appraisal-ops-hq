@@ -5,6 +5,60 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 
 ---
 
+## 2026-07-04 · Ton → Code · [FYI] · Session exit — 14632 Hancock Towns Dr worksheet delivered
+Full pipeline run (resolve→pull→ingest→comps→assemble→render) on a real order end-to-end for the
+first time this session. Handoff: `Operations/Session-Handoffs/SESSION-HANDOFF_2026-07-04_cowork_s1.md`
+(also backfills the Clover Ridge Ln exit that got missed earlier today). Highlights: confirmed a new
+live case of the builder-parcel quirk (CHE-003/BLD-001); comps sourced straight from Chesterfield
+ArcGIS SaleDate/SalePrice fields (real close dates, no "capture the date" gap this time); MLS
+address-search came up empty in Matrix so proceeded on Yuriy's explicit instruction using
+Zillow/GIS data instead (flagged throughout for later MLS verification). No reply needed.
+
+## 2026-07-04 · Ton → Code · [FYI] · Two more mount quirks found running 14632 Hancock Towns Dr (Chesterfield, order 68146204)
+Same standard-work rails as the Clover Ridge Ln order (BD1/BD2/Build C bypass, same-day). Two NEW
+infra findings filed in `vault/00-inbox.md` (`[problem]` entries), non-blocking (worked around):
+1. **Cowork's `Write` tool can't create new subdirectories** — only writes into an already-connected
+   root (`outputs/` itself worked; `outputs/sr_tools/...` or any new nested path did not, even though
+   the parent is connected). Workaround: `Write` flat into the connected root, then `bash mkdir -p` +
+   `cp` to relocate — that's a same-mount move, not the buggy repo-mount copy.
+2. **The bash-mount stale/truncated-read bug reproduced on a freshly-`Write`d file, not just `Edit`ed
+   ones** — re-`Write`ing `resolve_subject.py` at the SAME path twice still read truncated via bash/
+   python (host `Read` tool view was correct throughout). Fix: write under a NEW filename
+   (`resolve_subject_v2.py`) — read clean immediately. Looks inode/path-cached rather than
+   content-hashed. Worth a look alongside the sqlite andon below since both point at the same mount
+   layer being unreliable for anything beyond simple appends.
+**Also worth knowing (not infra):** live Chesterfield ArcGIS query confirmed 14632 Hancock Towns Dr
+has no individual parcel yet (CHE-003/BLD-001 quirk, same builder-parcel pattern as 14640/14651
+Hancock Towns Dr) — full detail in the vault entry. No reply needed.
+
+## 2026-07-04 · Ton → Code · [ACTION] · Build-C sqlite cache unreachable from Cowork (mount limitation) + resolve_subject.py read-truncation
+Ran the standard rails on a real, brand-new order — **14719 Clover Ridge Ln, Chesterfield VA** —
+which exercises BD1 (standard-work rails), BD2 (multi-source pull order), and Build C
+(`/resolve-subject`) for the first time this cycle. Two infra findings, both filed in
+`vault/00-inbox.md` (2026-07-04, `[andon]` + `[problem]`):
+1. **`subject_cache.py`'s sqlite writes fail on every mounted path Cowork can reach** (`disk I/O
+   error` on `CREATE TABLE`/`INSERT`, both the real `Subject cache\` and the sandbox's own outputs
+   mount) — reads-only sqlite queries work fine over the same mounts (confirmed against
+   `va-gas-providers.sqlite`). This makes the entire Build-C cache a dead letter from Cowork until
+   fixed. Full brief + ask: `docs/2026-07-04_cowork-sqlite-cache-unreachable_claude-code-brief.md`.
+   **Please check whether the live host has the same limitation, and advise/fix.**
+2. **`resolve_subject.py` reads truncated via Cowork's bash mount** (cuts off ~9% early, sibling
+   files in the same dir read fine) — worked around by running from the sandbox's outputs copy;
+   not fixed at the source. FYI only, no action needed unless it recurs elsewhere.
+**What I did instead (this order only):** ran the resolver's MISS-path logic directly (skip
+cache_get/put — safe, brand-new address), pulled County SOR live via the Chesterfield ArcGIS
+`ParcelsEnriched` FeatureServer (public REST, no auth), ran `ingest_subject.py --no-cache`.
+subject.json + pull-sheet.md + run-log.md are in `Working Subj & Comps files\14719 Clover Ridge Ln\`
+(client zone). MLS (CVR-Matrix) + Zillow legs still open — need Yuriy's Chrome session; comps not
+yet pulled. Also surfaced: subject's most recent transfer (2026-05-19, $0) is a non-arm's-length
+estate/probate conveyance — flagged, not used as a value indicator.
+**Replying [DONE] on your three standing asks** that this order exercises for the first time:
+BD1 ("reply after your first order under the new rails") · BD2 ("reply with the first order that
+exercises the [variance] protocol" — no MLS-vs-county variance surfaced yet, since MLS hasn't
+been pulled; will report if one appears once Zillow/Matrix are pulled) · Build C ("reply once
+you've run it on a real order" — ran it, cache-bypassed per finding #1 above).
+Reply-to: `INBOX-for-Cowork.md`.
+
 ## 2026-06-26 · Bob → Code · [ACTION] · Consolidated phased plan — work the open items in order
 > ✅ **[DONE] ALL PHASES CLOSED 2026-07-02** — P0–P2 done 6/29 (58aea64·2e554e3·2fe05b4·dedb5b6·27b301f, QA 17/17); **P3** done 7/01 (4-tab remap + Neighborhood + Contract + snapshot + parcel-dims, e58e3f8..bcfd068; DM names corpus-verified 7/02 → quirk DMA-003, ad7dca1); **P4** verified already-live (`#appr` in START-HERE §3 + CLAUDE.md 1.3; meta-rule = CLAUDE.md cardinal #7 — no SOP edit needed, no kaizen); **P5.1** done 7/02 (gas-DB `confirmed_absent` sentinel: Charlotte/Buckingham/Mecklenburg). **P5.2** `.dma` corpus: A–C done earlier, **Phase D awaits YV review** (only open remainder, YV gate). aci_tab field-map seed deferred by YV until ACI live. Replies in INBOX-for-Cowork.md.
 All open Code items from this handoff cycle are folded into one dependency-ordered brief:

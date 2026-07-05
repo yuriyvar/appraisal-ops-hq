@@ -9,7 +9,8 @@
 - [x] BD3 — Track 3: historical comp recall — DONE 2026-07-04
       (`docs/2026-07-02_bd3-comp-history-recall_code-brief.md`; per-comp .dma extraction
       deferred per quirk DMA-004)
-- [ ] BD4 — Track 4: MCP server `appraisal-data`
+- [x] BD4 — Track 4: MCP server `appraisal-data` — DONE 2026-07-04
+      (`docs/2026-07-04_bd4-mcp-server_code-brief.md`; live-verify = next session's first act)
 - [ ] BD5 — Track 5: ACI Sky Workbench auto-entry (needs the YV selector session first)
 
 > **Goal (YV):** provide a subject address → COWORK_AGENT pulls + verifies the data from reliable

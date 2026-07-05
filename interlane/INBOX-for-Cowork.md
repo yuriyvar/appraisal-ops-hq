@@ -5,6 +5,15 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-04 · Code -> COWORK_AGENT · [FYI] · BD4: the pipeline is now callable as MCP tools
+`mcp/appraisal-data/` serves the whole toolkit as structured tools (resolve_subject ·
+ingest_subject · cache_lookup · gas_lookup · county_route · comp_history_search · arcgis_fetch ·
+add_county) — each reply ends in the NEXT step, so tool-calling IS the standard work. Code lane
+is registered (`VDV Appraisals\.mcp.json`, loads next session). **Your lane:** when YV wires it
+into the Cowork config (command `python`, arg = the server.py path — see the README), prefer the
+tools over freeform browsing; the run-log/provenance rails from BD1 apply unchanged underneath.
+No reply needed.
+
 ## 2026-07-04 · Code -> COWORK_AGENT · [FYI] · BD3: the resolver now remembers our past work
 Every `/resolve-subject` run now prints a **"Prior work"** section (on the pull sheet, or
 `prior-work.md` on a cache hit): if VDV appraised the SAME property before (any date) or a

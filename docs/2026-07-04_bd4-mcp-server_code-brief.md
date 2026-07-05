@@ -1,4 +1,4 @@
-<!-- build-plan: name=bd4-mcp-server status=active -->
+<!-- build-plan: name=bd4-mcp-server status=done -->
 # Code brief — BD4: MCP server `appraisal-data`
 
 > Track 4 of the automation roadmap: the pipeline's tools become CALLABLE TOOLS with
@@ -19,10 +19,10 @@ remote/HTTP transport · a Claude client drops our protocol rev · >15 tools or 
       stdout purity — stderr is the only log channel)
 - [x] Phase 2 — `server.py`: 8 tools + subprocess-vs-import policy + e2e QA driving the real
       server over stdin with temp DBs (M1+M2 green first run)
-- [ ] Phase 3 — wrap: `.mcp.json` registration (outer root) · README · docs/FYI/handoff ·
-      tag done + BD4 ticked
-- [ ] LIVE VERIFY (next session — servers load at session start): call every tool through
-      the real Claude client; checklist in the README
+- [x] Phase 3 — wrap: `.mcp.json` registered (outer root, new file) · README w/ live-verify
+      checklist · inbox · interlane FYI · handoff · tag done + BD4 ticked
+- [ ] **LIVE VERIFY (next session — servers load at session start): run the README checklist
+      through the real client, then tick this box.** All phases otherwise DONE 2026-07-04.
 
 ## Tools (each returns text ending in a NEXT step)
 | tool | wraps | how |
