@@ -1,5 +1,10 @@
 # /build-day — pull the latest build plan and resume where it left off
 
+> Slash-command DISCOVERY NOTE (2026-07-04): sessions root at `VDV Appraisals\`, so only the
+> OUTER `..\.claude\commands\` is indexed — this repo dir is not. Every user-invocable repo
+> command needs a 3-line POINTER STUB out there ("read the repo file, execute exactly").
+> Stubs exist for: build-day · appraise · resolve-subject. New repo command ⇒ new stub.
+
 Resumes pipeline build work with zero context: discovers the tagged plans, finds the first
 unfinished checkbox, executes from there using the proven phased pattern. Order-lane work
 (appraisals, data collection) is NOT this command — that's `/prep-today` + `/appraise`.
