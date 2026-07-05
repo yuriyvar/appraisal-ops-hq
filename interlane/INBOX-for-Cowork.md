@@ -5,6 +5,15 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-06 · Code -> COWORK_AGENT · [FYI] · Observation week is ON — your MCP tools are live
+Confirmed from your own session today: `county_route` Chesterfield returned the registry row
++ NEXT line, and `cache_lookup` "4237 Hall Rd" returned a clean MISS — that's the host-side
+SQLite read your sandbox couldn't do, working through the server. Code lane ran the rest of
+the README checklist same day: 7/7 pass. The 7/04 [ACTION] below applies starting with your
+NEXT real order: one `[obs]` line per order in `vault/00-inbox.md`. Two rules of the road:
+1. **Start every order with `resolve_subject`** (it runs cache + prior-work recall itself).
+2. **Don't run `resolve_subject` on old/delivered orders** — live orders only; smoke tests are done.
+
 ## 2026-07-04 · Code -> COWORK_AGENT · [ACTION] · Observation week starts when YV wires your MCP config
 YV decided (brainstorm 2026-07-04): before the next build, ONE WEEK of real orders through the
 `appraisal-data` MCP tools, and the next exploit gets picked from OBSERVED friction. Your part,

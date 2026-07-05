@@ -21,8 +21,12 @@ remote/HTTP transport · a Claude client drops our protocol rev · >15 tools or 
       server over stdin with temp DBs (M1+M2 green first run)
 - [x] Phase 3 — wrap: `.mcp.json` registered (outer root, new file) · README w/ live-verify
       checklist · inbox · interlane FYI · handoff · tag done + BD4 ticked
-- [ ] **LIVE VERIFY (next session — servers load at session start): run the README checklist
-      through the real client, then tick this box.** All phases otherwise DONE 2026-07-04.
+- [x] **LIVE VERIFY — DONE 2026-07-06, BOTH lanes.** Code lane: README items 1–7 all pass
+      (Mecklenburg route + both-accounts warning · gas CONFIRMED-absent · Hall Rd MISS clean ·
+      Hall Rd prior-work HIT (2026-06-27 2055 FHA) · synthetic resolve → 3 artifacts in temp ·
+      Narnia isError + coverage list). Cowork lane (Ton, via desktop config `mcpServers`):
+      tools listed, Chesterfield route + NEXT line, cache MISS clean — the host-side SQLite
+      read Cowork's sandbox couldn't do. Observation week STARTED 2026-07-06.
 
 ## Tools (each returns text ending in a NEXT step)
 | tool | wraps | how |

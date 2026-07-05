@@ -10,12 +10,13 @@
       (`docs/2026-07-02_bd3-comp-history-recall_code-brief.md`; per-comp .dma extraction
       deferred per quirk DMA-004)
 - [x] BD4 — Track 4: MCP server `appraisal-data` — DONE 2026-07-04
-      (`docs/2026-07-04_bd4-mcp-server_code-brief.md`; live-verify = next session's first act)
-- [ ] OBS — observation week (decided 2026-07-04): YV wires the `appraisal-data` MCP server
-      into the COWORK config (5-min action; same command/args as `.mcp.json`) → one week of real
-      orders through the tools → pick the next exploit from OBSERVED friction, not guesses.
-      What to watch (Ton logs one inbox line per order): minutes tool-vs-browse per stage ·
-      tool failures/gaps · what still forced freeform browsing.
+      (`docs/2026-07-04_bd4-mcp-server_code-brief.md`; LIVE-VERIFIED both lanes 2026-07-06)
+- [ ] OBS — observation week **RUNNING 2026-07-06 → ~2026-07-13** (wired + live-verified in
+      BOTH lanes 2026-07-06; desktop config `mcpServers` block + outer `.mcp.json`): one week
+      of real orders through the tools → pick the next exploit from OBSERVED friction, not
+      guesses. What to watch (Ton logs one `[obs]` inbox line per order): minutes tool-vs-browse
+      per stage · tool failures/gaps · what still forced freeform browsing. Tick when the
+      week's log is reviewed and the next exploit is chosen.
 - [ ] BD5 — Track 5: ACI Sky Workbench auto-entry (needs the YV selector session first)
 
 ## Exploit backlog (brainstorm 2026-07-04 — YV confirmed the twin constraints:
