@@ -11,7 +11,28 @@
       deferred per quirk DMA-004)
 - [x] BD4 — Track 4: MCP server `appraisal-data` — DONE 2026-07-04
       (`docs/2026-07-04_bd4-mcp-server_code-brief.md`; live-verify = next session's first act)
+- [ ] OBS — observation week (decided 2026-07-04): YV wires the `appraisal-data` MCP server
+      into the COWORK config (5-min action; same command/args as `.mcp.json`) → one week of real
+      orders through the tools → pick the next exploit from OBSERVED friction, not guesses.
+      What to watch (Ton logs one inbox line per order): minutes tool-vs-browse per stage ·
+      tool failures/gaps · what still forced freeform browsing.
 - [ ] BD5 — Track 5: ACI Sky Workbench auto-entry (needs the YV selector session first)
+
+## Exploit backlog (brainstorm 2026-07-04 — YV confirmed the twin constraints:
+## comp search/extraction + DM/ACI entry)
+- **Nightly prefetch batch** (1 build day): /prep-today's WIP list → overnight scheduled job
+  pre-resolves subjects, ArcGIS pulls, comp-history recall, gas — both humans start on
+  pre-chewed orders. Front-runner for the post-OBS build day.
+- **Navica MlsNosForm HTTP adapter + sales-layer verification** (Powhatan/Goochland TODOs;
+  Chesterfield pattern proven live w/ real close dates): converts the fattest manual
+  extraction to queries. Creds stay out of the repo (session cookie / .env).
+- **ML#-first comp flow** (process change): DM auto-pulls SOME comp data from an ML# but
+  UNRELIABLY (YV; quirk DMA-002 stale-import class) → deliverable = ordered ML#+TaxID
+  shortlist + rubric notes, BUT keep the verification pass against DM's pull — transcribe
+  only what DM got wrong/missed instead of everything.
+- **BD5 ACI fill** — attacks YV's own entry hours; ~1-hr live selector session is the gate.
+- Parked: DMA-004 reverse-engineering (open-in-DM costs seconds) · registry bulk-fill (as
+  orders arrive, per YV).
 
 > **Goal (YV):** provide a subject address → COWORK_AGENT pulls + verifies the data from reliable
 > sources **in order: MLS → County/GIS → Zillow**, comps get pulled (incl. historical recall),
