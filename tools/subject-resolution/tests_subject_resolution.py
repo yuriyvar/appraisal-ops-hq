@@ -74,6 +74,10 @@ try:
     # different zip must NOT collide
     assert normalize_address("1 Main St, X, VA 23220") != \
         normalize_address("1 Main St, X, VA 23221"), "zip should split keys"
+    # a 5-digit HOUSE NUMBER in a zip-less address must not become the zip slot
+    assert normalize_address("14719 Clover Ridge Ln, Chesterfield, VA") == \
+        "14719 CLOVER RIDGE LN|CHESTERFIELD", \
+        normalize_address("14719 Clover Ridge Ln, Chesterfield, VA")
     # empty input fails loud
     try:
         normalize_address("   ")
@@ -759,6 +763,36 @@ try:
     ok("C20: recall — exact hit on pull sheet, similar via cached GLA, absent index safe")
 except Exception as ex:
     fail("C20", str(ex))
+
+# ---------------------------------------------------------------------------
+# C21: backfill — host sweeps Cowork's --no-cache subject.json files into the cache
+# ---------------------------------------------------------------------------
+try:
+    from subject_cache import backfill
+    scan = os.path.join(TMP, "orders_scan")
+    for name, subj21 in (
+        ("orderA", {"address": {"full": "70 Backfill Ave, Henrico, VA 23229",
+                                "county": "Henrico"},
+                    "characteristics": {"gla_sf": 1400},
+                    "resolution": {"resolved_on": "2026-07-04"}}),
+        ("orderB", {"address": {"full": "71 Backfill Ave, Henrico, VA 23229",
+                                "county": "Henrico"},
+                    "resolution": {"resolved_on": None}}),          # undated
+    ):
+        d = os.path.join(scan, name)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "subject.json"), "w") as f:
+            json.dump(subj21, f)
+    s = backfill(scan, db_path=DB)
+    assert s["put"] == 1 and s["skipped_undated"] == 1, s
+    assert any("orderB" in u for u in s["undated_list"])
+    hit = get("70 Backfill Avenue, Henrico County, VA 23229", db_path=DB)
+    assert hit and hit[0]["characteristics"]["gla_sf"] == 1400
+    s2 = backfill(scan, db_path=DB)                       # idempotent second sweep
+    assert s2["put"] == 0 and s2["already_current"] == 1, s2
+    ok("C21: backfill — validated file cached, undated listed not guessed, re-sweep idempotent")
+except Exception as ex:
+    fail("C21", str(ex))
 
 # ---------------------------------------------------------------------------
 # summary

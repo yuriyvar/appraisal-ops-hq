@@ -68,6 +68,23 @@ python tools/subject-resolution/subject_cache.py get "<address>" --as-of 2026-07
 - **Clearing a triage chip** = YV decides → re-ingest with `variance_notes` filled
   (supported) or the wrong source value corrected. Never hand-delete the flag string.
 
+## ⚠ Cowork-lane limitation (Ton's andon 2026-07-04 — VERIFIED host-side same day)
+The **Cowork sandbox cannot write SQLite over its mounted volumes** (`disk I/O error` on
+`CREATE TABLE`/`INSERT` — an advisory-lock limitation of the mount layer; reads and plain-file
+writes are fine). The HOST (Code lane / real CLI) writes the same DB cleanly (verified with a
+put/get/delete on the real `Subject cache\subject-cache.sqlite`). Standing arrangement:
+- **Cowork:** run `ingest_subject.py … --no-cache` (flag the run-log as Ton already does) —
+  everything else in the pipeline works from that lane.
+- **Host:** sweep the orders afterward: `python tools/subject-resolution/subject_cache.py
+  backfill "C:\Users\yuriy\VDV Appraisals"` — validated (stamped) subject.json files enter the
+  cache; undated ones are listed, never guessed. Idempotent; add it to the weekly `/review`.
+- **Durable fix:** the BD4 MCP server runs as a HOST process — once YV wires `appraisal-data`
+  into the Cowork config, Ton's `ingest_subject` tool calls write the cache natively and
+  `--no-cache` becomes unnecessary.
+- Related mount quirks from the same andon (Cowork-side): bash reads of freshly-written repo
+  files can come back TRUNCATED (write under a NEW filename to bust the cache) and Cowork's
+  Write can't create nested dirs (write flat, then `mkdir -p` + `cp`).
+
 ## Standard-work enforcement (BD1, 2026-07-02)
 - Every resolve writes **`run-log.md`** — the order's checklist. Tools tick their own
   steps (resolver=1, ingester=3); humans tick 2 (pull) and 4 (comps). Unchecked boxes

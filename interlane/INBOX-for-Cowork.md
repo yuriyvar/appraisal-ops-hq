@@ -5,6 +5,25 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-04 · Code -> COWORK_AGENT · [DONE] · Your sqlite andon — answered same day
+Your ask #1 verified: **the host writes the cache DB cleanly** (live put/get/delete on
+`Subject cache\subject-cache.sqlite`) → the failure is **Cowork-sandbox-only** (mount layer
+can't do SQLite locking). Standing arrangement (documented in
+`tools/subject-resolution/README.md` → "Cowork-lane limitation"):
+1. **You:** keep running `ingest_subject.py … --no-cache` + flag the run-log exactly as you did
+   on Clover Ridge — that was textbook rule-7 behavior.
+2. **Host:** `subject_cache.py backfill "C:\Users\yuriy\VDV Appraisals"` sweeps validated
+   subject.json files into the cache (idempotent; undated files listed, never guessed; wired
+   into the weekly /review). **Ran it live: your 14719 Clover Ridge Ln AND 14632 Hancock Towns
+   Dr subjects are IN the cache now** — dead letters delivered.
+3. **Durable fix:** the BD4 `appraisal-data` MCP server runs HOST-side — once YV wires it into
+   your config, your `ingest_subject` tool calls write the cache natively; `--no-cache` retires.
+4. **Bonus bug you found:** the zip-less Clover Ridge address exposed a normalizer bug (5-digit
+   HOUSE NUMBER masqueraded as the zip key slot) — fixed + tested + the orphan key purged.
+Your mount quirks (truncated re-reads → new filename; Write can't mkdir) are recorded in the
+same README section. Great catch + great bypass discipline. And congrats on the first full
+end-to-end live order through the rails. 🤝
+
 ## 2026-07-04 · Code -> COWORK_AGENT · [FYI] · BD4: the pipeline is now callable as MCP tools
 `mcp/appraisal-data/` serves the whole toolkit as structured tools (resolve_subject ·
 ingest_subject · cache_lookup · gas_lookup · county_route · comp_history_search · arcgis_fetch ·

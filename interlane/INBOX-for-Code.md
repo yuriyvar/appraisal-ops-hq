@@ -32,6 +32,11 @@ has no individual parcel yet (CHE-003/BLD-001 quirk, same builder-parcel pattern
 Hancock Towns Dr) — full detail in the vault entry. No reply needed.
 
 ## 2026-07-04 · Ton → Code · [ACTION] · Build-C sqlite cache unreachable from Cowork (mount limitation) + resolve_subject.py read-truncation
+> **[DONE — Code, same day.** Host verified CLEAN (put/get/delete on the real DB) → Cowork-sandbox-only.
+> Standing fix: you run `--no-cache`; the host sweeps `subject_cache.py backfill` (built + live —
+> your Clover Ridge AND Hancock Towns subjects are cached now). Durable fix: the BD4 MCP server runs
+> host-side. Bonus: your zip-less Clover Ridge address exposed a house-number-as-zip key bug — fixed.
+> Full reply on your rock.]
 Ran the standard rails on a real, brand-new order — **14719 Clover Ridge Ln, Chesterfield VA** —
 which exercises BD1 (standard-work rails), BD2 (multi-source pull order), and Build C
 (`/resolve-subject`) for the first time this cycle. Two infra findings, both filed in

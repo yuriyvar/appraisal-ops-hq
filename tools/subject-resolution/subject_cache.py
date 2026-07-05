@@ -79,9 +79,14 @@ def normalize_address(raw):
     if raw is None or not str(raw).strip():
         raise ValueError("empty address")
     s = str(raw).strip()
-    zips = _ZIP_RE.findall(s)
-    zipc = zips[-1] if zips else ""
     parts = [p.strip() for p in s.split(",") if p.strip()]
+    # ZIP only from the LAST segment — a 5-digit HOUSE NUMBER in a zip-less
+    # address must never masquerade as the zip slot (live bug: "14719 Clover
+    # Ridge Ln, Chesterfield, VA" keyed as ...|14719).
+    zipc = ""
+    if len(parts) >= 2:
+        zips = _ZIP_RE.findall(parts[-1])
+        zipc = zips[-1] if zips else ""
     street = _canon_street(parts[0])
     if not street:
         raise ValueError("no street segment in address: {!r}".format(raw))
@@ -212,6 +217,43 @@ def list_entries(db_path=None):
     return rows
 
 
+def backfill(scan_dir, db_path=None):
+    """Cowork-lane bridge (Ton's andon 2026-07-04): the Cowork SANDBOX cannot
+    write SQLite over its mounted volumes (advisory-lock failure on
+    CREATE/INSERT; reads + plain files are fine), so Cowork ingests with
+    --no-cache and the HOST sweeps validated subject.json files in here.
+    Only files with a resolution stamp qualify (same rule as ingest — junk
+    never enters the cache); undated ones are LISTED, never guessed."""
+    put_n = current_n = 0
+    undated = []
+    for root, dirs, files in os.walk(scan_dir):
+        dirs[:] = [d for d in dirs if d not in
+                   (".git", "appraisal-ops-hq", "Subject cache", "__pycache__",
+                    "node_modules", "OneDrive")]
+        if "subject.json" not in files:
+            continue
+        p = os.path.join(root, "subject.json")
+        try:
+            with open(p, "r", encoding="utf-8-sig") as fh:
+                subj = json.load(fh)
+        except (ValueError, OSError):
+            undated.append(p + "  (unreadable/unparseable)")
+            continue
+        addr = ((subj.get("address") or {}).get("full"))
+        resolved_on = ((subj.get("resolution") or {}).get("resolved_on"))
+        if not addr or not _parse_date(resolved_on):
+            undated.append(p)
+            continue
+        hit = get(addr, db_path=db_path)
+        if hit and str(hit[1]) >= str(resolved_on)[:10]:
+            current_n += 1
+            continue
+        put(addr, subj, "backfill:" + p, db_path=db_path)
+        put_n += 1
+    return {"put": put_n, "already_current": current_n,
+            "skipped_undated": len(undated), "undated_list": undated}
+
+
 def staleness_flags(subject, resolved_on, as_of=None, ttl_days=DEFAULT_TTL_DAYS):
     """Warnings the resolver must attach to a cache hit. Flag, never hide."""
     flags = []
@@ -232,8 +274,9 @@ def staleness_flags(subject, resolved_on, as_of=None, ttl_days=DEFAULT_TTL_DAYS)
 # ---------------------------------------------------------------------------
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Build C — subject cache")
-    ap.add_argument("action", choices=["get", "put", "list", "delete"])
-    ap.add_argument("address", nargs="?", help="subject address")
+    ap.add_argument("action", choices=["get", "put", "list", "delete", "backfill"])
+    ap.add_argument("address", nargs="?",
+                    help="subject address (for backfill: the folder to scan)")
     ap.add_argument("--db", help="cache DB path (default: client zone)")
     ap.add_argument("--as-of", help="date for age math (YYYY-MM-DD; default today)")
     ap.add_argument("--ttl-days", type=int, default=DEFAULT_TTL_DAYS)
@@ -248,7 +291,15 @@ def main(argv=None):
         return 0
 
     if not args.address:
-        ap.error("address required for get/put/delete")
+        ap.error("address required for get/put/delete (scan folder for backfill)")
+
+    if args.action == "backfill":
+        s = backfill(args.address, db_path=args.db)
+        print("backfill: {} put, {} already current, {} skipped (no resolution stamp)"
+              .format(s["put"], s["already_current"], s["skipped_undated"]))
+        for u in s["undated_list"]:
+            print("SKIPPED  " + u)
+        return 0
 
     if args.action == "get":
         hit = get(args.address, args.db, args.as_of)
