@@ -14,11 +14,11 @@ remote/HTTP transport · a Claude client drops our protocol rev · >15 tools or 
 
 ## Progress tracker
 - [x] Phase 0 — this brief committed
-- [ ] Phase 1 — `mcp_stdio.py` shim + in-memory transcript QA (initialize / initialized /
+- [x] Phase 1 — `mcp_stdio.py` shim + in-memory transcript QA (initialize / initialized /
       ping / tools list+call / unknown-method −32601 / parse −32700 / notifications silent /
       stdout purity — stderr is the only log channel)
-- [ ] Phase 2 — `server.py`: 8 tools + subprocess-vs-import policy + e2e QA driving the real
-      server over stdin with temp DBs
+- [x] Phase 2 — `server.py`: 8 tools + subprocess-vs-import policy + e2e QA driving the real
+      server over stdin with temp DBs (M1+M2 green first run)
 - [ ] Phase 3 — wrap: `.mcp.json` registration (outer root) · README · docs/FYI/handoff ·
       tag done + BD4 ticked
 - [ ] LIVE VERIFY (next session — servers load at session start): call every tool through
