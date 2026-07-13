@@ -53,7 +53,8 @@
             "city":   { "type": ["string", "null"] },
             "state":  { "type": ["string", "null"] },
             "zip":    { "type": ["string", "null"] },
-            "county": { "type": ["string", "null"] }
+            "county": { "type": ["string", "null"],
+              "description": "Standard (2026-07-11, YV-confirmed): the county string AS THE MLS LISTING DISPLAYS IT (e.g. 'Smyth Co', not 'Smyth County'), captured at subject pull, never reformatted downstream — it lands verbatim in the worksheet header." }
           }
         },
         "flags": { "type": "array", "items": { "type": "string" } },
@@ -338,7 +339,7 @@
             "surrounding_counties": {
               "type": "array",
               "items": { "type": "string" },
-              "description": "v1.1 — adjacent counties for comp-search widening. Filled by the orchestrator from the county registry; the deterministic renderer only displays (dash when absent)."
+              "description": "v1.1 — adjacent counties for comp-search widening. Filled by the orchestrator from the county registry; the deterministic renderer only displays (dash when absent). Standard (2026-07-11, YV-confirmed): EVERY entry = '{County Name} ({DIR})' — e.g. 'Bland Co (NE)' — no bare county names. DIR is one of N/NE/E/SE/S/SW/W/NW, relative to the SUBJECT's own county, verified against the county's Wikipedia infobox / official state map, never guessed. County names in MLS short form. The renderer warn-flags any entry missing the '(DIR)' suffix (warn-loud-never-block)."
             }
           }
         },

@@ -107,7 +107,7 @@
       "sale_window_months": 12,
       "gla_band": { "low_sf": 1670, "high_sf": 2042, "luxury_widened": false },
       "mls_systems": ["CVR MLS"],
-      "surrounding_counties": ["Goochland", "Powhatan"]
+      "surrounding_counties": ["Goochland Co (W)", "Powhatan Co (SW)"]
     },
     "neighborhood_notes": null
   },

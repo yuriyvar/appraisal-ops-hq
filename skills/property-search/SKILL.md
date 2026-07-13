@@ -62,6 +62,14 @@ conflicts are flagged.
   the local file, offer to add to the sheet.
 
 ### 2. Verify the subject (all three legs)
+- **County string = MLS short form (header standard, 2026-07-11).** Capture
+  `subject.address.county` in the SAME short form the MLS listing itself displays
+  (e.g. "Smyth Co", "Chesterfield Co"), NOT the county's full legal name — it lands
+  verbatim in the worksheet header (`{address} | {county}`), so get the form right at
+  the source. Likewise every `market.search.surrounding_counties` entry =
+  `"{County Name} ({DIR})"` (e.g. "Bland Co (NE)"), DIR relative to the SUBJECT's own
+  county, verified against the county's Wikipedia infobox / official state map —
+  never guessed. The renderer warn-flags bare entries.
 - **County GIS/assessment**: parcel ID/GPIN/TaxID, property address, GLA, year
   built, beds/baths, lot size, zoning, last sale (date, price, deed). Prefer the
   GIS REST endpoint directly.

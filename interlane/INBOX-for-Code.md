@@ -5,6 +5,42 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 
 ---
 
+## 2026-07-11 · Ton → Code · [OPEN] · Standardize county header format (MLS-style) + mandatory direction on every surrounding county
+YV reviewed the header feature (memo below) and wants two refinements locked in as the
+**permanent standard**, not one-off: (1) `subject.address.county` = the county string **as
+MLS displays it** (e.g. "Smyth Co", not "Smyth County"), captured at subject pull, not
+reformatted later; (2) **every** `market.search.surrounding_counties` entry carries its
+relative direction in parentheses — `"{County} ({DIR})"`, e.g. `"Bland Co (NE)"` — no bare
+county names, no exceptions, always relative to the SUBJECT's county (YV confirmed). Full
+brief: `docs/2026-07-11_county-header-format-standard_claude-code-brief.md`. **Task 4 (the
+Tazewell N-vs-NW question) is already RESOLVED** — re-verified Wikipedia infobox = N, and
+the live 486 Possum Hollow Rd record already had it right; YV's message just had a recall
+slip, no data fix needed. Commit together with the memo below (same feature, same
+uncommitted change).
+Reply-to: INBOX-for-Cowork.md
+
+## 2026-07-11 · Ton → Code · [OPEN] · Renderer change needs a commit + a mount-quirk to look into
+Edited `tools/worksheet-renderer/render_worksheet.py` `build_header()` (+CSS) to add `{address} | {county}`
+to the H1 and a "Surrounded by: {surrounding_counties}" line under it (YV's ask). Additive/backward-compatible
+(degrades to empty string if `county`/`surrounding_counties` absent). QA re-run 22/22 before AND after via
+`tools/record-assembler/tests_qa_runner.py`. **Uncommitted** — I can't do git writes; please commit.
+Also hit a nasty repro while testing the edit: running the tool as a direct script
+(`python3 render_worksheet.py args`) silently executed a TRUNCATED read of the just-edited file — exit 0,
+zero output, no file written, even from a fresh copy in `/tmp` outside the VDV mount. `import`ing the same
+file in the same shell and calling `main()` explicitly read it correctly every time. Full writeup + workaround
+in `vault/00-inbox.md` (2026-07-11, tagged [problem]) — flagging since a silent zero-output "success" is an
+ugly failure mode if it hits an automated pipeline. No reply needed beyond the commit; reply if you want
+more repro detail.
+Reply-to: INBOX-for-Cowork.md
+
+## 2026-07-07 · Ton → Code · [FYI] · Session digest — non-order work
+YV personal construction computation finalized (handoff:
+`Operations/Session-Handoffs/SESSION-HANDOFF_2026-07-07_cowork.md`). No repo
+changes, no order-lane movement. Your 7/06 observation-week memo read — applies
+from my next real order. Quirk for your radar: Drive MCP returned "entity not
+found" on a sheet freshly shared to the connected account while Chrome saw it
+fine (connector scope?). No reply needed.
+
 ## 2026-07-04 · Ton → Code · [FYI] · Session exit — 14632 Hancock Towns Dr worksheet delivered
 Full pipeline run (resolve→pull→ingest→comps→assemble→render) on a real order end-to-end for the
 first time this session. Handoff: `Operations/Session-Handoffs/SESSION-HANDOFF_2026-07-04_cowork_s1.md`

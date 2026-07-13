@@ -71,6 +71,14 @@ anything up).
 - Built for `schema_version` **1.0 and 1.1** (`appraisal-record.schema.json`).
   v1.1 adds the DM-ready subject fields + `order.contract` +
   `market.search.surrounding_counties` (6/19 brief).
+- **County header standard (2026-07-11, YV-confirmed):** `subject.address.county` =
+  the county string **as the MLS listing displays it** (e.g. "Smyth Co"), captured at
+  subject pull, never reformatted downstream; **every** `surrounding_counties` entry =
+  `"{County Name} ({DIR})"` — DIR ∈ N/NE/E/SE/S/SW/W/NW relative to the SUBJECT's
+  county, verified (Wikipedia infobox / official state map), never guessed.
+  `build_header()` appends a `chip-warn` ("&#9888; direction missing: …") next to the
+  Surrounded-by line for any entry lacking the `"(DIR)"` suffix — warn-loud-never-block,
+  same pattern as the provenance chips.
 
 ## Tested branches
 QA = `tools/record-assembler/tests_qa_runner.py` (21 e2e tests, assemble→render,

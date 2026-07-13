@@ -92,6 +92,15 @@ gas furnace if gas actually reaches the parcel (learned on 1214 Hillside Ave).
 Record the result in the subject's Utilities row — **Gas: Connected / Available-not-connected /
 Not available** — and adjust the heating-fuel inference accordingly.
 
+### County string standard (worksheet header — 2026-07-11, YV-confirmed)
+- Capture `subject.address.county` in the **same short form the MLS listing itself uses**
+  (e.g. "Smyth Co", "Chesterfield Co"), never the full legal name — it renders verbatim in
+  the worksheet H1 (`{address} | {county}`).
+- Every `market.search.surrounding_counties` entry = `"{County Name} ({DIR})"` (e.g.
+  "Bland Co (NE)") — no bare names, no exceptions. DIR = N/NE/E/SE/S/SW/W/NW **relative to
+  the subject's own county**, verified (county Wikipedia infobox / official state map —
+  never guessed). The renderer flags any entry missing its "(DIR)" suffix.
+
 ### DM-specific field rules (apply when building the worksheet)
 - **Assessor's Parcel #** — this is DM's canonical label for APN / Tax ID / Map#. Use it in the worksheet; never label the field "PID / APN / Tax ID" (confusing). One-time clarifier `(= APN / Tax ID)` is OK on first use.
 - **Map Reference** — enter `GIS` when the source doesn't supply a specific map reference. Never leave blank.
@@ -125,8 +134,9 @@ Source 3 (`Connected` / `Available-not-connected` / `Not available`); never leav
    Default tabs = Subject · Neighborhood · Comp grid · Sale/Listing history + the search-snapshot
    strip (all automatic from the record — populate `subject.neighborhood_bounds`,
    `neighborhood_description_context`, `water/sewer`, `re_taxes_annual`, `hoa_amount/period` and
-   `market.search.surrounding_counties` in subject.json to pre-fill them; anything absent renders
-   TBD/dash, never guessed). **Photos and Map are OFF by default**
+   `market.search.surrounding_counties` in subject.json to pre-fill them — surrounding-county
+   entries as `"{County Name} ({DIR})"` per the County string standard above; anything absent
+   renders TBD/dash, never guessed). **Photos and Map are OFF by default**
    — add `--with-photos` / `--with-map` ONLY after Yuriy explicitly approves including them.
 5. **Self-check the output** (tabs populated, flags surfaced, review gate shows NOT CERTIFIED),
    then hand the worksheet to the appraiser to review / adjust / certify.

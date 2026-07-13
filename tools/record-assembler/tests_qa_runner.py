@@ -642,6 +642,14 @@ try:
     html_nb = render(rec_nb)
     assert "Rt. 53 to the North" in html_nb and "Rt. 20 to the West" in html_nb
     assert "Goochland, Powhatan" in html_nb
+    # county-header standard (2026-07-11): bare entries get the loud warn chip,
+    # "(DIR)"-suffixed entries render clean — warn-loud-never-block
+    assert "direction missing: Goochland, Powhatan" in html_nb
+    rec_nb["market"]["search"]["surrounding_counties"] = ["Goochland Co (W)",
+                                                          "Powhatan Co (SW)"]
+    html_nd = render(rec_nb)
+    assert "Goochland Co (W), Powhatan Co (SW)" in html_nd
+    assert "direction missing" not in html_nd
     # computed band fallback when market.search has none
     rec_nb["market"]["search"]["gla_band"] = {"low_sf": None, "high_sf": None,
                                               "luxury_widened": False}

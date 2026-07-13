@@ -26,6 +26,7 @@ import argparse
 import html
 import json
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -158,6 +159,21 @@ def flag_chips(flags, kind="flag"):
 def build_header(rec):
     order = g(rec, "order", default={})
     subj_addr = g(rec, "subject", "address", "full", default="(no subject address)")
+    county = g(rec, "subject", "address", "county")
+    addr_display = subj_addr + (" | {}".format(county) if county else "")
+    surrounding = g(rec, "market", "search", "surrounding_counties", default=[]) or []
+    # 2026-07-11 standard: every entry = "{County Name} ({DIR})" — warn loud, never block
+    bare = [s for s in surrounding if not re.match(r".*\(.+\)$", (s or "").strip())]
+    dir_warn = (
+        ' <span class="chip chip-warn">&#9888; direction missing: {}</span>'.format(
+            esc(", ".join(bare)))
+        if bare else ""
+    )
+    surround_html = (
+        '<div class="county-line">Surrounded by: {}{}</div>'.format(
+            esc(", ".join(surrounding)), dir_warn)
+        if surrounding else ""
+    )
     status = g(order, "status", default="")
     form_type = g(order, "form_type", default="")
     badge = '<span class="status status-{}">{}</span>'.format(
@@ -184,13 +200,14 @@ def build_header(rec):
         <div>
           <div class="eyebrow">VDV Appraisal Worksheet</div>
           <h1>{addr}</h1>
+          {surround}
         </div>
         <div class="head-status">{badge}</div>
       </div>
       <div class="meta-grid">{meta}</div>
       {flags}
     </header>
-    """.format(addr=esc(subj_addr), badge=badge, meta=meta_html,
+    """.format(addr=esc(addr_display), surround=surround_html, badge=badge, meta=meta_html,
                flags=flag_chips(flags, "warn"))
 
 
@@ -909,6 +926,7 @@ body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,H
   padding:22px 26px;border-radius:0 0 12px 12px;}
 .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
 .sheet-head h1{margin:2px 0 0;font-size:24px;font-weight:650}
+.county-line{font-size:12.5px;margin-top:4px;opacity:.85}
 .head-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
 .status{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;
   letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.18)}
