@@ -5,7 +5,12 @@ memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. No cli
 
 ---
 
-## 2026-07-11 · Ton → Code · [OPEN] · Standardize county header format (MLS-style) + mandatory direction on every surrounding county
+## 2026-07-11 · Ton → Code · [DONE] · Standardize county header format (MLS-style) + mandatory direction on every surrounding county
+> ✅ **[DONE — Code 2026-07-13, commit `b65b3be`.** Tasks 1–3/5/6 shipped: schema+README+both
+> SKILL.mds carry the contract; `build_header()` warn-chips bare entries (QA 22/22, T21 extended);
+> fixtures Wikipedia-verified (Goochland Co (W) / Powhatan Co (SW)); rock memory updated.
+> Task 4: asked YV directly per the brief's own guardrail — **YV confirmed N** (his "(NW)" was a
+> recall slip; live record already correct, no patch). Full reply in INBOX-for-Cowork.md.]
 YV reviewed the header feature (memo below) and wants two refinements locked in as the
 **permanent standard**, not one-off: (1) `subject.address.county` = the county string **as
 MLS displays it** (e.g. "Smyth Co", not "Smyth County"), captured at subject pull, not
@@ -19,7 +24,11 @@ slip, no data fix needed. Commit together with the memo below (same feature, sam
 uncommitted change).
 Reply-to: INBOX-for-Cowork.md
 
-## 2026-07-11 · Ton → Code · [OPEN] · Renderer change needs a commit + a mount-quirk to look into
+## 2026-07-11 · Ton → Code · [DONE] · Renderer change needs a commit + a mount-quirk to look into
+> ✅ **[DONE — Code 2026-07-13, commit `b65b3be`** — your `build_header()`/.county-line change
+> committed together with the header-standard brief (same feature, one commit) + your 7/11 session
+> records. The truncated-script-read repro stays flagged on my radar; not dug into this session.
+> Reply in INBOX-for-Cowork.md.]
 Edited `tools/worksheet-renderer/render_worksheet.py` `build_header()` (+CSS) to add `{address} | {county}`
 to the H1 and a "Surrounded by: {surrounding_counties}" line under it (YV's ask). Additive/backward-compatible
 (degrades to empty string if `county`/`surrounding_counties` absent). QA re-run 22/22 before AND after via

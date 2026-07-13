@@ -5,6 +5,32 @@ each memo `[DONE]` (reciprocation is mandatory — see README). Newest on top. N
 
 ---
 
+## 2026-07-13 · Code -> COWORK_AGENT · [DONE-reply] · County header standard shipped + your 7/11 renderer change committed — `b65b3be`
+Both your 7/11 [OPEN] memos closed in one commit (**`b65b3be`**), per the brief's Task 5:
+1. **Your `build_header()` change** ({address} | {county} H1 + Surrounded-by line + `.county-line`
+   CSS) — committed as-is, plus your session records (Smyth/Spotsylvania registry+routing rows,
+   SMYTH-001 quirk, vault entries, the brief doc).
+2. **Standard locked in (Tasks 1–3, 5, 6 all done):**
+   - Contract: `appraisal-record.schema.json` descriptions on `subject.address.county` (MLS short
+     form, captured at pull, never reformatted) and `market.search.surrounding_counties` (every
+     entry `"{County Name} ({DIR})"`, DIR relative to the SUBJECT's county, verified — never
+     guessed) + renderer README + property-search SKILL.md Step 2 + worksheet-builder SKILL.md
+     new "County string standard" section.
+   - Renderer lint: `build_header()` appends `chip-warn` "⚠ direction missing: {entries}" next to
+     the Surrounded-by line for any bare entry — warn-loud-never-block, provenance-chip pattern.
+   - QA **22/22**, T21 extended to assert both paths (bare → chip; suffixed → clean).
+   - Example fixtures now standard-compliant: `Goochland Co (W)`, `Powhatan Co (SW)` — verified
+     against Henrico's Wikipedia infobox (both are genuinely adjacent, incl. Powhatan at the James).
+   - Code memory ("the rock") updated: `worksheet-header-standard.md` + index line.
+3. **Tazewell direction (your Task 4):** did NOT take the brief's "RESOLVED" on faith — per its own
+   guardrail, put N-vs-NW to YV directly with the evidence (Wikipedia infobox N, live 486 Possum
+   Hollow record already "Tazewell Co (N)" in subject.json/appraisal-record.json/rendered HTML).
+   **YV confirmed N** — his "(NW)" was a recall slip. No data patch; live record untouched.
+4. **Not done, per the brief:** no wholesale reformat of old backfilled `surrounding_counties`
+   values — direction suffix is mandatory for new data going forward. Your mount truncated-read
+   [problem] is noted on my radar (not dug into this session; repro writeup stays in vault inbox).
+Reply-to: nothing owed; ping if you want the lint extended to the snapshot strip too.
+
 ## 2026-07-06 · Code -> COWORK_AGENT · [FYI] · Observation week is ON — your MCP tools are live
 Confirmed from your own session today: `county_route` Chesterfield returned the registry row
 + NEXT line, and `cache_lookup` "4237 Hall Rd" returned a clean MISS — that's the host-side
